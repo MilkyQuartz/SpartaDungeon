@@ -181,15 +181,19 @@ public class GameManager
         }
         Console.WriteLine("");
         Console.WriteLine("1. 아이템 구매");
+        Console.WriteLine("2. 아이템 판매");
         Console.WriteLine("0. 나가기");
         Console.WriteLine("");
-        switch (ConsoleUtility.PromptMenuChoice(0, 1))
+        switch (ConsoleUtility.PromptMenuChoice(0, 2))
         {
             case 0:
                 MainMenu();
                 break;
             case 1:
                 PurchaseMenu();
+                break;
+            case 2:
+                SellMenu();
                 break;
         }
     }
@@ -246,6 +250,82 @@ public class GameManager
                 else
                 {
                     PurchaseMenu("Gold가 부족합니다.");
+                }
+                break;
+        }
+    }
+    private void SellMenu(string? prompt = null) // 추가요소 상점 판매
+    {
+        if (prompt != null)
+        {
+            // 1초간 메시지를 띄운 다음에 다시 진행
+            Console.Clear();
+            ConsoleUtility.ShowTitle(prompt);
+            Thread.Sleep(1000);
+        }
+        Console.Clear();
+
+        ConsoleUtility.ShowTitle("■ 상점 ■");
+        Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.");
+        Console.WriteLine("");
+        Console.WriteLine("[보유 골드]");
+        ConsoleUtility.PrintTextHighlights("", player.Gold.ToString(), " G");
+        Console.WriteLine("");
+        Console.WriteLine("[아이템 목록]");
+        for (int i = 0; i < inventory.Count; i++)
+        {
+            inventory[i].PrintItemStatDescription(true, i + 1);
+        }
+        Console.WriteLine("");
+        Console.WriteLine("0. 나가기");
+        Console.WriteLine("");
+
+        int keyInput = ConsoleUtility.PromptMenuChoice(0, inventory.Count);
+
+        void Sell(int keyInput)
+        {
+            player.Gold += (int)(inventory[keyInput - 1].Price * 0.85f);
+            foreach (var item in storeInventory)
+            {
+                if (item.Name == inventory[keyInput - 1].Name)
+                {
+                    item.Purchase(); // 불값 되돌림
+                    break;
+                }
+            }
+            inventory.Remove(inventory[keyInput - 1]);
+        }
+
+        switch (keyInput)
+        {
+            case 0:
+                StoreMenu();
+                break;
+            default:
+                // 1 : 장비한 아이템인 경우
+                if (inventory[keyInput - 1].IsEquipped) // index 맞추기
+                {
+                    Console.WriteLine("정말로 장비한 아이템을 파시겠습니까?");
+                    Console.WriteLine("0. 아니오     1. 예");
+                    int keyInput2 = ConsoleUtility.PromptMenuChoice(0, 1);
+                    switch (keyInput2)
+                    {
+                        case 0:
+                            SellMenu();
+                            break;
+                        case 1:
+                            // 장비해제
+                            inventory[keyInput - 1].ToggleEquipStatus();
+                            // 판매
+                            Sell(keyInput);
+                            break;
+                    }
+                }
+                // 2 : 장비하지 않은 아이템인 경우
+                else
+                {
+                    Sell(keyInput);
+                    SellMenu();
                 }
                 break;
         }
