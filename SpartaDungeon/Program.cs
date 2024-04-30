@@ -18,9 +18,15 @@ namespace SpartaDungeon
             InitializeGame();
         }
 
+        public void PastePlayer(string name)
+        {
+            player.Name = name;
+            // 나머지 정보 추가
+        }
+
         private void InitializeGame()
         {
-            player = new Player("Jiwon", "Programmer", level: 1, atk: 10, def: 5, hp: 100, maxHp: 100, mp: 20, maxMp: 20, gold: 10000, maxExp: 10);
+            player = new Player(name: "", job: "", level: 1, atk: 10, def: 5, hp: 100, maxHp: 100, mp: 20, maxMp: 20, gold: 10000, maxExp: 10);
 
             compareDic = new Dictionary<ItemType, int>();   // 추가요소 장비교체
 

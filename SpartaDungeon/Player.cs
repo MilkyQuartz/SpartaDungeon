@@ -1,4 +1,6 @@
-﻿
+﻿using System.Text.Json;
+using System.Xml.Linq;
+
 namespace SpartaDungeon
 {
     public enum JOB
@@ -27,11 +29,7 @@ namespace SpartaDungeon
         public float BonusDef { get; set; }
         public float BonusHp { get; set; }
 
-
-
-
-
-        public Player(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp, float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0)
+        public Player(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp = 10, float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0)
         {
             Name = name;
             Job = job;
@@ -75,6 +73,7 @@ namespace SpartaDungeon
                 {
                     case 0: //예
                         isTrue = false;
+                        Name = name; // 이름을 플레이어 객체의 속성에 할당
                         break;
                     case 1: //아니오 반복문
 
@@ -144,34 +143,99 @@ namespace SpartaDungeon
         {
             Console.WriteLine("경비병 : 거기 멈춰서라.");
             Console.WriteLine("경비병 : 우리 마을은 정체도 모르는 이방인을 안으로 들이지 않는다.");
+            Console.WriteLine("[0] 새로운 모험을 떠나기 위해 왔다.         [1] 내 얼굴도 기억하지 못하냐.");
+
+            switch (ConsoleUtility.PromptMenuChoice(0, 1))
+            {
+                case 0:
+                    StartNewAdventure(MainMenu);
+                    break;
+                case 1:
+                    RememberMyFace(MainMenu);
+                    break;
+            }
+        }
+        private void StartNewAdventure(Action MainMenu)
+        {
             Console.WriteLine("경비병 : 당신의 이름이 뭐지?");
             Console.WriteLine();
             string name = InputName();
-            Console.WriteLine();
-            Console.WriteLine("경비병 : 직업은?");
-            // ... 직업
-            JobSelect();
-            Console.WriteLine();
-            Console.WriteLine("경비병 : 이제 들어가도 좋다.");
-            PastePlayer();
-            Console.WriteLine("");
 
-            Console.WriteLine("0. 마을로 들어가기");
-            Console.WriteLine("");
-
-            switch (ConsoleUtility.PromptMenuChoice(0, 0))
+            if (!string.IsNullOrEmpty(name))
             {
-                case 0:
-                    MainMenu();
-                    break;
-            }
+                if (!IsNameCheck(name))
+                {
+                    Console.WriteLine("경비병 : 직업은?");
+                    // ... 직업
+                    JobSelect();
+                    Console.WriteLine();
+                    Console.WriteLine("경비병 : 이제 들어가도 좋다.");
+                    GameManager gameManager = new GameManager();
+                    gameManager.PastePlayer(name);
+                    Console.WriteLine("");
 
-            void PastePlayer()
-            {
-                this.Name = name;
-                // 능력치 추가
+                    SavePlayer();
 
+                    Console.WriteLine("0. 마을로 들어가기");
+                    Console.WriteLine("");
+
+                    switch (ConsoleUtility.PromptMenuChoice(0, 0))
+                    {
+                        case 0:
+                            MainMenu();
+                            break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("경비병 : 용사님을 사칭하지마라!");
+                    Environment.Exit(0);
+                }
             }
         }
+
+        private void RememberMyFace(Action MainMenu)
+        {
+            Console.WriteLine("경비병 : 당신의 이름이 뭐지?");
+            Console.WriteLine();
+            Console.WriteLine("이름을 입력하세요");
+            string name = Console.ReadLine();
+
+            if (IsNameCheck(name))
+            {
+                // 이름이 존재하는 경우, 해당 플레이어 정보를 불러옴
+                Console.WriteLine($"경비병 : {name} 용사님! 몰라봬서 죄송합니다. 들어가시면 됩니다!");
+
+                GameManager gameManager = new GameManager();
+                gameManager.PastePlayer(name);
+
+
+                Console.WriteLine("0. 마을로 들어가기");
+                Console.WriteLine("");
+
+                switch (ConsoleUtility.PromptMenuChoice(0, 0))
+                {
+                    case 0:
+                        MainMenu();
+                        break;
+                }
+            }
+        }
+
+        private bool IsNameCheck(string name)
+        {
+            return JsonSerializer.Deserialize<Player[]>(File.ReadAllText("Player.json")).Any(p => p.Name == name);
+        }
+
+        private void SavePlayer()
+        {
+            // 기존 플레이어 정보 읽기
+            var players = JsonSerializer.Deserialize<List<Player>>(File.ReadAllText("Player.json"));
+
+            players.Add(this);
+            var json = JsonSerializer.Serialize(players);
+            File.WriteAllText("Player.json", json);
+        }
+
     }
 }
