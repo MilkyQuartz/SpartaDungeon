@@ -28,6 +28,9 @@ namespace SpartaDungeon
         public float BonusHp { get; set; }
 
 
+
+
+
         public Player(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp, float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0)
         {
             Name = name;
@@ -42,6 +45,15 @@ namespace SpartaDungeon
             Gold = gold;
             MaxExp = maxExp;
         }
+
+        public void LevelUp()
+        {
+            Level++;
+            Atk += 1;
+            Def += 1;
+        }
+
+        // 이름입력 함수
         public string InputName()
         {
             bool isTrue = true;
@@ -161,7 +173,5 @@ namespace SpartaDungeon
 
             }
         }
-
     }
-
 }

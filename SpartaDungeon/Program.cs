@@ -99,13 +99,13 @@ namespace SpartaDungeon
 
             // TODO : 능력치 강화분을 표현하도록 변경
 
-            int bonusAtk = inventory.Select(item => item.IsEquipped ? item.Atk : 0).Sum();
-            int bonusDef = inventory.Select(item => item.IsEquipped ? item.Def : 0).Sum();
-            int bonusHp = inventory.Select(item => item.IsEquipped ? item.Hp : 0).Sum();
+            player.BonusAtk = inventory.Select(item => item.IsEquipped ? item.Atk : 0).Sum();
+            player.BonusDef = inventory.Select(item => item.IsEquipped ? item.Def : 0).Sum();
+            player.BonusHp = inventory.Select(item => item.IsEquipped ? item.Hp : 0).Sum();
 
-            ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + bonusAtk).ToString(), bonusAtk > 0 ? $" (+{bonusAtk})" : "");
-            ConsoleUtility.PrintTextHighlights("방어력 : ", (player.Def + bonusDef).ToString(), bonusDef > 0 ? $" (+{bonusDef})" : "");
-            ConsoleUtility.PrintTextHighlights("체 력 : ", (player.Hp + bonusHp).ToString(), bonusHp > 0 ? $" (+{bonusHp})" : "");
+            ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + player.BonusAtk).ToString(), player.BonusAtk > 0 ? $" (+{player.BonusAtk})" : "");
+            ConsoleUtility.PrintTextHighlights("방어력 : ", (player.Def + player.BonusDef).ToString(), player.BonusDef > 0 ? $" (+{player.BonusDef})" : "");
+            ConsoleUtility.PrintTextHighlights("체 력 : ", (player.Hp + player.BonusHp).ToString(), player.BonusHp > 0 ? $" (+{player.BonusHp})" : "");
 
             ConsoleUtility.PrintTextHighlights("Gold : ", player.Gold.ToString());
             Console.WriteLine("");
