@@ -116,11 +116,17 @@ namespace SpartaDungeon
             Console.WriteLine("0. 뒤로가기");
             Console.WriteLine("");
 
-            switch (ConsoleUtility.PromptMenuChoice(0, 0))
+            switch (ConsoleUtility.PromptMenuChoice(0, 1))//0))
             {
                 case 0:
                     MainMenu();
                     break;
+                case 1:
+                    //아래테스트영역 삭제가능
+                    Potion.UsePotion(player, player.potion, StatusMenu);
+            
+            break;
+                    //위 테스트영역 삭제가능
             }
         }
 

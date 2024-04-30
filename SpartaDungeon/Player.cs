@@ -28,7 +28,8 @@ namespace SpartaDungeon
         public float BonusHp { get; set; }
         public float BonusMp { get; set; }
 
-       
+        //디버그
+        public int potion = 4;
 
         public Player(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp = 10, float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0, float bonusMp = 0)
         {
@@ -62,9 +63,14 @@ namespace SpartaDungeon
                 Console.WriteLine("이름을 입력하세요");
                 // 이름입력
                 name = Console.ReadLine();
-                if (name == null)
+                if(name == "")
                 {
                     Console.WriteLine("빈 칸은 안됩니다.");
+                    continue;
+                }
+                else if (name[0].ToString() == " ")
+                {
+                    Console.WriteLine("첫자리에 빈 칸은 안됩니다.");
                     continue;
                 }
                 ConsoleUtility.PrintTextHighlights("당신의 이름은 ", name, "이 맞습니까?");
@@ -155,15 +161,11 @@ namespace SpartaDungeon
             PastePlayer();
             Console.WriteLine("");
 
-            Console.WriteLine("0. 마을로 들어가기");
+            Console.WriteLine("                        PRESS ANYKEY TO ENTER THE VILLAGE                             ");
             Console.WriteLine("");
-
-            switch (ConsoleUtility.PromptMenuChoice(0, 0))
-            {
-                case 0:
-                    MainMenu();
-                    break;
-            }
+            Console.ReadKey();
+            MainMenu();
+                   
 
             void PastePlayer()
             {
@@ -171,6 +173,7 @@ namespace SpartaDungeon
                 // 능력치 추가
 
             }
+            
         }
     }
 }
