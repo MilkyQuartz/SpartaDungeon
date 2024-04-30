@@ -26,12 +26,11 @@ namespace SpartaDungeon
         public float BonusAtk { get; set; }
         public float BonusDef { get; set; }
         public float BonusHp { get; set; }
+        public float BonusMp { get; set; }
 
+       
 
-
-
-
-        public Player(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp, float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0)
+        public Player(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp = 10, float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0, float bonusMp = 0)
         {
             Name = name;
             Job = job;
