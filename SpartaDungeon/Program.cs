@@ -20,7 +20,7 @@ namespace SpartaDungeon
 
         private void InitializeGame()
         {
-            player = new Player("Jiwon", "Programmer", 1, 10, 5, 100, 15000);
+            player = new Player("Jiwon", "Programmer", level: 1, atk: 10, def: 5, hp: 100, maxHp: 100, mp: 20, maxMp: 20, gold: 10000, maxExp: 10);
 
             inventory = new List<Item>();
             compareDic = new Dictionary<ItemType, int>();   // 추가요소 장비교체
@@ -32,7 +32,8 @@ namespace SpartaDungeon
         {
             Console.Clear();
             ConsoleUtility.PrintGameHeader();
-            MainMenu();
+            Console.Clear();
+            player.CharacterMakingMenu(MainMenu);
         }
 
         private void MainMenu()
