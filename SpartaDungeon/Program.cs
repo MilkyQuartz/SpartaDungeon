@@ -22,9 +22,9 @@ namespace SpartaDungeon
         {
             player = new Player("Jiwon", "Programmer", level: 1, atk: 10, def: 5, hp: 100, maxHp: 100, mp: 20, maxMp: 20, gold: 10000, maxExp: 10);
 
-            inventory = new List<Item>();
             compareDic = new Dictionary<ItemType, int>();   // 추가요소 장비교체
 
+            inventory = new List<Item>();
             storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json")); // Json파일 불러오기
         }
 
@@ -159,9 +159,16 @@ namespace SpartaDungeon
             Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.");
             Console.WriteLine("");
             Console.WriteLine("[아이템 목록]");
-            for (int i = 0; i < inventory.Count; i++)
+            if (inventory.Count == 1 && inventory[0] == null)
             {
-                inventory[i].PrintItemStatDescription(true, i + 1); // 나가기가 0번 고정, 나머지가 1번부터 배정
+                Console.WriteLine("보유 중인 아이템이 존재하지 않습니다.");
+            }
+            else
+            {
+                for (int i = 0; i < inventory.Count; i++)
+                {
+                    inventory[i].PrintItemStatDescription(true, i + 1); // 나가기가 0번 고정, 나머지가 1번부터 배정
+                }
             }
             Console.WriteLine("");
             Console.WriteLine("0. 나가기");
@@ -203,6 +210,9 @@ namespace SpartaDungeon
                             }
                         }
                     }
+                    // 인벤토리 파일 업데이트
+                    string inventoryJson = JsonSerializer.Serialize(inventory);
+                    File.WriteAllText("Inventory.json", inventoryJson);
 
                     EquipMenu();
                     break;
@@ -223,7 +233,7 @@ namespace SpartaDungeon
             Console.WriteLine("[아이템 목록]");
             for (int i = 0; i < storeInventory.Count; i++)
             {
-                storeInventory[i].PrintStoreItemDescription();
+                storeInventory[i].PrintStoreItemDescription(true, i + 1);
             }
             Console.WriteLine("");
             Console.WriteLine("1. 아이템 구매");
@@ -265,7 +275,7 @@ namespace SpartaDungeon
             Console.WriteLine("[아이템 목록]");
             for (int i = 0; i < storeInventory.Count; i++)
             {
-                storeInventory[i].PrintStoreItemDescription(true, i);
+                storeInventory[i].PrintStoreItemDescription(true, i + 1);
             }
             Console.WriteLine("");
             Console.WriteLine("0. 나가기");
@@ -289,6 +299,12 @@ namespace SpartaDungeon
                         player.Gold -= storeInventory[keyInput - 1].Price;
                         storeInventory[keyInput - 1].Purchase();
                         inventory.Add(storeInventory[keyInput - 1]);
+
+                        // 
+                        string inventoryJson = JsonSerializer.Serialize(inventory);
+                        File.WriteAllText("Inventory.json", inventoryJson);
+
+
                         PurchaseMenu();
                     }
                     // 3 : 돈이 모자라는 경우
@@ -336,11 +352,13 @@ namespace SpartaDungeon
                 {
                     if (item.Name == inventory[keyInput - 1].Name)
                     {
-                        item.Purchase(); // 불값 되돌림
+                        item.Refund();
                         break;
                     }
                 }
                 inventory.Remove(inventory[keyInput - 1]);
+                string inventoryJson = JsonSerializer.Serialize(inventory);
+                File.WriteAllText("Inventory.json", inventoryJson);
             }
 
             switch (keyInput)
