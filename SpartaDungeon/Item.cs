@@ -122,5 +122,9 @@ namespace SpartaDungeon
         {
             IsPurchased = true;
         }
+        internal void Refund()
+        {
+            IsPurchased = false;
+        }
     }
 }
