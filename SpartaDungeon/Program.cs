@@ -100,6 +100,7 @@ namespace SpartaDungeon
             Console.WriteLine("캐릭터의 정보가 표기됩니다.");
 
             ConsoleUtility.PrintTextHighlights("Lv. ", player.Level.ToString("00"));
+            ConsoleUtility.PrintTextHighlights("경험치 : ", (player.Exp).ToString("00"), " / ", player.MaxExp.ToString("00"));            
             Console.WriteLine("");
             Console.WriteLine($"{player.Name} ( {player.Job} )");
 
@@ -108,10 +109,12 @@ namespace SpartaDungeon
             player.BonusAtk = inventory.Select(item => item.IsEquipped ? item.Atk : 0).Sum();
             player.BonusDef = inventory.Select(item => item.IsEquipped ? item.Def : 0).Sum();
             player.BonusHp = inventory.Select(item => item.IsEquipped ? item.Hp : 0).Sum();
+            player.BonusMp = inventory.Select(item => item.IsEquipped ? item.Hp : 0).Sum();
 
             ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + player.BonusAtk).ToString(), player.BonusAtk > 0 ? $" (+{player.BonusAtk})" : "");
             ConsoleUtility.PrintTextHighlights("방어력 : ", (player.Def + player.BonusDef).ToString(), player.BonusDef > 0 ? $" (+{player.BonusDef})" : "");
-            ConsoleUtility.PrintTextHighlights("체 력 : ", (player.Hp + player.BonusHp).ToString(), player.BonusHp > 0 ? $" (+{player.BonusHp})" : "");
+            ConsoleUtility.PrintTextHighlights("체 력 : ", (player.Hp).ToString(), " / ", (player.Hp + player.BonusHp).ToString(), player.BonusHp > 0 ? $" (+{player.BonusHp})" : "");            
+            ConsoleUtility.PrintTextHighlights("마 력 : ", (player.Mp).ToString(), " / ", (player.Mp + player.BonusMp).ToString(), player.BonusMp > 0 ? $" (+{player.BonusMp})" : "");
 
             ConsoleUtility.PrintTextHighlights("Gold : ", player.Gold.ToString());
             Console.WriteLine("");
@@ -119,11 +122,17 @@ namespace SpartaDungeon
             Console.WriteLine("0. 뒤로가기");
             Console.WriteLine("");
 
-            switch (ConsoleUtility.PromptMenuChoice(0, 0))
+            switch (ConsoleUtility.PromptMenuChoice(0, 1))//0))
             {
                 case 0:
                     MainMenu();
                     break;
+                case 1:
+                    //아래테스트영역 삭제가능
+                    Potion.UsePotion(player, player.potion, StatusMenu);
+            
+            break;
+                    //위 테스트영역 삭제가능
             }
         }
 
