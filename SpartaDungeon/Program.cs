@@ -1,5 +1,7 @@
-﻿
-using System.Numerics;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
 
 namespace SpartaDungeon
 {
@@ -8,11 +10,8 @@ namespace SpartaDungeon
     {
         private Player player;
         private List<Item> inventory;
-
         private List<Item> storeInventory;
-
         private Dictionary<ItemType, int> compareDic;
-
 
         public GameManager()
         {
@@ -21,22 +20,20 @@ namespace SpartaDungeon
 
         private void InitializeGame()
         {
-            player = new Player("Jiwon", "Programmer", 1, 10, 5, 100, 15000);
+            player = new Player("Jiwon", "Programmer", level: 1, atk: 10, def: 5, hp: 100, maxHp: 100, mp: 20, maxMp: 20, gold: 10000, maxExp: 10);
 
             inventory = new List<Item>();
             compareDic = new Dictionary<ItemType, int>();   // 추가요소 장비교체
 
-            storeInventory = new List<Item>();
-            storeInventory.Add(new Item("무쇠갑옷", "튼튼한 갑옷", ItemType.ARMOR, 0, 5, 0, 500));
-            storeInventory.Add(new Item("낡은 검", "낡은 검", ItemType.WEAPON, 2, 0, 0, 1000));
-            storeInventory.Add(new Item("골든 헬름", "희귀한 투구", ItemType.ARMOR, 0, 9, 0, 2000));
+            storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json")); // Json파일 불러오기
         }
 
         public void StartGame()
         {
             Console.Clear();
             ConsoleUtility.PrintGameHeader();
-            MainMenu();
+            Console.Clear();
+            player.CharacterMakingMenu(MainMenu);
         }
 
         private void MainMenu()
@@ -62,7 +59,7 @@ namespace SpartaDungeon
             Console.WriteLine("");
 
             // 2. 선택한 결과를 검증함
-            int choice = ConsoleUtility.PromptMenuChoice(1, 3);
+            int choice = ConsoleUtility.PromptMenuChoice(1, 6);
 
             // 3. 선택한 결과에 따라 보내줌
             switch (choice)
@@ -268,13 +265,12 @@ namespace SpartaDungeon
             Console.WriteLine("[아이템 목록]");
             for (int i = 0; i < storeInventory.Count; i++)
             {
-                storeInventory[i].PrintStoreItemDescription(true, i + 1);
+                storeInventory[i].PrintStoreItemDescription(true, i);
             }
             Console.WriteLine("");
             Console.WriteLine("0. 나가기");
             Console.WriteLine("");
-
-            int keyInput = ConsoleUtility.PromptMenuChoice(0, storeInventory.Count);
+            int keyInput = ConsoleUtility.PromptMenuChoice(0, storeInventory.Count - 1);
 
             switch (keyInput)
             {
@@ -398,6 +394,11 @@ namespace SpartaDungeon
             Console.WriteLine("0. 나가기");
             Console.WriteLine("");
 
+            Console.WriteLine("임시임시임시...");
+            Console.ReadKey(); 
+
+            Environment.Exit(0);
+
         }
 
         public void BarMenu()
@@ -406,6 +407,12 @@ namespace SpartaDungeon
 
             ConsoleUtility.ShowTitle("■ 주점입장 ■");
             Console.WriteLine("이곳에서 체력을 회복할 수 있습니다.");
+            Console.WriteLine("");
+
+            Console.WriteLine("임시임시임시...");
+            Console.ReadKey(); 
+
+            Environment.Exit(0); 
             /*Console.WriteLine($"현재 체력:{player.health} | 현재 골드: {player.gold}"); // 임시 현재 player설정안됨{}안에 넣어야함
             Console.WriteLine("");
 
@@ -498,10 +505,13 @@ namespace SpartaDungeon
             Console.Clear();
 
             ConsoleUtility.ShowTitle("■ 게임종료 ■");
-            Console.WriteLine("다음에 다시만나요.");
+            Console.WriteLine("다음에 다시 만나요.");
             Console.WriteLine("");
 
-            return;
+            Console.Write(">> ENTER");
+            Console.ReadKey(); 
+
+            Environment.Exit(0); 
         }
     }
 
