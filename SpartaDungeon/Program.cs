@@ -55,11 +55,12 @@ namespace SpartaDungeon
             Console.WriteLine("3. 상    점");
             Console.WriteLine("4. 던    전");
             Console.WriteLine("5. 주    점");
-            Console.WriteLine("6. 게임종료");
+            Console.WriteLine("6. 길    드");
+            Console.WriteLine("7. 게임종료");
             Console.WriteLine("");
 
             // 2. 선택한 결과를 검증함
-            int choice = ConsoleUtility.PromptMenuChoice(1, 6);
+            int choice = ConsoleUtility.PromptMenuChoice(1, 8);
 
             // 3. 선택한 결과에 따라 보내줌
             switch (choice)
@@ -80,6 +81,9 @@ namespace SpartaDungeon
                     BarMenu();
                     break;
                 case 6:
+                    GuildMenu();
+                    break;
+                case 7:
                     GameOverMenu();
                     break;
             }
@@ -517,6 +521,45 @@ namespace SpartaDungeon
             }*/
         }
 
+        public void GuildMenu()
+        {
+            Console.Clear();
+            ConsoleUtility.ShowTitle("■ 길드입장 ■");
+            Console.WriteLine("");
+            Console.WriteLine("길드에 들어서자 접수원이 말을 건다.");
+            Console.WriteLine("");
+            Console.WriteLine("\"어서오세요! 길드 카지노 입니다.\"");
+            Console.WriteLine("\"무엇을 도와드릴까요?\"");
+            Console.WriteLine("");
+
+            Console.WriteLine("1. \"괜찮은 일거리 좀 있나?\"");
+            Console.WriteLine("2. \"보상을 받으러 왔는데\"");
+            Console.WriteLine("0. 발을 돌려 나간다.");
+
+            switch (ConsoleUtility.PromptMenuChoice(0, 1))
+            {
+                case 0:
+                    MainMenu();
+                    break;
+                case 1:
+                    QuestMenu();
+                    break;
+                case 2:
+                    RewardMenu();
+                    break;
+            }
+
+        }
+
+        public void QuestMenu()
+        {
+
+        }
+
+        public void RewardMenu()
+        {
+
+        }
 
         public void GameOverMenu()
         {
