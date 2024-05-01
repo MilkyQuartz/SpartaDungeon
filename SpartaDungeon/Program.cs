@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -9,6 +9,7 @@ namespace SpartaDungeon
 
     public class GameManager
     {
+        private static GameManager instance;
         private Player player;
         private List<Item> inventory;
         private List<Item> storeInventory;
@@ -22,12 +23,22 @@ namespace SpartaDungeon
             InitializeGame();
         }
 
+        public static GameManager Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new GameManager();
+                }
+                return instance;
+            }
+        }
+
         private void InitializeGame()
         {
-            player = new Player("Jiwon", "Programmer", level: 1, atk: 10, def: 5, hp: 100, maxHp: 100, mp: 20, maxMp: 20, gold: 10000, maxExp: 10);
-
-            compareDic = new Dictionary<ItemType, int>();   // 추가요소 장비교체
-
+            player = new Player(name: "", job: "", level: 1, atk: 10, def: 5, hp: 100, maxHp: 100, mp: 20, maxMp: 20, gold: 10000, maxExp: 10);
+            compareDic = new Dictionary<ItemType, int>();
             inventory = new List<Item>();
             storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json")); // Json파일 불러오기
 
@@ -45,7 +56,8 @@ namespace SpartaDungeon
             Console.Clear();
             ConsoleUtility.PrintGameHeader();
             Console.Clear();
-            player.CharacterMakingMenu(MainMenu);
+            // 게임 시작 메뉴 호출
+            player.CharacterMakingMenu(player, MainMenu);
         }
 
         private void MainMenu()
@@ -60,7 +72,6 @@ namespace SpartaDungeon
             Console.WriteLine("이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다.");
             Console.WriteLine("■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
             Console.WriteLine("");
-
 
             Console.WriteLine("1. 상태보기");
             Console.WriteLine("2. 인벤토리");
@@ -114,6 +125,7 @@ namespace SpartaDungeon
             Console.WriteLine("캐릭터의 정보가 표기됩니다.");
 
             ConsoleUtility.PrintTextHighlights("Lv. ", player.Level.ToString("00"));
+            ConsoleUtility.PrintTextHighlights("경험치 : ", (player.Exp).ToString("00"), " / ", player.MaxExp.ToString("00"));
             Console.WriteLine("");
             Console.WriteLine($"{player.Name} ( {player.Job} )");
 
@@ -122,10 +134,12 @@ namespace SpartaDungeon
             player.BonusAtk = inventory.Select(item => item.IsEquipped ? item.Atk : 0).Sum();
             player.BonusDef = inventory.Select(item => item.IsEquipped ? item.Def : 0).Sum();
             player.BonusHp = inventory.Select(item => item.IsEquipped ? item.Hp : 0).Sum();
+            player.BonusMp = inventory.Select(item => item.IsEquipped ? item.Hp : 0).Sum();
 
             ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + player.BonusAtk).ToString(), player.BonusAtk > 0 ? $" (+{player.BonusAtk})" : "");
             ConsoleUtility.PrintTextHighlights("방어력 : ", (player.Def + player.BonusDef).ToString(), player.BonusDef > 0 ? $" (+{player.BonusDef})" : "");
-            ConsoleUtility.PrintTextHighlights("체 력 : ", (player.Hp + player.BonusHp).ToString(), player.BonusHp > 0 ? $" (+{player.BonusHp})" : "");
+            ConsoleUtility.PrintTextHighlights("체 력 : ", (player.Hp).ToString(), " / ", (player.MaxHp + player.BonusHp).ToString(), player.BonusHp > 0 ? $" (+{player.BonusHp})" : "");
+            ConsoleUtility.PrintTextHighlights("마 력 : ", (player.Mp).ToString(), " / ", (player.MaxMp + player.BonusMp).ToString(), player.BonusMp > 0 ? $" (+{player.BonusMp})" : "");
 
             ConsoleUtility.PrintTextHighlights("Gold : ", player.Gold.ToString());
             Console.WriteLine("");
@@ -133,11 +147,17 @@ namespace SpartaDungeon
             Console.WriteLine("0. 뒤로가기");
             Console.WriteLine("");
 
-            switch (ConsoleUtility.PromptMenuChoice(0, 0))
+            switch (ConsoleUtility.PromptMenuChoice(0, 1))//0))
             {
                 case 0:
                     MainMenu();
                     break;
+                case 1:
+                    //아래테스트영역 삭제가능
+                    Potion.UsePotion(player, player.potion, StatusMenu);
+
+                    break;
+                    //위 테스트영역 삭제가능
             }
         }
 
@@ -417,7 +437,7 @@ namespace SpartaDungeon
         }
 
         // 임시
-        public void DungeonMenu() 
+        public void DungeonMenu()
         {
             Console.Clear();
 
@@ -433,7 +453,7 @@ namespace SpartaDungeon
             Console.WriteLine("");
 
             Console.WriteLine("임시임시임시...");
-            Console.ReadKey(); 
+            Console.ReadKey();
 
             Environment.Exit(0);
 
@@ -446,12 +466,7 @@ namespace SpartaDungeon
             ConsoleUtility.ShowTitle("■ 주점입장 ■");
             Console.WriteLine("이곳에서 체력을 회복할 수 있습니다.");
             Console.WriteLine("");
-
-            Console.WriteLine("임시임시임시...");
-            Console.ReadKey(); 
-
-            Environment.Exit(0); 
-            /*Console.WriteLine($"현재 체력:{player.health} | 현재 골드: {player.gold}"); // 임시 현재 player설정안됨{}안에 넣어야함
+            Console.WriteLine($"현재 체력:{player.Hp} | 현재 골드: {player.Gold}");
             Console.WriteLine("");
 
             Console.WriteLine("");
@@ -463,13 +478,13 @@ namespace SpartaDungeon
 
             while (true)
             {
-                Console.Write(">> ");
-                int input = int.Parse(Console.ReadLine());
-
-                switch (input)
+                switch (ConsoleUtility.PromptMenuChoice(0, 3))
                 {
+                    case 0:
+                        MainMenu();
+                        break;
                     case 1:
-                        if (player.gold < 100)
+                        if (player.Gold < 100)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("\t\t\t\t\t[돈이 부족하여 구매할 수 없습니다.]");
@@ -477,17 +492,17 @@ namespace SpartaDungeon
                             break;
                         }
                         Console.WriteLine("\t\t\t  \"키야~ 역시 한국인이라면 이 맥주를 마셔줘야지!\"");
-                        player.health += player.health / 2;
-                        if (player.health > 100)
+                        player.Hp += player.Hp / 2;
+                        if (player.Hp > 100)
                         {
-                            player.health = 100;
+                            player.Hp = 100;
                         }
-                        player.gold -= 100;
+                        player.Gold -= 100;
 
-                        fileManager.SavePlayerData(player);
+                        player.SavePlayerIndirectly();
                         break;
                     case 2:
-                        if (player.gold < 300)
+                        if (player.Gold < 300)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("\t\t\t\t\t[돈이 부족하여 구매할 수 없습니다.]");
@@ -495,17 +510,17 @@ namespace SpartaDungeon
                             break;
                         }
                         Console.WriteLine("\t\t\"아차차~ 이런 술은 난생 처음 마셔봤네! 너무 맛있다! 자주 사먹어야겠는걸?\"");
-                        player.health += 50;
-                        if (player.health > 100)
+                        player.Hp += 50;
+                        if (player.Hp > 100)
                         {
-                            player.health = 100;
+                            player.Hp = 100;
                         }
-                        player.gold -= 300;
+                        player.Gold -= 300;
 
-                        fileManager.SavePlayerData(player);
+                        player.SavePlayerIndirectly();
                         break;
                     case 3:
-                        if (player.gold < 500)
+                        if (player.Gold < 500)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("\t\t\t\t\t[돈이 부족하여 구매할 수 없습니다.]");
@@ -513,28 +528,17 @@ namespace SpartaDungeon
                             break;
                         }
                         Console.WriteLine("\t\t\t\t\t \"비싸구만.. \"");
-                        player.health += 100;
-                        if (player.health > 100)
+                        player.Hp += 100;
+                        if (player.Hp > 100)
                         {
-                            player.health = 100;
+                            player.Hp = 100;
                         }
-                        player.gold -= 500;
+                        player.Gold -= 500;
 
-                        fileManager.SavePlayerData(player);
-                        break;
-                    case 0:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("\t\t\t\t    [로비로 이동합니다.]");
-                        Console.ResetColor();
-                        Program.EnterLobby(player, fileManager);
-                        break;
-                    default:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("\t\t\t\t\t[올바른 옵션을 선택하세요.]");
-                        Console.ResetColor();
+                        player.SavePlayerIndirectly();
                         break;
                 }
-            }*/
+            }
         }
 
         public void GuildMenu()
@@ -749,9 +753,9 @@ namespace SpartaDungeon
             Console.WriteLine("");
 
             Console.Write(">> ENTER");
-            Console.ReadKey(); 
+            Console.ReadKey();
 
-            Environment.Exit(0); 
+            Environment.Exit(0);
         }
     }
 

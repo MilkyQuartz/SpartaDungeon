@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 
 namespace SpartaDungeon
-{
+{   
 
     public enum ItemType
     {
@@ -29,6 +29,7 @@ namespace SpartaDungeon
 
         public bool IsEquipped { get; private set; }
         public bool IsPurchased { get; private set; }
+
 
         public Item(string name, string desc, ItemType type, int atk, int def, int hp, int price, bool isEquipped = false, bool isPurchased = false)
         {
@@ -127,4 +128,5 @@ namespace SpartaDungeon
             IsPurchased = false;
         }
     }
+
 }

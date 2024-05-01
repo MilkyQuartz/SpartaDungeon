@@ -54,6 +54,19 @@
             Console.WriteLine(s3);
         }
 
+        public static void PrintTextHighlights(string s1, string s2, string s3 , string s4, string s5 = "")         // 최대체력 표시
+        {
+            Console.Write(s1);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(s2);
+            Console.ResetColor();
+            Console.Write(s3);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(s4);
+            Console.ResetColor();
+            Console.WriteLine(s5);
+        }
+
         public static int GetPrintableLength(string str)
         {
             int length = 0;
