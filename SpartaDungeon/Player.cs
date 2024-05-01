@@ -328,12 +328,32 @@ namespace SpartaDungeon
                 players = JsonSerializer.Deserialize<List<Player>>(json);
             }
 
-            // 현재 플레이어 정보를 리스트에 추가
-            players.Add(this);
+            // 동일한 이름을 가진 플레이어 정보 업데이트 또는 추가
+            bool playerExists = false;
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (players[i].Name == this.Name)
+                {
+                    players[i] = this; // 동일한 이름의 플레이어 정보 업데이트
+                    playerExists = true;
+                    break;
+                }
+            }
+
+            // 동일한 이름을 가진 플레이어가 없으면 새로운 플레이어 정보 추가
+            if (!playerExists)
+            {
+                players.Add(this);
+            }
 
             // 리스트를 Json 형식으로 직렬화하여 파일에 저장
             var jsonToWrite = JsonSerializer.Serialize(players);
             File.WriteAllText("Player.json", jsonToWrite);
+        }
+
+        public void SavePlayerIndirectly()
+        {
+            SavePlayer(); // private 메서드 호출
         }
 
     }
