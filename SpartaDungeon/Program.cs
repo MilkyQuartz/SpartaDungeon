@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -17,11 +17,30 @@ namespace SpartaDungeon
         {
             InitializeGame();
         }
-
-        public void PastePlayer(string name)
+        internal Player GetPlayer() // 메서드의 액세스 한정자를 public으로 변경
         {
+            return player;
+        }
+
+        public void PastePlayer(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp = 10, float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0)
+        {
+            player = new Player(name: "", job: "", level: 0, atk: 0, def: 0, hp: 0, maxHp: 0, mp: 0, maxMp: 0, gold: 0, maxExp: 0);
             player.Name = name;
-            // 나머지 정보 추가
+            player.Job = job;
+            player.Level = level;
+            player.Atk = atk;
+            player.Def = def;
+            player.Hp = hp;
+            player.MaxHp = maxHp;
+            player.Mp = mp;
+            player.MaxMp = maxMp;
+            player.Gold = gold;
+            player.MaxExp = maxExp;
+            player.Exp = exp;
+            player.BonusAtk = bonusAtk;
+            player.BonusDef = bonusDef;
+            player.BonusHp = bonusHp;
+
         }
 
         private void InitializeGame()
@@ -54,7 +73,6 @@ namespace SpartaDungeon
             Console.WriteLine("이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다.");
             Console.WriteLine("■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
             Console.WriteLine("");
-
 
             Console.WriteLine("1. 상태보기");
             Console.WriteLine("2. 인벤토리");
@@ -100,7 +118,7 @@ namespace SpartaDungeon
             Console.WriteLine("캐릭터의 정보가 표기됩니다.");
 
             ConsoleUtility.PrintTextHighlights("Lv. ", player.Level.ToString("00"));
-            ConsoleUtility.PrintTextHighlights("경험치 : ", (player.Exp).ToString("00"), " / ", player.MaxExp.ToString("00"));            
+            ConsoleUtility.PrintTextHighlights("경험치 : ", (player.Exp).ToString("00"), " / ", player.MaxExp.ToString("00"));
             Console.WriteLine("");
             Console.WriteLine($"{player.Name} ( {player.Job} )");
 
@@ -113,7 +131,7 @@ namespace SpartaDungeon
 
             ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + player.BonusAtk).ToString(), player.BonusAtk > 0 ? $" (+{player.BonusAtk})" : "");
             ConsoleUtility.PrintTextHighlights("방어력 : ", (player.Def + player.BonusDef).ToString(), player.BonusDef > 0 ? $" (+{player.BonusDef})" : "");
-            ConsoleUtility.PrintTextHighlights("체 력 : ", (player.Hp).ToString(), " / ", (player.Hp + player.BonusHp).ToString(), player.BonusHp > 0 ? $" (+{player.BonusHp})" : "");            
+            ConsoleUtility.PrintTextHighlights("체 력 : ", (player.Hp).ToString(), " / ", (player.Hp + player.BonusHp).ToString(), player.BonusHp > 0 ? $" (+{player.BonusHp})" : "");
             ConsoleUtility.PrintTextHighlights("마 력 : ", (player.Mp).ToString(), " / ", (player.Mp + player.BonusMp).ToString(), player.BonusMp > 0 ? $" (+{player.BonusMp})" : "");
 
             ConsoleUtility.PrintTextHighlights("Gold : ", player.Gold.ToString());
@@ -130,8 +148,8 @@ namespace SpartaDungeon
                 case 1:
                     //아래테스트영역 삭제가능
                     Potion.UsePotion(player, player.potion, StatusMenu);
-            
-            break;
+
+                    break;
                     //위 테스트영역 삭제가능
             }
         }
@@ -412,7 +430,7 @@ namespace SpartaDungeon
         }
 
         // 임시
-        public void DungeonMenu() 
+        public void DungeonMenu()
         {
             Console.Clear();
 
@@ -428,7 +446,7 @@ namespace SpartaDungeon
             Console.WriteLine("");
 
             Console.WriteLine("임시임시임시...");
-            Console.ReadKey(); 
+            Console.ReadKey();
 
             Environment.Exit(0);
 
@@ -443,9 +461,9 @@ namespace SpartaDungeon
             Console.WriteLine("");
 
             Console.WriteLine("임시임시임시...");
-            Console.ReadKey(); 
+            Console.ReadKey();
 
-            Environment.Exit(0); 
+            Environment.Exit(0);
             /*Console.WriteLine($"현재 체력:{player.health} | 현재 골드: {player.gold}"); // 임시 현재 player설정안됨{}안에 넣어야함
             Console.WriteLine("");
 
@@ -542,9 +560,9 @@ namespace SpartaDungeon
             Console.WriteLine("");
 
             Console.Write(">> ENTER");
-            Console.ReadKey(); 
+            Console.ReadKey();
 
-            Environment.Exit(0); 
+            Environment.Exit(0);
         }
     }
 
@@ -553,6 +571,8 @@ namespace SpartaDungeon
         public static void Main(string[] args)
         {
             GameManager gameManager = new GameManager();
+            Player player = gameManager.GetPlayer();
+            gameManager.PastePlayer(player.Name, player.Job, player.Level, player.Atk, player.Def, player.Hp, player.MaxHp, player.Mp, player.MaxMp, player.Gold, player.MaxExp, player.Exp, player.BonusAtk, player.BonusDef, player.BonusHp);
             gameManager.StartGame();
         }
     }

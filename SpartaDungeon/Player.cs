@@ -1,5 +1,8 @@
 using System.Text.Json;
 using System.Xml.Linq;
+using System.Collections.Generic;
+using System.IO;
+using System.Numerics;
 
 namespace SpartaDungeon
 {
@@ -29,6 +32,11 @@ namespace SpartaDungeon
         public float BonusDef { get; set; }
         public float BonusHp { get; set; }
         public float BonusMp { get; set; }
+
+        //디버그
+        public int potion = 4;
+
+
 
         public Player(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp = 10, float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0)
         {
@@ -62,7 +70,7 @@ namespace SpartaDungeon
                 Console.WriteLine("이름을 입력하세요");
                 // 이름입력
                 name = Console.ReadLine();
-                if(name == "")
+                if (name == "")
                 {
                     Console.WriteLine("빈 칸은 안됩니다.");
                     continue;
@@ -90,8 +98,10 @@ namespace SpartaDungeon
         }
 
         // 직업선택 함수
-        public void JobSelect(string? prompt = null)
+        public string JobSelect(string? prompt = null)
         {
+            string result = ""; // 기본적으로 빈 문자열로 초기화
+
             if (prompt != null)
             {
                 // 1초간 메시지를 띄운 다음에 다시 진행
@@ -106,7 +116,7 @@ namespace SpartaDungeon
             Console.WriteLine("[1] 전사");
             Console.WriteLine("[2] 마법사");
             Console.WriteLine();
-            Console.WriteLine("0. 마을로 들어가기");
+            Console.WriteLine("                        PRESS ANYKEY TO ENTER THE VILLAGE                             ");
 
             int keyinput = ConsoleUtility.PromptMenuChoice(0, 2);
 
@@ -125,6 +135,7 @@ namespace SpartaDungeon
                     this.Mp = 20;
                     this.MaxMp = 20;
                     this.Gold = 2000;
+                    result = "Warrior"; // 전사 선택 시 "Warrior" 반환
                     break;
                 case 2:
                     this.Job = "Mage";
@@ -136,17 +147,20 @@ namespace SpartaDungeon
                     this.Mp = 60;
                     this.MaxMp = 60;
                     this.Gold = 2000;
+                    result = "Mage"; // 마법사 선택 시 "Mage" 반환
                     break;
                 default:
-
+                    result = ""; // 기본적으로 빈 문자열 반환
                     break;
             }
 
+            return result; // 결과 반환
         }
 
         //이름 입력과 직업선택 함수
         public void CharacterMakingMenu(Action MainMenu)
         {
+            GameManager gameManager = new GameManager(); // GameManager 객체 생성
             Console.WriteLine("경비병 : 거기 멈춰서라.");
             Console.WriteLine("경비병 : 우리 마을은 정체도 모르는 이방인을 안으로 들이지 않는다.");
             Console.WriteLine("[0] 새로운 모험을 떠나기 위해 왔다.         [1] 내 얼굴도 기억하지 못하냐.");
@@ -154,14 +168,14 @@ namespace SpartaDungeon
             switch (ConsoleUtility.PromptMenuChoice(0, 1))
             {
                 case 0:
-                    StartNewAdventure(MainMenu);
+                    StartNewAdventure(gameManager, MainMenu);
                     break;
                 case 1:
-                    RememberMyFace(MainMenu);
+                    RememberMyFace(gameManager, MainMenu);
                     break;
             }
         }
-        private void StartNewAdventure(Action MainMenu)
+        private void StartNewAdventure(GameManager gameManager, Action MainMenu)
         {
             Console.WriteLine("경비병 : 당신의 이름이 뭐지?");
             Console.WriteLine();
@@ -176,8 +190,7 @@ namespace SpartaDungeon
                     JobSelect();
                     Console.WriteLine();
                     Console.WriteLine("경비병 : 이제 들어가도 좋다.");
-                    GameManager gameManager = new GameManager();
-                    gameManager.PastePlayer(name);
+                    gameManager.PastePlayer(this.Name, this.Job, this.Level, this.Atk, this.Def, this.Hp, this.MaxHp, this.Mp, this.MaxMp, this.Gold, this.MaxExp, this.Exp, this.BonusAtk, this.BonusDef, this.BonusHp);
                     Console.WriteLine("");
 
                     SavePlayer();
@@ -198,10 +211,9 @@ namespace SpartaDungeon
                     Environment.Exit(0);
                 }
             }
-            
         }
 
-        private void RememberMyFace(Action MainMenu)
+        private void RememberMyFace(GameManager gameManager, Action MainMenu)
         {
             Console.WriteLine("경비병 : 당신의 이름이 뭐지?");
             Console.WriteLine();
@@ -213,13 +225,29 @@ namespace SpartaDungeon
                 // 이름이 존재하는 경우, 해당 플레이어 정보를 불러옴
                 Console.WriteLine($"경비병 : {name} 용사님! 몰라봬서 죄송합니다. 들어가시면 됩니다!");
 
-                GameManager gameManager = new GameManager();
-                gameManager.PastePlayer(name);
+                // 이미 생성된 GameManager 객체의 player에 정보 할당
+                gameManager.PastePlayer(this.Name, this.Job, this.Level, this.Atk, this.Def, this.Hp, this.MaxHp, this.Mp, this.MaxMp, this.Gold, this.MaxExp, this.Exp, this.BonusAtk, this.BonusDef, this.BonusHp);
+
+                /*Console.WriteLine("입력된 플레이어 정보:");
+                Console.WriteLine($"이름: {this.Name}");
+                Console.WriteLine($"직업: {this.Job}");
+                Console.WriteLine($"레벨: {this.Level}");
+                Console.WriteLine($"공격력: {this.Atk}");
+                Console.WriteLine($"방어력: {this.Def}");
+                Console.WriteLine($"체력: {this.Hp}");
+                Console.WriteLine($"최대 체력: {this.MaxHp}");
+                Console.WriteLine($"마나: {this.Mp}");
+                Console.WriteLine($"최대 마나: {this.MaxMp}");
+                Console.WriteLine($"골드: {this.Gold}");
+                Console.WriteLine($"최대 경험치: {this.MaxExp}");
+                Console.WriteLine($"현재 경험치: {this.Exp}");
+                Console.WriteLine($"보너스 공격력: {this.BonusAtk}");
+                Console.WriteLine($"보너스 방어력: {this.BonusDef}");
+                Console.WriteLine($"보너스 체력: {this.BonusHp}");*/
 
 
                 Console.WriteLine("0. 마을로 들어가기");
                 Console.WriteLine("");
-
                 switch (ConsoleUtility.PromptMenuChoice(0, 0))
                 {
                     case 0:
@@ -227,21 +255,54 @@ namespace SpartaDungeon
                         break;
                 }
             }
+            else
+            {
+                // 이름이 존재하지 않는 경우 강제 종료
+                Console.WriteLine($"경비병 : 에잇 넌 뭐야? 나가!");
+                Environment.Exit(0);
+            }
         }
 
         private bool IsNameCheck(string name)
         {
-            return JsonSerializer.Deserialize<Player[]>(File.ReadAllText("Player.json")).Any(p => p.Name == name);
-        }
+            // Json 파일이 존재하지 않으면 false 반환
+            if (!File.Exists("Player.json"))
+                return false;
 
+            // Json 파일 읽어오기
+            var json = File.ReadAllText("Player.json");
+
+            // 파일이 비어 있는지 확인
+            if (string.IsNullOrWhiteSpace(json))
+                return false;
+
+            // 읽어온 Json 파일의 데이터를 Player 배열로 역직렬화
+            var players = JsonSerializer.Deserialize<List<Player>>(json);
+
+            // 플레이어 배열에서 이름이 일치하는 플레이어가 있는지 확인
+            return players != null && players.Any(p => p.Name == name);
+        }
         private void SavePlayer()
         {
-            // 기존 플레이어 정보 읽기
-            var players = JsonSerializer.Deserialize<List<Player>>(File.ReadAllText("Player.json"));
+            // Json 파일이 존재하지 않으면 빈 리스트 생성
+            List<Player> players;
+            if (!File.Exists("Player.json") || new FileInfo("Player.json").Length == 0)
+            {
+                players = new List<Player>();
+            }
+            else
+            {
+                // 기존 플레이어 정보 읽기
+                var json = File.ReadAllText("Player.json");
+                players = JsonSerializer.Deserialize<List<Player>>(json);
+            }
 
+            // 현재 플레이어 정보를 리스트에 추가
             players.Add(this);
-            var json = JsonSerializer.Serialize(players);
-            File.WriteAllText("Player.json", json);
+
+            // 리스트를 Json 형식으로 직렬화하여 파일에 저장
+            var jsonToWrite = JsonSerializer.Serialize(players);
+            File.WriteAllText("Player.json", jsonToWrite);
         }
 
     }
