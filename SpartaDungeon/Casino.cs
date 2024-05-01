@@ -69,11 +69,11 @@ namespace SpartaDungeon
             ConsoleUtility.PrintTextHighlights("","얼마나 베팅하시겠습니까?");
             Console.WriteLine();
             ConsoleUtility.ShowTitle("가지고 있는 COIN보다 크게 입력하면 ALL IN 합니다");
-            ConsoleUtility.PrintTextHighlightsNoLF("배팅 가능 코인 : ","1"," ~ ");
+            ConsoleUtility.PrintTextHighlightsNoLF("배팅 가능 코인 : ","0"," ~ ");
             ConsoleUtility.PrintTextHighlights("", player.casinoCoin.ToString());
             Console.WriteLine("0. 뒤로가기");
             Console.WriteLine();
-            int keyinput = ConsoleUtility.PromptMenuChoice(0, player.casinoCoin);
+            int keyinput = ConsoleUtility.PromptMenuChoice(0, 99999);
             
             switch (keyinput)
             {
