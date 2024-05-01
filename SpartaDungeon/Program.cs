@@ -13,6 +13,7 @@ namespace SpartaDungeon
         private Player player;
         private List<Item> inventory;
         private List<Item> storeInventory;
+        private List<Monster> monsters;
         private Dictionary<ItemType, int> compareDic;
         private List<Quest> questList;
         private List<Quest> myQuest;
@@ -42,6 +43,7 @@ namespace SpartaDungeon
             compareDic = new Dictionary<ItemType, int>();
             inventory = new List<Item>();
             storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json")); // Json파일 불러오기
+            monsters = JsonSerializer.Deserialize<List<Monster>>(File.ReadAllText("Monster.json"));
 
             questList = new List<Quest>();
             questList.Add( new Quest("몬스터 사냥", "몬스터를 사냥하세요", "몬스터", 100));
@@ -133,7 +135,7 @@ namespace SpartaDungeon
             ConsoleUtility.PrintTextHighlights("Lv. ", player.Level.ToString("00"));
             ConsoleUtility.PrintTextHighlights("경험치 : ", (player.Exp).ToString("00"), " / ", player.MaxExp.ToString("00"));
             Console.WriteLine("");
-            Console.WriteLine($"{player.Name} ( {player.Job} )");
+            Console.WriteLine($"{player.Name} ({player.Job})");
 
             // TODO : 능력치 강화분을 표현하도록 변경
 
@@ -458,12 +460,244 @@ namespace SpartaDungeon
             Console.WriteLine("0. 나가기");
             Console.WriteLine("");
 
-            Console.WriteLine("임시임시임시...");
-            Console.ReadKey();
-
-            Environment.Exit(0);
-
+            switch (ConsoleUtility.PromptMenuChoice(0, 3))
+            {
+                case 0:
+                    MainMenu();
+                    break;
+                case 1:
+                    StartDungeon(1);
+                    break;
+                case 2:
+                    StartDungeon(2);
+                    break;
+                case 3:
+                    StartDungeon(3);
+                    break;
+            }
         }
+
+        public void StartDungeon(int difficulty)
+        {
+            // 해당 난이도에 맞는 몬스터들을 가져옴
+            List<Monster> dungeonMonsters = GetDungeonMonsters(difficulty);
+
+            // 전투 시작
+            Battle(dungeonMonsters);
+        }
+        private List<Monster> GetDungeonMonsters(int difficulty)
+        {
+            List<Monster> filteredMonsters = new List<Monster>();
+            Random rand = new Random();
+
+            int minLevel = 1;
+            int maxLevel = 10;
+
+            switch (difficulty)
+            {
+                case 1: // 쉬움
+                    minLevel = 1;
+                    maxLevel = 3;
+                    break;
+                case 2: // 보통
+                    minLevel = 4;
+                    maxLevel = 7;
+                    break;
+                case 3: // 어려움
+                    minLevel = 8;
+                    maxLevel = 10;
+                    break;
+                default:
+                    break;
+            }
+
+            // 필터링된 몬스터 선택
+            filteredMonsters = monsters.Where(monster => monster.Level >= minLevel && monster.Level <= maxLevel).ToList();
+
+            // 3마리 랜덤으로 선택
+            List<Monster> selectedMonsters = new List<Monster>();
+            for (int i = 0; i < 3; i++)
+            {
+                int index = rand.Next(filteredMonsters.Count);
+                Monster originalMonster = filteredMonsters[index]; // 원본 ... 복사했을때 참조형식으로 복사가 돼서 다른 독립적인 객체로 만들기 위해 new로 생성
+                Monster copiedMonster = new Monster(originalMonster.Name, originalMonster.Level, originalMonster.Atk, originalMonster.Def, originalMonster.Hp, originalMonster.MaxHp, originalMonster.Price); // 복사본 생성
+                
+                selectedMonsters.Add(copiedMonster);
+            }
+            selectedMonsters = selectedMonsters.OrderBy(monster => monster.Level).ToList(); // 보기좋게 오름차순으로 정렬해서 반환하기
+            return selectedMonsters;
+        }
+        internal void Battle(List<Monster> monsters)
+        {
+            bool gameOver = false;
+            int totalGold = 0;
+
+            while (!gameOver)
+            {
+                Console.WriteLine("[Battle!!]\n");
+
+                // 몬스터 정보 출력
+                for (int i = 0; i < monsters.Count; i++)
+                {
+                    var monster = monsters[i];
+                    if (monster.Hp > 0)
+                        Console.WriteLine($"Lv.{monster.Level} {monster.Name} HP: {monster.Hp}");
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Console.WriteLine($"Lv.{monster.Level} {monster.Name} HP: Dead");
+                        Console.ResetColor();
+                    }
+                }
+
+                Console.WriteLine($"\n[내정보]\nLv. {player.Level} {player.Name} ({player.Job})");
+                Console.WriteLine($"HP: {player.Hp}/{player.MaxHp}");
+                Console.WriteLine("");
+
+                Console.WriteLine("0. 도망가기");
+                Console.WriteLine("1. 공격");
+                Console.WriteLine("");
+
+                int choice = ConsoleUtility.PromptMenuChoice(0, 1);
+
+                switch (choice)
+                {
+                    case 0:
+                        Console.WriteLine("쫄?");
+                        MainMenu();
+                        break;
+                    case 1:
+                        Console.WriteLine("공격할 대상을 선택하세요.\n");
+                        for (int i = 0; i < monsters.Count; i++)
+                        {
+                            var monster = monsters[i];
+                            if (monster.Hp > 0)
+                                Console.WriteLine($"{i + 1}. Lv.{monster.Level} {monster.Name} HP: {monster.Hp}");
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.DarkGray;
+                                Console.WriteLine($"{i + 1}. Lv.{monster.Level} {monster.Name} HP: Dead");
+                                Console.ResetColor();
+                            }
+                        }
+                        int targetChoice = ConsoleUtility.PromptMenuChoice(1, monsters.Count) - 1;
+                        Monster targetMonster = monsters[targetChoice];
+                        if (targetMonster.Hp > 0)
+                        {
+                            int minAttack = (int)(player.Atk * 0.9f);
+                            int maxAttack = (int)(player.Atk * 1.1f);
+                            int attackDamage = new Random().Next(minAttack, maxAttack + 1);
+                            targetMonster.Hp -= attackDamage;
+                            if (targetMonster.Hp <= 0)
+                            {
+                                targetMonster.Hp = 0;
+                                totalGold += targetMonster.Price;
+                            }
+                            Console.WriteLine($"당신은 {targetMonster.Name}에게 {attackDamage}의 피해를 입혔습니다.");
+                            Console.WriteLine("");
+                            if (targetMonster.Hp == 0)
+                            {
+                                Console.WriteLine($"{targetMonster.Name}이(가) 죽었습니다.");
+                                Console.WriteLine("");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("이미 죽은 몬스터입니다.");
+                            Console.WriteLine("");
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("잘못된 입력입니다.");
+                        Console.WriteLine("");
+                        break;
+                }
+
+                // 몬스터의 공격 턴 아직 수정필요~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                foreach (var monster in monsters)
+                {
+                    if (monster.Hp > 0)
+                    {
+                        int minAttack = (int)(monster.Atk * 0.9f);
+                        int maxAttack = (int)(monster.Atk * 1.1f);
+                        int attackDamage = new Random().Next(minAttack, maxAttack + 1);
+
+                        if (attackDamage >= 0)
+                        {
+                            player.Hp -= attackDamage;
+                            if (player.Hp <= 0)
+                            {
+                                player.Hp = 0;
+                            }
+                            Console.WriteLine($"{monster.Name}의 공격! {player.Name}을(를) 맞췄습니다. [데미지: {attackDamage}]");
+                            Console.WriteLine("");
+                        }
+                        else
+                        {
+                            // 회복량 표시
+                            int healAmount = Math.Abs(attackDamage); // 음수를 양수로 변환하여 회복량 계산.. 근데 지금 아직... 안돼요ㅜㅜ json안에 skills배열의 객체를 못가져와요 중첩이라그런건지 아직 모르겠어용..
+                            player.Hp += healAmount;
+                            Console.WriteLine($"{monster.Name}의 회복! {healAmount}만큼 회복되었습니다.");
+                            Console.WriteLine("");
+                        }
+
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{monster.Name}은(는) 죽었습니다.");
+                        Console.WriteLine("");
+                    }
+                }
+
+                gameOver = CheckGameOver(monsters, totalGold);
+            }
+        }
+
+        private bool CheckGameOver(List<Monster> monsters, int totalGold)
+        {
+            bool allMonstersDead = monsters.All(monster => monster.Hp <= 0);
+            bool playerDead = player.Hp <= 0;
+
+            if (allMonstersDead)
+            {
+                Console.WriteLine("던전 공략에 성공하셨습니다.");
+                Console.WriteLine($"총 획득 골드: {totalGold}");
+                player.Gold += totalGold;
+                Console.WriteLine("");
+                Console.WriteLine("1. 다시하기");
+                Console.WriteLine("0. 나가기");
+                Console.WriteLine("");
+                switch (ConsoleUtility.PromptMenuChoice(0, 2))
+                {
+                    case 0:
+                        MainMenu();
+                        break;
+                    case 1:
+                        StartDungeon(1);
+                        break;
+                }
+            }
+            else if (playerDead)
+            {
+                Console.WriteLine("던전 공략에 실패하셨습니다.");
+                Console.WriteLine("");
+                Console.WriteLine("1. 다시하기");
+                Console.WriteLine("0. 나가기");
+                Console.WriteLine("");
+                switch (ConsoleUtility.PromptMenuChoice(0, 2))
+                {
+                    case 0:
+                        MainMenu();
+                        break;
+                    case 1:
+                        StartDungeon(1);
+                        break;
+                }
+            }
+
+            return false;
+        }
+
 
         public void BarMenu()
         {
@@ -763,6 +997,13 @@ namespace SpartaDungeon
 
             Environment.Exit(0);
         }
+
+
+
+
+
+
+
     }
 
     public class Program
