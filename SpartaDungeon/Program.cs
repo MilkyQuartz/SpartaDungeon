@@ -17,6 +17,7 @@ namespace SpartaDungeon
         private List<Quest> questList;
         private List<Quest> myQuest;
         private List<Quest> completeQuest;
+        private Casino casino;
 
         public GameManager()
         {
@@ -48,7 +49,7 @@ namespace SpartaDungeon
             questList.Add( new Quest("몬스터 사냥", "몬스터를 사냥하세요", "몬스터", 100));
             myQuest = new List<Quest>();
             completeQuest = new List<Quest>();
-
+            casino = new Casino(player);
         }
 
         public void StartGame()
@@ -81,10 +82,11 @@ namespace SpartaDungeon
             Console.WriteLine("6. 길    드");
             Console.WriteLine("7. 퀘스트 완료시키기(테스트용)");
             Console.WriteLine("8 . 게임종료");
+            Console.WriteLine("9 . $$카지노$$");
             Console.WriteLine("");
 
             // 2. 선택한 결과를 검증함
-            int choice = ConsoleUtility.PromptMenuChoice(1, 8);
+            int choice = ConsoleUtility.PromptMenuChoice(1, 9);
 
             // 3. 선택한 결과에 따라 보내줌
             switch (choice)
@@ -112,6 +114,10 @@ namespace SpartaDungeon
                     break;
                 case 8:
                     GameOverMenu();
+                    break;
+                case 9:                    
+                    casino.CasinoMenu(MainMenu);
+                    
                     break;
             }
             MainMenu();
@@ -320,7 +326,7 @@ namespace SpartaDungeon
             Console.WriteLine("");
             Console.WriteLine("0. 나가기");
             Console.WriteLine("");
-            int keyInput = ConsoleUtility.PromptMenuChoice(0, storeInventory.Count - 1);
+            int keyInput = ConsoleUtility.PromptMenuChoice(0, storeInventory.Count);
 
             switch (keyInput)
             {

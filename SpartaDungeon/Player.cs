@@ -222,6 +222,7 @@ namespace SpartaDungeon
                 else
                 {
                     Console.WriteLine("경비병 : 용사님을 사칭하지마라!");
+                    Thread.Sleep(1000);
                     Environment.Exit(0);
                 }
             }
