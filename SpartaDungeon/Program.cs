@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Xml.Serialization;
 
 namespace SpartaDungeon
 {
@@ -13,6 +14,9 @@ namespace SpartaDungeon
         private List<Item> inventory;
         private List<Item> storeInventory;
         private Dictionary<ItemType, int> compareDic;
+        private List<Quest> questList;
+        private List<Quest> myQuest;
+        private List<Quest> completeQuest;
 
         public GameManager()
         {
@@ -36,7 +40,15 @@ namespace SpartaDungeon
             player = new Player(name: "", job: "", level: 1, atk: 10, def: 5, hp: 100, maxHp: 100, mp: 20, maxMp: 20, gold: 10000, maxExp: 10);
             compareDic = new Dictionary<ItemType, int>();
             inventory = new List<Item>();
-            storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json"));
+            storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json")); // Json파일 불러오기
+
+            questList = new List<Quest>();
+            questList.Add( new Quest("몬스터 사냥", "몬스터를 사냥하세요", "몬스터", 100));
+            questList.Add( new Quest("레벨 업", "레벨을 올려보자", "레벨", 100));
+            questList.Add( new Quest("몬스터 사냥", "몬스터를 사냥하세요", "몬스터", 100));
+            myQuest = new List<Quest>();
+            completeQuest = new List<Quest>();
+
         }
 
         public void StartGame()
@@ -66,11 +78,13 @@ namespace SpartaDungeon
             Console.WriteLine("3. 상    점");
             Console.WriteLine("4. 던    전");
             Console.WriteLine("5. 주    점");
-            Console.WriteLine("6. 게임종료");
+            Console.WriteLine("6. 길    드");
+            Console.WriteLine("7. 퀘스트 완료시키기(테스트용)");
+            Console.WriteLine("8 . 게임종료");
             Console.WriteLine("");
 
             // 2. 선택한 결과를 검증함
-            int choice = ConsoleUtility.PromptMenuChoice(1, 6);
+            int choice = ConsoleUtility.PromptMenuChoice(1, 8);
 
             // 3. 선택한 결과에 따라 보내줌
             switch (choice)
@@ -91,6 +105,12 @@ namespace SpartaDungeon
                     BarMenu();
                     break;
                 case 6:
+                    GuildMenu();
+                    break;
+                case 7:
+                    TestQuest();
+                    break;
+                case 8:
                     GameOverMenu();
                     break;
             }
@@ -521,6 +541,208 @@ namespace SpartaDungeon
             }
         }
 
+        public void GuildMenu()
+        {
+            Console.Clear();
+            ConsoleUtility.ShowTitle("■ 길드입장 ■");
+            Console.WriteLine("");
+            Console.WriteLine("길드에 들어서자 접수원이 말을 건다.");
+            Console.WriteLine("");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\"어서오세요! 길드 카지노 입니다.\"");
+            Console.WriteLine("\"무엇을 도와드릴까요?\"");
+            Console.ResetColor();
+            Console.WriteLine("");
+
+            Console.WriteLine("1. \"괜찮은 일거리 좀 있나?\"");
+            Console.WriteLine("2. \"내가 뭘 해야 하더라...?\"");
+            Console.WriteLine("3. \"보상을 받으러 왔는데\"");
+            Console.WriteLine("");
+            Console.WriteLine("0. 발을 돌려 나간다.");
+            Console.WriteLine("");
+
+            switch (ConsoleUtility.PromptMenuChoice(0, 3))
+            {
+                case 0:
+                    MainMenu();
+                    break;
+                case 1:
+                    QuestMenu();
+                    break;
+                case 2:
+                    MyQuestMenu();
+                    break;
+                case 3:
+                    RewardMenu();
+                    break;
+            }
+
+        }
+
+        public void QuestMenu(string? prompt = null)
+        {
+            if (prompt != null)
+            {
+                // 1초간 메시지를 띄운 다음에 다시 진행
+                Console.Clear();
+                ConsoleUtility.ShowTitle(prompt);
+                Thread.Sleep(1000);
+            }
+
+            Console.Clear();
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\"현재 게시된 의뢰 목록들이에요.\"");
+            Console.ResetColor();
+            Console.WriteLine("");
+
+            for (int i = 0; i<questList.Count; i++)
+            {
+                questList[i].PrintQuestList(i + 1);
+            }
+
+            Console.WriteLine("");
+            Console.WriteLine("0. \"별거 없군...\"");
+            Console.WriteLine("");
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\"관심이 가는 의뢰가 있나요?\"");
+            Console.ResetColor();
+            Console.WriteLine("");
+            int choice = ConsoleUtility.PromptMenuChoice(0, questList.Count);
+
+            switch (choice)
+            {
+                case 0:
+                    GuildMenu();
+                    break;
+                default:
+                    if(questList[choice - 1].IsAccept == false)
+                    {
+                        QuestInfo(choice - 1);
+                        QuestMenu("\"탁월한 선택이에요!\"");
+                    }
+                    else
+                    {                       
+                        QuestMenu("\"어머! 이건 이미 수락하셨는걸요?\"");
+                    }
+                    break;
+            }
+
+        }
+
+        public void QuestInfo(int choice)
+        {
+            Console.Clear();
+            questList[choice].PrintQuestInfo();
+            Console.WriteLine("");
+
+            Console.WriteLine("1. 수락");
+            Console.WriteLine("0. 돌아가기");
+
+            switch(ConsoleUtility.PromptMenuChoice(0, 1))
+            {
+                case 0:
+                    QuestMenu();
+                    break;
+                case 1:
+                    myQuest.Add(questList[choice]);
+                    questList[choice].AcceptQuest();
+                    break;
+            }
+        }
+
+        public void MyQuestMenu()
+        {
+            Console.Clear();
+            Console.WriteLine("\"현재 수령하신 의뢰 목록들이에요.");
+            Console.WriteLine("");
+
+            int i = 0;
+            foreach(var quest in myQuest)
+            {
+                quest.PrintMyQuestList(i + 1);
+                i++;
+            }
+
+            Console.WriteLine("");
+            Console.WriteLine("0. 뒤로가기");
+            Console.WriteLine("");
+
+            switch (ConsoleUtility.PromptMenuChoice(0, 0))
+            {
+                case 0:
+                    GuildMenu();
+                    break;
+            }
+        }
+
+        public void RewardMenu()
+        {
+            Console.Clear();
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\"어떤 의뢰를 완료하셨나요?\"");
+            Console.ResetColor();
+            Console.WriteLine("");
+
+            int i = 0;
+            foreach (var quest in completeQuest)
+            {
+                quest.PrintMyQuestList(i + 1);
+                i++;
+            }
+
+            Console.WriteLine("");
+            Console.WriteLine("0. \"다음에 다시 오지\"");
+            Console.WriteLine("");
+
+            int choice = ConsoleUtility.PromptMenuChoice(0, completeQuest.Count);
+
+            switch (choice)
+            {
+                case 0:
+                    GuildMenu();
+                    break;
+                default:
+                    player.Gold += completeQuest[choice - 1].RewardGold;
+                    completeQuest.RemoveAt(choice - 1);
+                    RewardMenu();
+                    break;
+            }
+        }
+
+        public void TestQuest()
+        {
+            Console.Clear();
+
+            int i = 0;
+            foreach (var quest in myQuest)
+            {
+                quest.PrintMyQuestList(i + 1);
+                i++;
+            }
+
+            Console.WriteLine("");
+            Console.WriteLine("0. 나가기");
+            Console.WriteLine("");
+
+            int choice = ConsoleUtility.PromptMenuChoice(0, myQuest.Count);
+
+            switch (choice)
+            {
+                case 0:
+                    MainMenu();
+                    break;
+                default:
+                    myQuest[choice - 1].ClearQuest();
+                    completeQuest.Add(myQuest[choice - 1]);
+                    myQuest.RemoveAt(choice - 1);
+                    TestQuest();
+                    break;
+            }
+
+        }
 
         public void GameOverMenu()
         {
