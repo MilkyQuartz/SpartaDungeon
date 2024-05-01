@@ -134,7 +134,7 @@ namespace SpartaDungeon
                     break;
                 case 1:
                     //아래테스트영역 삭제가능
-                    Potion.UsePotion(player, player.potion, StatusMenu);
+                    Potion.HealMenu(player, player.potion, StatusMenu);
 
                     break;
                     //위 테스트영역 삭제가능
