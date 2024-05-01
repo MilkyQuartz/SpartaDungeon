@@ -157,10 +157,9 @@ namespace SpartaDungeon
             return result; // 결과 반환
         }
 
-        //이름 입력과 직업선택 함수
-        public void CharacterMakingMenu(Action MainMenu)
+        // 이름 입력과 직업선택 함수
+        public void CharacterMakingMenu(Player player, Action MainMenu)
         {
-            GameManager gameManager = new GameManager(); // GameManager 객체 생성
             Console.WriteLine("경비병 : 거기 멈춰서라.");
             Console.WriteLine("경비병 : 우리 마을은 정체도 모르는 이방인을 안으로 들이지 않는다.");
             Console.WriteLine("[0] 새로운 모험을 떠나기 위해 왔다.         [1] 내 얼굴도 기억하지 못하냐.");
@@ -168,14 +167,15 @@ namespace SpartaDungeon
             switch (ConsoleUtility.PromptMenuChoice(0, 1))
             {
                 case 0:
-                    StartNewAdventure(gameManager, MainMenu);
+                    StartNewAdventure(MainMenu);
                     break;
                 case 1:
-                    RememberMyFace(gameManager, MainMenu);
+                    RememberMyFace(player, MainMenu);
                     break;
             }
         }
-        private void StartNewAdventure(GameManager gameManager, Action MainMenu)
+
+        private void StartNewAdventure(Action MainMenu)
         {
             Console.WriteLine("경비병 : 당신의 이름이 뭐지?");
             Console.WriteLine();
@@ -190,7 +190,6 @@ namespace SpartaDungeon
                     JobSelect();
                     Console.WriteLine();
                     Console.WriteLine("경비병 : 이제 들어가도 좋다.");
-                    gameManager.PastePlayer(this.Name, this.Job, this.Level, this.Atk, this.Def, this.Hp, this.MaxHp, this.Mp, this.MaxMp, this.Gold, this.MaxExp, this.Exp, this.BonusAtk, this.BonusDef, this.BonusHp);
                     Console.WriteLine("");
 
                     SavePlayer();
@@ -213,38 +212,49 @@ namespace SpartaDungeon
             }
         }
 
-        private void RememberMyFace(GameManager gameManager, Action MainMenu)
+        private void RememberMyFace(Player player, Action MainMenu)
         {
             Console.WriteLine("경비병 : 당신의 이름이 뭐지?");
             Console.WriteLine();
             Console.WriteLine("이름을 입력하세요");
             string name = Console.ReadLine();
 
+            // 주어진 이름을 가진 플레이어가 존재하는지 확인
             if (IsNameCheck(name))
             {
-                // 이름이 존재하는 경우, 해당 플레이어 정보를 불러옴
-                Console.WriteLine($"경비병 : {name} 용사님! 몰라봬서 죄송합니다. 들어가시면 됩니다!");
+                // 이름이 존재하는 경우, 해당 플레이어 정보를 가져옴
+                Player existingPlayer = GetPlayerByName(name);
 
-                // 이미 생성된 GameManager 객체의 player에 정보 할당
-                gameManager.PastePlayer(this.Name, this.Job, this.Level, this.Atk, this.Def, this.Hp, this.MaxHp, this.Mp, this.MaxMp, this.Gold, this.MaxExp, this.Exp, this.BonusAtk, this.BonusDef, this.BonusHp);
+                // 플레이어 정보 업데이트
+                player.Name = existingPlayer.Name;
+                player.Job = existingPlayer.Job;
+                player.Level = existingPlayer.Level;
+                player.Atk = existingPlayer.Atk;
+                player.Def = existingPlayer.Def;
+                player.Hp = existingPlayer.Hp;
+                player.MaxHp = existingPlayer.MaxHp;
+                player.Mp = existingPlayer.Mp;
+                player.MaxMp = existingPlayer.MaxMp;
+                player.Gold = existingPlayer.Gold;
+                player.MaxExp = existingPlayer.MaxExp;
+                player.Exp = existingPlayer.Exp;
+                player.BonusAtk = existingPlayer.BonusAtk;
+                player.BonusDef = existingPlayer.BonusDef;
+                player.BonusHp = existingPlayer.BonusHp;
 
+                // 잘가져오는지 확인용.. 플레이어 정보를 출력
                 /*Console.WriteLine("입력된 플레이어 정보:");
-                Console.WriteLine($"이름: {this.Name}");
-                Console.WriteLine($"직업: {this.Job}");
-                Console.WriteLine($"레벨: {this.Level}");
-                Console.WriteLine($"공격력: {this.Atk}");
-                Console.WriteLine($"방어력: {this.Def}");
-                Console.WriteLine($"체력: {this.Hp}");
-                Console.WriteLine($"최대 체력: {this.MaxHp}");
-                Console.WriteLine($"마나: {this.Mp}");
-                Console.WriteLine($"최대 마나: {this.MaxMp}");
-                Console.WriteLine($"골드: {this.Gold}");
-                Console.WriteLine($"최대 경험치: {this.MaxExp}");
-                Console.WriteLine($"현재 경험치: {this.Exp}");
-                Console.WriteLine($"보너스 공격력: {this.BonusAtk}");
-                Console.WriteLine($"보너스 방어력: {this.BonusDef}");
-                Console.WriteLine($"보너스 체력: {this.BonusHp}");*/
-
+                Console.WriteLine($"이름: {player.Name}");
+                Console.WriteLine($"직업: {player.Job}");
+                Console.WriteLine($"레벨: {player.Level}");
+                Console.WriteLine($"공격력: {player.Atk}");
+                Console.WriteLine($"방어력: {player.Def}");
+                Console.WriteLine($"체력: {player.Hp}");
+                Console.WriteLine($"최대 체력: {player.MaxHp}");
+                Console.WriteLine($"마나: {player.Mp}");
+                Console.WriteLine($"최대 마나: {player.MaxMp}");
+                Console.WriteLine($"골드: {player.Gold}");
+                Console.WriteLine($"최대 경험치: {player.MaxExp}");*/
 
                 Console.WriteLine("0. 마을로 들어가기");
                 Console.WriteLine("");
@@ -257,13 +267,13 @@ namespace SpartaDungeon
             }
             else
             {
-                // 이름이 존재하지 않는 경우 강제 종료
+                // 주어진 이름을 가진 플레이어가 존재하지 않는 경우
                 Console.WriteLine($"경비병 : 에잇 넌 뭐야? 나가!");
                 Environment.Exit(0);
             }
         }
 
-        private bool IsNameCheck(string name)
+        private bool IsNameCheck(string name) // 아이디 중복 확인용 메서드. TRUE, FALSE
         {
             // Json 파일이 존재하지 않으면 false 반환
             if (!File.Exists("Player.json"))
@@ -282,6 +292,27 @@ namespace SpartaDungeon
             // 플레이어 배열에서 이름이 일치하는 플레이어가 있는지 확인
             return players != null && players.Any(p => p.Name == name);
         }
+
+        private Player GetPlayerByName(string name) //객체 읽어오는 용 메서드.. 근데 IsNameCheck메서드랑 합쳐도 될 것 같긴한데 일단은 던전 만들고 손대겠습니당.
+        {
+            // Json 파일이 존재하지 않으면 null 반환
+            if (!File.Exists("Player.json"))
+                return null;
+
+            // Json 파일 읽어오기
+            var json = File.ReadAllText("Player.json");
+
+            // 파일이 비어 있는지 확인
+            if (string.IsNullOrWhiteSpace(json))
+                return null;
+
+            // 읽어온 Json 파일의 데이터를 Player 배열로 역직렬화
+            var players = JsonSerializer.Deserialize<List<Player>>(json);
+
+            // 플레이어 배열에서 이름이 일치하는 플레이어를 찾아서 반환
+            return players?.FirstOrDefault(p => p.Name == name);
+        }
+
         private void SavePlayer()
         {
             // Json 파일이 존재하지 않으면 빈 리스트 생성
