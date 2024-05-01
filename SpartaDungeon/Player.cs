@@ -33,6 +33,7 @@ namespace SpartaDungeon
         public float BonusHp { get; set; }
         public float BonusMp { get; set; }
 
+
         //디버그
         public int potion = 4;
 
@@ -53,14 +54,29 @@ namespace SpartaDungeon
             MaxExp = maxExp;
         }
 
+        // Level Up
+        // 레벨업을 호출하는 경우. 
+            // 전투 결과에서 출력하는 경우, 
+            // 퀘스트 완료에서 출력하는 경우
+                // 호출예시 : player.LevelUp();
         public void LevelUp()
         {
+            // 출력예시 : [캐릭터 정보]
+            // 출력예시 : Lv.1 Chad -> Lv2. Chad
+            Console.WriteLine("[캐릭터 정보]");
+            ConsoleUtility.PrintTextHighlightsNoLF("Lv.", Level.ToString(), Name);
+            ConsoleUtility.PrintTextHighlightsNoLF("", " -> ");
+            ConsoleUtility.PrintTextHighlightsNoLF("Lv.", (Level + 1).ToString(), Name);
             Level++;
-            Atk += 1;
-            Def += 1;
+            Exp = Exp - MaxExp; // 넘치는 Exp를 다음레벨 Exp에 이월
+            MaxExp += 25 + 5 * (Level - 2);   // 필요경험치 상승폭은 5씩 커진다
+            Atk += 0.5f;
+            Def += 1f;
+            MaxHp += 2f;
+            MaxMp += 2f;
         }
 
-        // 이름입력 함수
+
         public string InputName()
         {
             bool isTrue = true;
@@ -68,7 +84,6 @@ namespace SpartaDungeon
             while (isTrue)
             {
                 Console.WriteLine("이름을 입력하세요");
-                // 이름입력
                 name = Console.ReadLine();
                 if (name == "")
                 {
@@ -207,6 +222,7 @@ namespace SpartaDungeon
                 else
                 {
                     Console.WriteLine("경비병 : 용사님을 사칭하지마라!");
+                    Thread.Sleep(1000);
                     Environment.Exit(0);
                 }
             }

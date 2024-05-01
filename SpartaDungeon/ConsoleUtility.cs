@@ -1,4 +1,4 @@
-﻿namespace SpartaDungeon
+namespace SpartaDungeon
 {
 
     internal class ConsoleUtility
@@ -65,6 +65,15 @@
             Console.Write(s4);
             Console.ResetColor();
             Console.WriteLine(s5);
+        }
+
+        public static void PrintTextHighlightsNoLF(string s1, string s2, string s3 = "")
+        {
+            Console.Write(s1);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(s2);
+            Console.ResetColor();
+            Console.Write(s3);
         }
 
         public static int GetPrintableLength(string str)
