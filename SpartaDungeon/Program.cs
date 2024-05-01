@@ -8,6 +8,7 @@ namespace SpartaDungeon
 
     public class GameManager
     {
+        private static GameManager instance;
         private Player player;
         private List<Item> inventory;
         private List<Item> storeInventory;
@@ -17,40 +18,25 @@ namespace SpartaDungeon
         {
             InitializeGame();
         }
-        internal Player GetPlayer() // 메서드의 액세스 한정자를 public으로 변경
-        {
-            return player;
-        }
 
-        public void PastePlayer(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp = 10, float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0)
+        public static GameManager Instance
         {
-            player = new Player(name: "", job: "", level: 0, atk: 0, def: 0, hp: 0, maxHp: 0, mp: 0, maxMp: 0, gold: 0, maxExp: 0);
-            player.Name = name;
-            player.Job = job;
-            player.Level = level;
-            player.Atk = atk;
-            player.Def = def;
-            player.Hp = hp;
-            player.MaxHp = maxHp;
-            player.Mp = mp;
-            player.MaxMp = maxMp;
-            player.Gold = gold;
-            player.MaxExp = maxExp;
-            player.Exp = exp;
-            player.BonusAtk = bonusAtk;
-            player.BonusDef = bonusDef;
-            player.BonusHp = bonusHp;
-
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new GameManager();
+                }
+                return instance;
+            }
         }
 
         private void InitializeGame()
         {
             player = new Player(name: "", job: "", level: 1, atk: 10, def: 5, hp: 100, maxHp: 100, mp: 20, maxMp: 20, gold: 10000, maxExp: 10);
-
-            compareDic = new Dictionary<ItemType, int>();   // 추가요소 장비교체
-
+            compareDic = new Dictionary<ItemType, int>();
             inventory = new List<Item>();
-            storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json")); // Json파일 불러오기
+            storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json"));
         }
 
         public void StartGame()
@@ -58,7 +44,8 @@ namespace SpartaDungeon
             Console.Clear();
             ConsoleUtility.PrintGameHeader();
             Console.Clear();
-            player.CharacterMakingMenu(MainMenu);
+            // 게임 시작 메뉴 호출
+            player.CharacterMakingMenu(player, MainMenu);
         }
 
         private void MainMenu()
@@ -571,8 +558,6 @@ namespace SpartaDungeon
         public static void Main(string[] args)
         {
             GameManager gameManager = new GameManager();
-            Player player = gameManager.GetPlayer();
-            gameManager.PastePlayer(player.Name, player.Job, player.Level, player.Atk, player.Def, player.Hp, player.MaxHp, player.Mp, player.MaxMp, player.Gold, player.MaxExp, player.Exp, player.BonusAtk, player.BonusDef, player.BonusHp);
             gameManager.StartGame();
         }
     }
