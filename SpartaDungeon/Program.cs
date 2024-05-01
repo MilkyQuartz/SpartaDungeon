@@ -43,6 +43,7 @@ namespace SpartaDungeon
             compareDic = new Dictionary<ItemType, int>();
             inventory = new List<Item>();
             storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json")); // Json파일 불러오기
+            monsters = JsonSerializer.Deserialize<List<Monster>>(File.ReadAllText("Monster.json"));
 
             questList = new List<Quest>();
             questList.Add( new Quest("몬스터 사냥", "몬스터를 사냥하세요", "몬스터", 100));

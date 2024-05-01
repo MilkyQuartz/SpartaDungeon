@@ -17,7 +17,7 @@ namespace SpartaDungeon
         public float Hp { get; set; }
         public float MaxHp { get; set; }
         public int Price { get; set; }
-        public List<Skill> Skills { get; set; }
+        public List<MonsterSkill> MonsterSkills { get; set; }
 
         public Monster(string name, int level, float atk, float def, float hp, float maxHp, int price)
         {
@@ -28,14 +28,14 @@ namespace SpartaDungeon
             Hp = hp;
             MaxHp = maxHp;
             Price = price;
-            Skills = new List<Skill>();
+            MonsterSkills = new List<MonsterSkill>();
         }
     }
 
-    public class Skill
+    public class MonsterSkill
     {
-        public string SkillName { get; set; }
-        public float Damage { get; set; }
+        public string MonsterSkillName { get; set; }
+        public float MonsterDamage { get; set; }
     }
 
 }
