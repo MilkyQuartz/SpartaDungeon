@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +14,7 @@ namespace SpartaDungeon
         // 어디에서 _howManyPotion을 선언할지 정해야 합니다.
         // _howManyPotion 포션 갯수의 설정이 필요합니다.
         //  위 작업이 완료되면 이 주석을 지워주세요.
-        public static void UsePotion(Player player, int _howManyPotion, Action? Menu,string? prompt = null)
+        public static void UsePotion(Player player, int _howManyPotion, Action Menu,string? prompt = null)
         {
             if (prompt != null)
             {
@@ -55,7 +55,7 @@ namespace SpartaDungeon
                             Console.WriteLine(player.Hp.ToString() + " -> " + ((player.Hp + 50) > 100 ? (player.Hp = 100) : (player.Hp + 50)).ToString());
                             //HP 적용
                             player.Hp = (player.Hp + 30) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + 30);
-                            UsePotion(player, _howManyPotion, null, "체력을 회복했습니다.");
+                            UsePotion(player, _howManyPotion, prevMenu, "체력을 회복했습니다.");
                             --_howManyPotion;
                         }
                         else
