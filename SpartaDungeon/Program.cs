@@ -594,9 +594,8 @@ namespace SpartaDungeon
                 Console.WriteLine("");
 
                 Console.WriteLine("1. 공격");
-                Console.WriteLine("0. 도망가기");
-                Console.WriteLine("1. 공격");
                 Console.WriteLine("2. 스킬");
+                Console.WriteLine("0. 도망가기");
                 Console.WriteLine("");
 
                 int choice = ConsoleUtility.PromptMenuChoice(0, 2);
