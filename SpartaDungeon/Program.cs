@@ -44,7 +44,7 @@ namespace SpartaDungeon
             player = new Player(name: "", job: "", level: 1, atk: 10, def: 5, hp: 100, maxHp: 100, mp: 20, maxMp: 20, gold: 10000, maxExp: 10);
             compareDic = new Dictionary<ItemType, int>();
             inventory = new List<Item>();
-            storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json")); // Json파일 불러오기
+            storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json"));
             monsters = JsonSerializer.Deserialize<List<Monster>>(File.ReadAllText("Monster.json"));
 
             questList = new List<Quest>();
@@ -71,7 +71,6 @@ namespace SpartaDungeon
             Console.Clear();
             ConsoleUtility.PrintGameHeader();
             Console.Clear();
-            // 게임 시작 메뉴 호출
             player.CharacterMakingMenu(player, MainMenu);
         }
 
@@ -466,8 +465,6 @@ namespace SpartaDungeon
                     break;
             }
         }
-
-        // 임시
         public void DungeonMenu()
         {
             Console.Clear();
@@ -482,6 +479,14 @@ namespace SpartaDungeon
             Console.WriteLine("3. 어려운 던전");
             Console.WriteLine("0. 나가기");
             Console.WriteLine("");
+
+            if (player.Hp < 1)
+            {
+                Console.WriteLine("체력이 부족해 던전에 입장할 수 없습니다. 휴식을 취한 후 시도해주세요.");
+                Thread.Sleep(1000);
+                MainMenu();
+                return;
+            }
 
             switch (ConsoleUtility.PromptMenuChoice(0, 3))
             {
@@ -543,8 +548,18 @@ namespace SpartaDungeon
             {
                 int index = rand.Next(filteredMonsters.Count);
                 Monster originalMonster = filteredMonsters[index]; // 원본 ... 복사했을때 참조형식으로 복사가 돼서 다른 독립적인 객체로 만들기 위해 new로 생성
-                Monster copiedMonster = new Monster(originalMonster.Name, originalMonster.Level, originalMonster.Atk, originalMonster.Def, originalMonster.Hp, originalMonster.MaxHp, originalMonster.Price); // 복사본 생성
-                
+
+                // 몬스터 스킬 복사
+                List<MonsterSkill> copiedSkills = new List<MonsterSkill>();
+                foreach (var originalSkill in originalMonster.MonsterSkills)
+                {
+                    MonsterSkill copiedSkill = new MonsterSkill(originalSkill.MonsterSkillName, originalSkill.MonsterDamage);
+                    copiedSkills.Add(copiedSkill);
+                }
+
+                Monster copiedMonster = new Monster(originalMonster.Name, originalMonster.Level, originalMonster.Atk, originalMonster.Def, originalMonster.Hp, originalMonster.MaxHp, originalMonster.Price);
+                copiedMonster.MonsterSkills = copiedSkills; // 복사본 생성
+
                 selectedMonsters.Add(copiedMonster);
             }
             selectedMonsters = selectedMonsters.OrderBy(monster => monster.Level).ToList(); // 보기좋게 오름차순으로 정렬해서 반환하기
@@ -578,6 +593,7 @@ namespace SpartaDungeon
                 Console.WriteLine($"MP: {player.Mp}/{player.MaxMp}");
                 Console.WriteLine("");
 
+                Console.WriteLine("1. 공격");
                 Console.WriteLine("0. 도망가기");
                 Console.WriteLine("1. 공격");
                 Console.WriteLine("2. 스킬");
@@ -592,6 +608,7 @@ namespace SpartaDungeon
                         MainMenu();
                         break;
                     case 1:
+                        Console.WriteLine("[My turn!]\n");
                         Console.WriteLine("공격할 대상을 선택하세요.\n");
                         for (int i = 0; i < monsters.Count; i++)
                         {
@@ -605,6 +622,7 @@ namespace SpartaDungeon
                                 Console.ResetColor();
                             }
                         }
+                        Console.WriteLine("");
                         int targetChoice = ConsoleUtility.PromptMenuChoice(1, monsters.Count) - 1;
                         Monster targetMonster = monsters[targetChoice];
                         if (targetMonster.Hp > 0)
@@ -641,15 +659,20 @@ namespace SpartaDungeon
                         break;
                 }
 
-                // 몬스터의 공격 턴 아직 수정필요~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                Console.WriteLine("[Monster Turn!]"); // 아직 몬스터 스킬 수정 필요합니당.. 스킬당 데미지 확률로 바꾸려구용~~
+                 Random rand = new Random();
+
                 foreach (var monster in monsters)
                 {
+                    MonsterSkill randomSkill = monster.MonsterSkills[rand.Next(monster.MonsterSkills.Count)]; // 스킬 랜덤으로 사용
+
                     if (monster.Hp > 0)
                     {
                         int minAttack = (int)(monster.Atk * 0.9f);
                         int maxAttack = (int)(monster.Atk * 1.1f);
                         int attackDamage = new Random().Next(minAttack, maxAttack + 1);
-
+                       
+                        // 몬스터의 스킬 사용
                         if (attackDamage >= 0)
                         {
                             player.Hp -= attackDamage;
@@ -657,23 +680,17 @@ namespace SpartaDungeon
                             {
                                 player.Hp = 0;
                             }
-                            Console.WriteLine($"{monster.Name}의 공격! {player.Name}을(를) 맞췄습니다. [데미지: {attackDamage}]");
-                            Console.WriteLine("");
+                            Console.WriteLine($">> {monster.Name}(이)가 [{randomSkill.MonsterSkillName}] 스킬을 사용했습니다! [데미지: {attackDamage}]");
                         }
                         else
                         {
                             // 회복량 표시
-                            int healAmount = Math.Abs(attackDamage); // 음수를 양수로 변환하여 회복량 계산.. 근데 지금 아직... 안돼요ㅜㅜ json안에 skills배열의 객체를 못가져와요 중첩이라그런건지 아직 모르겠어용..
+                            int healAmount = Math.Abs(attackDamage);
                             player.Hp += healAmount;
-                            Console.WriteLine($"{monster.Name}의 회복! {healAmount}만큼 회복되었습니다.");
+                            Console.WriteLine($"{monster.Name}(이)가 {healAmount}만큼 회복되었습니다.");
                             Console.WriteLine("");
                         }
 
-                    }
-                    else
-                    {
-                        Console.WriteLine($"{monster.Name}은(는) 죽었습니다.");
-                        Console.WriteLine("");
                     }
                 }
 
@@ -802,7 +819,7 @@ namespace SpartaDungeon
                         MainMenu();
                         break;
                     case 1:
-                        StartDungeon(1);
+                        DungeonMenu();
                         break;
                 }
             }
@@ -819,7 +836,7 @@ namespace SpartaDungeon
                         MainMenu();
                         break;
                     case 1:
-                        StartDungeon(1);
+                        DungeonMenu();
                         break;
                 }
             }

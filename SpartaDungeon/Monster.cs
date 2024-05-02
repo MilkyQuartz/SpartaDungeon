@@ -36,6 +36,12 @@ namespace SpartaDungeon
     {
         public string MonsterSkillName { get; set; }
         public float MonsterDamage { get; set; }
+
+        public MonsterSkill(string monsterSkillName, float monsterDamage)
+        {
+            MonsterSkillName = monsterSkillName;
+            MonsterDamage = monsterDamage;
+        }
     }
 
 }
