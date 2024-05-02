@@ -1,0 +1,35 @@
+[
+    {
+        "Name": "무쇠갑옷",
+        "Desc": "튼튼한 갑옷",
+        "Type": 1,
+        "Atk": 0,
+        "Def": 5,
+        "Hp": 0,
+        "Price": 500,
+        "IsEquipped": false,
+        "IsPurchased": false
+    },
+    {   
+        "Name": "낡은 검",
+        "Desc": "낡은 검",
+        "Type": 0,
+        "Atk": 2,
+        "Def": 0,
+        "Hp": 0,
+        "Price": 1000,
+        "IsEquipped": false,
+        "IsPurchased": false
+    },
+    {
+        "Name": "골든 헬름",
+        "Desc": "희귀한 투구",
+        "Type": 1,
+        "Atk": 0,
+        "Def": 9,
+        "Hp": 0,
+        "Price": 2000,
+        "IsEquipped": false,
+        "IsPurchased": false
+    }
+]
