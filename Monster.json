@@ -1,0 +1,212 @@
+[
+    {
+        "Name": "당근마켓빌런",
+        "Level": 1,
+        "Atk": 3,
+        "Def": 1,
+        "Hp": 10,
+        "MaxHp": 10,
+        "Price": 100,
+        "Skills": [
+            {
+                "SkillName": "네고해주세요",
+                "Damage": 3
+            }
+        ]
+    },
+    {
+        "Name": "7호선 최강의 검사",
+        "Level": 1,
+        "Atk": 2,
+        "Def": 5,
+        "Hp": 20,
+        "MaxHp": 20,
+        "Price": 200,
+        "Skills": [
+            {
+                "SkillName": "후 아 유 !! 아.. 안때려!",
+                "Damage": 2
+            }
+        ]
+    },
+    {
+        "Name": "샌즈",
+        "Level": 2,
+        "Atk": 5,
+        "Def": 5,
+        "Hp": 20,
+        "MaxHp": 20,
+        "Price": 200,
+        "Skills": [
+            {
+                "SkillName": "와! 샌즈! 언더*일 아시는구나! 진짜 겁.나.어.렵.습.니.다.",
+                "Damage": 4
+            }
+        ]
+    },
+    {
+        "Name": "아파트 주민",
+        "Level": 3,
+        "Atk": 5,   
+        "Def": 5,
+        "Hp": 40,
+        "MaxHp": 40,
+        "Price": 300,
+        "Skills": [
+            {
+                "SkillName": "야!!!!!!!!!!!!! 개 짖는 소리 좀 안나게 하라!!",
+                "Damage": 3
+            }
+        ]
+    },
+    {
+        "Name": "공항도둑",
+        "Level": 4,
+        "Atk": 6,
+        "Def": 2,
+        "Hp": 40,
+        "MaxHp": 40,
+        "Price": 400,
+        "Skills": [
+            {
+                "SkillName": "너너너너너는 뉴스도 안보냐?",
+                "Damage": 4
+            }
+        ]
+    },
+    {
+        "Name": "물음표살인마",
+        "Level": 5,
+        "Atk": 6,
+        "Def": 10,
+        "Hp": 100,
+        "MaxHp": 100,
+        "Price": 450,
+        "Skills": [
+            {
+                "SkillName": "?",
+                "Damage": 3
+            }
+        ]
+    }, 
+    {
+        "Name": "고길동",
+        "Level": 6,
+        "Atk": 6,
+        "Def": 5,
+        "Hp": 50,
+        "MaxHp": 50,
+        "Price": 500,
+        "Skills": [
+            {
+                "SkillName": "아아, 이 서늘하고도 묵직한감각.",
+                "Damage": 6
+            }
+        ]
+    }, 
+    {
+        "Name": "빵상아줌마",
+        "Level": 7,
+        "Atk": 5,
+        "Def": 7,
+        "Hp": 50,
+        "MaxHp": 50,
+        "Price": 600,
+        "Skills": [
+            {
+                "SkillName": "빵↘빵↗똥똥똥똥 땅땅 따라라라~↘따띵↘ 똥똥똥똥띵↘똥똥↗↗",
+                "Damage": 5
+            }
+        ]
+    },  
+    {
+        "Name": "도서관 경쟁자",
+        "Level": 8,
+        "Atk": 7,
+        "Def": 7,
+        "Hp": 70,
+        "MaxHp": 70,
+        "Price": 700,
+        "Skills": [
+            {
+                "SkillName": "저랑 사궈실래요?",
+                "Damage": 5
+            }
+        ]
+    },
+    {
+        "Name": "상남자",
+        "Level": 9,
+        "Atk": 15,
+        "Def": 5,
+        "Hp": 70,
+        "MaxHp": 70,
+        "Price": 800,
+        "Skills": [
+            {
+                "SkillName": "저는 트렁크에 오함마를 가지고 다닙니다. 전화 한번 걸어서 안받으면 사이드미러, 두번은 보닛, 세번은 유리창..",
+                "Damage": 15
+            }
+        ]
+    },
+    {
+        "Name": "엑스트라1",
+        "Level": 9,
+        "Atk": 10,
+        "Def": 7,
+        "Hp": 100,
+        "MaxHp": 100,
+        "Price": 800,
+        "Skills": [
+            {
+                "SkillName": "해치웠나?",
+                "Damage": -20
+            }
+        ]
+    },
+    {
+        "Name": "머리에 붕대를 감은 여성",
+        "Level": 10,
+        "Atk": 20,
+        "Def": 5,
+        "Hp": 50,
+        "MaxHp": 50,
+        "Price": 900,
+        "Skills": [
+            {
+                "SkillName": "오버워치는 출시한 2016년에 올해의 게임상을 수상했을 정도로..... 내가 피씨방 가면 서버 터지고....... 또 이러신다. 밥이나 드세요.",
+                "Damage": 20
+            }
+        ]
+    },
+    {
+        "Name": "개발자 삼형제",
+        "Level": 10,
+        "Atk": 15,
+        "Def": 10,
+        "Hp": 100,
+        "MaxHp": 100,
+        "Price": 900,
+        "Skills": [
+            {
+                "SkillName": "어?",
+                "Damage": 13
+            }
+        ]
+    },
+    {
+        "Name": "AI",
+        "Level": 10,
+        "Atk": 15,
+        "Def": 15,
+        "Hp": 100,
+        "MaxHp": 100,
+        "Price": 1000,
+        "Skills": [
+            {
+                "SkillName": "삐빅 인간시대에 끝이 도래했다.",
+                "Damage": 15
+            }
+        ]
+    }
+]
