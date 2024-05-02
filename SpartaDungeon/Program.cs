@@ -722,18 +722,18 @@ namespace SpartaDungeon
             ConsoleUtility.ShowTitle("■ 주점입장 ■");
             Console.WriteLine("이곳에서 체력을 회복할 수 있습니다.");
             Console.WriteLine("");
-            Console.WriteLine($"현재 체력:{player.Hp} | 현재 골드: {player.Gold}");
-            Console.WriteLine("");
-
-            Console.WriteLine("");
-            Console.WriteLine(" 1. [카스테라주] 자신의 보유 체력의 50%를 채워준다.(체력 50일때 +25)     - 가격 : 100G");
-            Console.WriteLine(" 2. [복분자주] 정읍의 자랑, 100을 기준으로 체력을 50% 채워준다.          - 가격 : 300G");
-            Console.WriteLine(" 3. [조니왔다] 유명 위스키, 100을 기준으로 체력을 100% 채워준다.         - 가격 : 500G");
-            Console.WriteLine("0. 나가기");
-            Console.WriteLine("");
 
             while (true)
             {
+                Console.WriteLine($"현재 체력:{player.Hp} | 현재 골드: {player.Gold}");
+                Console.WriteLine("");
+
+                Console.WriteLine("");
+                Console.WriteLine("1. [카스테라주] 자신의 보유 체력의 50%를 채워준다.(체력 50일때 +25)     - 가격 : 100G");
+                Console.WriteLine("2. [복분자주] 정읍의 자랑, 100을 기준으로 체력을 50% 채워준다.          - 가격 : 300G");
+                Console.WriteLine("3. [조니왔다] 유명 위스키, 100을 기준으로 체력을 100% 채워준다.         - 가격 : 500G");
+                Console.WriteLine("0. 나가기");
+                Console.WriteLine("");
                 switch (ConsoleUtility.PromptMenuChoice(0, 3))
                 {
                     case 0:
@@ -747,7 +747,7 @@ namespace SpartaDungeon
                             Console.ResetColor();
                             break;
                         }
-                        Console.WriteLine("\t\t\t  \"키야~ 역시 한국인이라면 이 맥주를 마셔줘야지!\"");
+                        Console.WriteLine("\n\t\t\t  \"키야~ 역시 한국인이라면 이 맥주를 마셔줘야지!\"\n");
                         player.Hp += player.Hp / 2;
                         if (player.Hp > 100)
                         {
@@ -765,7 +765,7 @@ namespace SpartaDungeon
                             Console.ResetColor();
                             break;
                         }
-                        Console.WriteLine("\t\t\"아차차~ 이런 술은 난생 처음 마셔봤네! 너무 맛있다! 자주 사먹어야겠는걸?\"");
+                        Console.WriteLine("\n\t\t\"아차차~ 이런 술은 난생 처음 마셔봤네! 너무 맛있다! 자주 사먹어야겠는걸?\"\n");
                         player.Hp += 50;
                         if (player.Hp > 100)
                         {
@@ -783,7 +783,7 @@ namespace SpartaDungeon
                             Console.ResetColor();
                             break;
                         }
-                        Console.WriteLine("\t\t\t\t\t \"비싸구만.. \"");
+                        Console.WriteLine("\n\t\t\t\t\t \"비싸구만.. \"\n");
                         player.Hp += 100;
                         if (player.Hp > 100)
                         {
