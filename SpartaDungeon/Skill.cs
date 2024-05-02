@@ -11,49 +11,64 @@ namespace SpartaDungeon
     {
         public string Name { get; }
         public string Desc { get; }
-        public int Damage { get; }
+        public int Mp { get; }
+        public float Damage { get; }
 
         Random random = new Random();
 
-        public Skill(string name, string desc, int damage)
+        public Skill(string name, string desc, int mp, int damage = 0)
         {
             Name = name;
             Desc = desc;
+            Mp = mp;
             Damage = damage;
         }
+
 
         public void RolltheDice(out int dice1, out int dice2)
         {
             dice1 = random.Next(10, 70) / 10;
             dice2 = random.Next(10, 70) / 10;
-            Console.WriteLine($"주사위 1 : {dice1}, 주사위 2 : {dice2}");
+            Console.WriteLine($"빨간 주사위 : {dice1}, 파란 주사위 : {dice2}");
         }
-        public void UseDiceSkill(int dice1, int dice2)
+        public int UseDiceSkill(int dice1, int dice2, int attackDamage)
         {
             int chance = random.Next(dice1, 11);
+            int damage = 0;
 
             if (chance > 5)
             {
-                Console.WriteLine($"{Name} 스킬사용 성공");
-                int damage = Damage / 2 * dice2;
-                Console.WriteLine("데미지 = (공격력 / 2) X 주사위 눈");
-                Console.WriteLine($"데미지 : {damage}");
+                Console.WriteLine("스킬 발동에 성공했습니다.");
+                Console.WriteLine("\"운이 좋군!\"");
+                damage = (attackDamage / 2 * dice2);
             }
             else
             {
-                Console.WriteLine($"{Name} 스킬사용 실패");
+                Console.WriteLine("스킬 발동에 실패했습니다.");
+                Console.WriteLine("\"이럴..수가?!\"");
             }
+
+            return damage;
         }
 
-        public void UseCardSkill()
+
+        public void UseCardSkill(out int cardColor)
         {
             List<Card> card = new List<Card>();
-            card.Add(new Card("빨간 카드", "빨간색 카드", CardType.RED));
-            card.Add(new Card("파란 카드", "파란색 카드", CardType.BLUE));
-            card.Add(new Card("황금 카드", "황금색 카드", CardType.GOLD));
+
+            card.Add(new Card("빨간색 카드", CardType.RED));
+            card.Add(new Card("파란색 카드", CardType.BLUE));
+            card.Add(new Card("황금색 카드", CardType.GOLD));
+
 
             int rand = random.Next(0, 3);
             card[rand].DrawCard();
+            cardColor = (int)card[rand].Type;
+        }
+
+        public void CardCheck()
+        {
+
         }
     }
 
@@ -67,20 +82,20 @@ namespace SpartaDungeon
     public class Card
     {
         public string Name { get; }
-        public string Desc { get; }
 
         public CardType Type { get; }
 
-        public Card(string name, string desc, CardType type)
+        public Card(string name, CardType type)
         {
             Name = name;
-            Desc = desc;
             Type = type;
         }
 
 
         public void DrawCard()
         {
+            int damage = 0;
+
             switch (Type)
             {
                 case CardType.RED:
@@ -93,27 +108,30 @@ namespace SpartaDungeon
                     GoldCard();
                     break;
             }
+
         }
 
         public void RedCard()
         {
+            int damage = 0;
+
             Console.WriteLine($"{Name}를 뽑았습니다");
             Console.WriteLine($"\"핏빛 빨강\"");
-            Console.WriteLine("2연속베기");
+
         }
 
         public void BlueCard()
         {
+
             Console.WriteLine($"{Name}를 뽑았습니다");
-            Console.WriteLine($"\"파랑이 좋겠어\"");
-            Console.WriteLine("마나 회복");
+            Console.WriteLine($"\"파랑이 좋겠어\"");            
+
         }
 
         public void GoldCard()
         {
             Console.WriteLine($"{Name}를 뽑았습니다");
             Console.WriteLine($"\"반짝이는 황금색\"");
-            Console.WriteLine("강력한 일격,  마나 전부 소진");
         }
     }
 }

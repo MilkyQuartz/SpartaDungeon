@@ -32,6 +32,7 @@ namespace SpartaDungeon
         public float BonusDef { get; set; }
         public float BonusHp { get; set; }
         public float BonusMp { get; set; }
+        public int casinoCoin = 0;
 
 
         //디버그
