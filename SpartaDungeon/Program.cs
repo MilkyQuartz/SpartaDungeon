@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -19,6 +20,7 @@ namespace SpartaDungeon
         private List<Quest> myQuest;
         private List<Quest> completeQuest;
         private Casino casino;
+        private List<Skill> skill;
 
         public GameManager()
         {
@@ -52,6 +54,16 @@ namespace SpartaDungeon
             myQuest = new List<Quest>();
             completeQuest = new List<Quest>();
             casino = new Casino(player);
+
+            skill = new List<Skill>();
+            skill.Add(new Skill("주사위 굴리기", "주사위를 2개 굴려서 나온 주사위 눈에따라 스킬발동확률과 스킬데미지가 정해집니다.\n" +
+                                                 "빨간주사위는 발동확률을 파란주사위는 데미지를 결정합니다.\n" +
+                                                 "주사위 눈에 따른 발동확률: 1 - 50%, 2 - 55%, 3 - 62%, 4 - 71%, 5 - 83%, 6 - 100%\n" +
+                                                 "주사위 눈에 따른 데미지 : (플레이어의 공격력 / 2) X 주사위의 눈", 5));
+            skill.Add(new Skill("카드뽑기", "도박사 트페가 빨간색, 파란색, 황금색의 카드 중에서 한장을 뽑아줍니다.\n" +
+                                            "빨간색 카드 - 일반 공격력의 2배의 데미지의 공격을 합니다.\n" +
+                                            "파란색 카드 - 20%의 MP를 회복시켜 줍니다.\n" +
+                                            "황금색 카드 - MP를 모두 소진시켜 5배의 데미지의 공격을 합니다.", 10));
         }
 
         public void StartGame()
@@ -150,6 +162,17 @@ namespace SpartaDungeon
 
             ConsoleUtility.PrintTextHighlights("Gold : ", player.Gold.ToString());
             Console.WriteLine("");
+
+            Console.WriteLine("[보유 스킬]");
+            Console.WriteLine("");
+            foreach(var skillList in skill)
+            {
+                Console.Write($"{skillList.Name} -");
+                ConsoleUtility.PrintTextHighlights(" ", $"필요 MP : {skillList.Mp}", "");
+                Console.WriteLine("");
+                Console.WriteLine(skillList.Desc);
+                Console.WriteLine("");
+            }
 
             Console.WriteLine("0. 뒤로가기");
             Console.WriteLine("");
@@ -519,7 +542,7 @@ namespace SpartaDungeon
             // 필터링된 몬스터 선택
             filteredMonsters = monsters.Where(monster => monster.Level >= minLevel && monster.Level <= maxLevel).ToList();
 
-            // 3마리 랜덤으로 선택
+            // 3마리 랜덤으로 선택 
             List<Monster> selectedMonsters = new List<Monster>();
             for (int i = 0; i < 3; i++)
             {
@@ -567,13 +590,15 @@ namespace SpartaDungeon
 
                 Console.WriteLine($"\n[내정보]\nLv. {player.Level} {player.Name} ({player.Job})");
                 Console.WriteLine($"HP: {player.Hp}/{player.MaxHp}");
+                Console.WriteLine($"MP: {player.Mp}/{player.MaxMp}");
                 Console.WriteLine("");
 
                 Console.WriteLine("1. 공격");
+                Console.WriteLine("2. 스킬");
                 Console.WriteLine("0. 도망가기");
                 Console.WriteLine("");
 
-                int choice = ConsoleUtility.PromptMenuChoice(0, 1);
+                int choice = ConsoleUtility.PromptMenuChoice(0, 2);
 
                 switch (choice)
                 {
@@ -624,6 +649,9 @@ namespace SpartaDungeon
                             Console.WriteLine("");
                         }
                         break;
+                    case 2:
+                        totalGold += UsingSkill(totalGold, monsters);
+                        break;
                     default:
                         Console.WriteLine("잘못된 입력입니다.");
                         Console.WriteLine("");
@@ -667,6 +695,107 @@ namespace SpartaDungeon
 
                 gameOver = CheckGameOver(monsters, totalGold);
             }
+        }
+
+        private int UsingSkill(int totalGold , List<Monster> monsters)
+        {
+            Console.WriteLine("사용할 스킬을 선택하세요.\n");
+            for(int i = 0; i< skill.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {skill[i].Name}");
+            }
+
+            int skillChoice = ConsoleUtility.PromptMenuChoice(1, skill.Count) - 1;
+
+            Console.WriteLine(" 스킬을 사용할 대상을 선택하세요.\n");
+            for (int i = 0; i < monsters.Count; i++)
+            {
+                var monster = monsters[i];
+                if (monster.Hp > 0)
+                    Console.WriteLine($"{i + 1}. Lv.{monster.Level} {monster.Name} HP: {monster.Hp}");
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine($"{i + 1}. Lv.{monster.Level} {monster.Name} HP: Dead");
+                    Console.ResetColor();
+                }
+            }
+            int targetChoice = ConsoleUtility.PromptMenuChoice(1, monsters.Count) - 1;
+            Monster targetMonster = monsters[targetChoice];
+            int minAttack = (int)(player.Atk * 0.9f);
+            int maxAttack = (int)(player.Atk * 1.1f);
+            int attackDamage = new Random().Next(minAttack, maxAttack + 1);
+            int skillDamage = 0;
+
+            switch (skillChoice)
+            {
+                case 0:
+                    if (player.Mp > skill[skillChoice].Mp)
+                    {
+                        player.Mp -= skill[skillChoice].Mp;
+                        skill[skillChoice].RolltheDice(out int dice1, out int dice2);
+                        skillDamage = skill[skillChoice].UseDiceSkill(dice1, dice2, attackDamage);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("스킬을 사용할 MP가 부족합니다.");
+                        Console.ResetColor();
+                    }
+                    break;
+                case 1:
+                    if (player.Mp >= skill[skillChoice].Mp)
+                    {
+                        player.Mp -= skill[skillChoice].Mp;
+                        skill[skillChoice].UseCardSkill(out int cardColor);
+                        
+                        switch (cardColor)
+                        {
+                            case 0:
+                                skillDamage = attackDamage * 2;
+                                break;
+                            case 1:
+                                player.Mp += (int)(player.MaxMp * 0.2);
+                                Console.WriteLine($"MP {(int)(player.MaxMp * 0.2)}를 회복합니다.");
+                                break;
+                            case 2:
+                                skillDamage = attackDamage * 5;
+                                player.Mp = 0;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("스킬을 사용할 MP가 부족합니다.");
+                        Console.ResetColor();
+                    }
+
+                    break;
+            }
+            if (targetMonster.Hp > 0)
+            {
+                targetMonster.Hp -= skillDamage;
+                if (targetMonster.Hp <= 0)
+                {
+                    targetMonster.Hp = 0;
+                    totalGold += targetMonster.Price;
+                }
+                Console.WriteLine($"당신은 {targetMonster.Name}에게 {skillDamage}의 피해를 입혔습니다.");
+                Console.WriteLine("");
+                if (targetMonster.Hp == 0)
+                {
+                    Console.WriteLine($"{targetMonster.Name}이(가) 죽었습니다.");
+                    Console.WriteLine("");
+                }
+            }
+            else
+            {
+                Console.WriteLine("이미 죽은 몬스터입니다.");
+                Console.WriteLine("");
+            }
+
+            return totalGold;
         }
 
         private bool CheckGameOver(List<Monster> monsters, int totalGold)
