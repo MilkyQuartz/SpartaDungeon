@@ -186,7 +186,7 @@ namespace SpartaDungeon
         public void PrintUsableItemDescription(bool withNumber = false, int idx = 0)
         {
             Console.Write("- ");
-            // 장착관리 전용
+            
             if (withNumber)
             {
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;

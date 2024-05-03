@@ -201,7 +201,15 @@ namespace SpartaDungeon
 
             for (int i = 0; i < inventory.Count; i++)
             {
-                inventory[i].PrintItemStatDescription();
+                if (inventory[i] is UsableItem usableItem)
+                {
+                    usableItem.PrintUsableItemDescription();
+                }
+                else
+                {
+                    inventory[i].PrintItemStatDescription();
+                }
+               
             }
 
             Console.WriteLine("");
@@ -249,7 +257,14 @@ namespace SpartaDungeon
                 case 0:
                     InventoryMenu();
                     break;
-                default: // 추가요소 장비교체
+                default: 
+                    //Usable인지 체크
+                    if (inventory[KeyInput - 1].Type==ItemType.USABLE)
+                    {
+                        Console.WriteLine("장비할 수 없는 아이템입니다.");
+                        Thread.Sleep(500);
+                        EquipMenu();
+                    }
                     // 같은 아이템 선택하면 장비해제로 가고 같은타입이면 기존장비 해제 후 그 장비 착용
                     // null이면 착용, null이 아니면 키값Type 비교, 같으면 해제 후 착용, 같아도 Value Name이 같으면 장비해제 
                     if (!compareDic.ContainsKey(inventory[KeyInput - 1].Type))
