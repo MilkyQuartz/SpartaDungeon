@@ -16,21 +16,21 @@ namespace SpartaDungeon
     {
         Player player;
         List<UsableItem> barInventory;
-        List<Item> inventory;
-        // InventoryManager 클래스의 인스턴스 생성
-            InventoryManager inventoryManager = new InventoryManager();
+        List<Item> playerInventory;
+        InventoryManager inventoryManager;
 
           
 
-        public BarTakeout(Player _player, List<UsableItem> _BarInventory)
+        public BarTakeout(Player _player, List<UsableItem> _BarInventory, InventoryManager _inventoryManager)
         {
             player = _player;
-            barInventory = _BarInventory;            
-            inventory = inventoryManager.GetInventory(player.Name);
+            barInventory = _BarInventory;
+            inventoryManager = _inventoryManager;
         }
 
         public void TakeoutMenu(Action Menu)
-        {            
+        {
+            playerInventory = inventoryManager.GetInventory(player.Name);
             Action prevMenu = Menu;
             bool failBuy = false;
             Console.Clear();
@@ -55,6 +55,7 @@ namespace SpartaDungeon
             Console.WriteLine("");
 
             int keyInput = ConsoleUtility.PromptMenuChoice(0, barInventory.Count);
+            int selectedItem = keyInput - 1;
 
             switch (keyInput)
             {
@@ -62,7 +63,7 @@ namespace SpartaDungeon
                     Menu();
                     break;
                 default:
-                    if (barInventory[keyInput - 1].Type == ItemType.USABLE && player.Gold >= barInventory[keyInput - 1].Price)
+                    if (barInventory[selectedItem].Type == ItemType.USABLE && player.Gold >= barInventory[selectedItem].Price)
                     {                        
                         // 선택한 아이템이 USABLE인지 체크
                         // USABLE이면 인벤토리의 수량을 증가시키는 로직
@@ -70,37 +71,25 @@ namespace SpartaDungeon
                         // 인벤토리를 탐색해서 구매선택한 아이템의 Name이 있는지 알아낸다.
                         // 있다면 그아이템의 인벤토리 인덱스를 얻는다.
                         // 인벤토리[인덱스].Qty를 ++한다.
-                        int index = Item.SearchIndexInInventoryAtName(inventory, barInventory, keyInput);
+                        int index = Item.SearchIndexInInventoryAtName(playerInventory, barInventory, keyInput);
                         if (index == -1)
                         {
-                            inventory.Add(barInventory[keyInput - 1]);
-                            UsableItem temp = (UsableItem)inventory[inventory.Count - 1];
+                            barInventory[selectedItem].Purchase(player.Name, inventoryManager); //Purchase하면 Add도 안에 있음
+                            playerInventory = inventoryManager.GetInventory(player.Name); // 가방 상태 갱신
+                            UsableItem temp = (UsableItem)playerInventory[playerInventory.Count -1];                            
                             temp.Qty++;
                         }
                         else
                         {
-                            UsableItem temp = (UsableItem)inventory[index];
+                            UsableItem temp = (UsableItem)playerInventory[index];
                             temp.Qty++;
                         }
+                        player.Gold -= barInventory[selectedItem].Price;
 
-                        player.Gold -= barInventory[keyInput - 1].Price;
-                        string inventoryJson = JsonSerializer.Serialize(inventory);
-                        File.WriteAllText("Inventory.json", inventoryJson);
                         
-                    }                    
-                    // 2 : 돈이 충분해서 살 수 있는 경우 && USABLE이 아님                    
-                    //if (barInventory[keyInput - 1].Type != ItemType.USABLE && player.Gold >= barInventory[keyInput - 1].Price)
-                    //{
-                    //    player.Gold -= barInventory[keyInput - 1].Price;
-                    //    barInventory[keyInput - 1].Purchase();
-                    //    inventory.Add(barInventory[keyInput - 1]);
-                                                
-                    //    string inventoryJson = JsonSerializer.Serialize(inventory);
-                    //    File.WriteAllText("Inventory.json", inventoryJson);
 
-                    //    TakeoutMenu(prevMenu);
-                    //}
-                    // 3 : 돈이 모자라는 경우
+                    }     
+                    // 돈이 모자라는 경우
                     else
                     {
                         failBuy = !failBuy;
