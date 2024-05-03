@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Xml.Serialization;
 
 namespace SpartaDungeon
@@ -494,7 +495,7 @@ namespace SpartaDungeon
         {
             List<Monster> filteredMonsters = new List<Monster>();
             Random rand = new Random();
-
+            
             int minLevel = 1;
             int maxLevel = 10;
 
@@ -546,6 +547,10 @@ namespace SpartaDungeon
         {
             bool gameOver = false;
             int totalGold = 0;
+            int startLevel = player.Level;
+            float startHp = player.Hp;
+            float startExp = player.Exp;
+            int monsterCount = 0;
 
             while (!gameOver)
             {
@@ -563,6 +568,7 @@ namespace SpartaDungeon
                         Console.WriteLine($"Lv.{monster.Level} {monster.Name} HP: Dead");
                         Console.ResetColor();
                     }
+                    monsterCount = i;
                 }
 
                 Console.WriteLine($"\n[내정보]\nLv. {player.Level} {player.Name} ({player.Job})");
@@ -609,14 +615,17 @@ namespace SpartaDungeon
                             {
                                 targetMonster.Hp = 0;
                                 totalGold += targetMonster.Price;
+                                player.Exp += targetMonster.Level;
                             }
                             Console.WriteLine($"당신은 {targetMonster.Name}에게 {attackDamage}의 피해를 입혔습니다.");
                             Console.WriteLine("");
                             if (targetMonster.Hp == 0)
                             {
                                 Console.WriteLine($"{targetMonster.Name}이(가) 죽었습니다.");
-                                Console.WriteLine("");
+                                Console.WriteLine(""); 
+                                
                             }
+                            if (player.Exp >= player.MaxExp) player.LevelUp();
                         }
                         else
                         {
@@ -665,11 +674,11 @@ namespace SpartaDungeon
                     }
                 }
 
-                gameOver = CheckGameOver(monsters, totalGold);
+                gameOver = CheckGameOver(monsters, totalGold, monsterCount, startLevel, startHp, startExp);
             }
         }
 
-        private bool CheckGameOver(List<Monster> monsters, int totalGold)
+        private bool CheckGameOver(List<Monster> monsters, int totalGold, int monsterCount, float startLevel, float startHp, float startExp)
         {
             bool allMonstersDead = monsters.All(monster => monster.Hp <= 0);
             bool playerDead = player.Hp <= 0;
@@ -677,8 +686,15 @@ namespace SpartaDungeon
             if (allMonstersDead)
             {
                 Console.WriteLine("던전 공략에 성공하셨습니다.");
-                Console.WriteLine($"총 획득 골드: {totalGold}");
+                Console.WriteLine($"던전에서 몬스터 {monsterCount}마리를 잡았습니다.");
+
+                Console.WriteLine("[캐릭터 정보]");
+                Console.WriteLine($"Lv. {startLevel} {player.Job} -> Lv. {player.Level} {player.Job}");
+                Console.WriteLine($"HP {startHp} -> {player.Hp}");
+                Console.WriteLine($"Exp {startExp} -> {player.Exp}");
+                Console.WriteLine($"획득 골드: {totalGold}");
                 player.Gold += totalGold;
+                Console.WriteLine($"보유 골드: {player.Gold}");
                 Console.WriteLine("");
                 Console.WriteLine("1. 다시하기");
                 Console.WriteLine("0. 나가기");
@@ -696,6 +712,8 @@ namespace SpartaDungeon
             else if (playerDead)
             {
                 Console.WriteLine("던전 공략에 실패하셨습니다.");
+                Console.WriteLine($"Lv. {player.Level} {player.Job}");
+                Console.WriteLine($"HP. {startHp} -> 0");
                 Console.WriteLine("");
                 Console.WriteLine("1. 다시하기");
                 Console.WriteLine("0. 나가기");
@@ -749,9 +767,9 @@ namespace SpartaDungeon
                         }
                         Console.WriteLine("\t\t\t  \"키야~ 역시 한국인이라면 이 맥주를 마셔줘야지!\"");
                         player.Hp += player.Hp / 2;
-                        if (player.Hp > 100)
+                        if (player.Hp > player.MaxHp)
                         {
-                            player.Hp = 100;
+                            player.Hp = player.MaxHp;
                         }
                         player.Gold -= 100;
 
@@ -766,10 +784,10 @@ namespace SpartaDungeon
                             break;
                         }
                         Console.WriteLine("\t\t\"아차차~ 이런 술은 난생 처음 마셔봤네! 너무 맛있다! 자주 사먹어야겠는걸?\"");
-                        player.Hp += 50;
-                        if (player.Hp > 100)
+                        player.Hp += player.MaxHp / 2;
+                        if (player.Hp > player.MaxHp)
                         {
-                            player.Hp = 100;
+                            player.Hp = player.MaxHp;
                         }
                         player.Gold -= 300;
 
@@ -784,10 +802,10 @@ namespace SpartaDungeon
                             break;
                         }
                         Console.WriteLine("\t\t\t\t\t \"비싸구만.. \"");
-                        player.Hp += 100;
-                        if (player.Hp > 100)
+                        player.Hp += player.MaxHp;
+                        if (player.Hp > player.MaxHp)
                         {
-                            player.Hp = 100;
+                            player.Hp = player.MaxHp;
                         }
                         player.Gold -= 500;
 
