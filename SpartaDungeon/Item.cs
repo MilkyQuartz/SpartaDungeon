@@ -138,91 +138,88 @@ namespace SpartaDungeon
             PlayerName = null;
             inventoryManager.RemoveItem(playerName, this); 
         }
-    }
 
-    // 호출예시 Item.SearchIndexInInventoryAtName(targetList, searchList, keyInput)
-    public static int SearchIndexInInventoryAtName(List<Item> targetList, List<UsableItem> searchList, int keyInput)
-    {
-        if (keyInput < 1 || keyInput > searchList.Count)
+        // 호출예시 Item.SearchIndexInInventoryAtName(targetList, searchList, keyInput)
+        public static int SearchIndexInInventoryAtName(List<Item> targetList, List<UsableItem> searchList, int keyInput)
         {
-            // keyInput이 searchList의 인덱스 범위 밖에 있을 경우 처리
-            return -1; // 범위를 벗어나면 기본값으로 -1 반환
-        }
-        for (int i = 0; i < targetList.Count; ++i)
-        {
-            if (targetList[i].Name == searchList[keyInput - 1].Name)
+            if (keyInput < 1 || keyInput > searchList.Count)
             {
-                return i;
+                // keyInput이 searchList의 인덱스 범위 밖에 있을 경우 처리
+                return -1; // 범위를 벗어나면 기본값으로 -1 반환
             }
+            for (int i = 0; i < targetList.Count; ++i)
+            {
+                if (targetList[i].Name == searchList[keyInput - 1].Name)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
-        return -1;
-    }
-}
-
-internal class UsableItem : Item
-{
-    public float Value { get; set; }
-    public int Qty { get; set; } //Quantity
-
-
-    public UsableItem(string name, string desc, ItemType type, int atk, int def, int hp, int price, float value, int qty, bool isEquipped = false, bool isPurchased = false) : base(name, desc, type, atk, def, hp, price, isEquipped = false, isPurchased = false)
-    {
-        Value = value;
-        Qty = qty;
     }
 
-    // 호출예시 : 배틀 -> 아이템사용하기 -> 아이템선택 선택한 아이템.UseHealItem(Value);
-    void UseItem(Object target, float value)
+   
+    internal class UsableItem : Item
     {
+        public float Value { get; set; }
+        public int Qty { get; set; } //Quantity
 
 
-
-    }
-    //void Castera()
-    //{
-    //    player.Hp = (player.Hp + player.Hp * 0.5) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + player.Hp * 0.5);
-    //}
-
-    //void FixedHeal(float _hp)
-    //{
-    //    player.Hp = (player.Hp + _hp) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + _hp);
-    //}
-
-    //void PercentHeal(float _percent)
-    //{
-    //    player.Hp = (player.Hp + player.MaxHp * _percent) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + player.MaxHp * _percent);
-    //}
-    public void PrintUsableItemDescription(bool withNumber = false, int idx = 0)
-    {
-        Console.Write("- ");
-
-        if (withNumber)
+        public UsableItem(string name, string desc, ItemType type, int atk, int def, int hp, int mp, int price, float value, int qty, string playerName = null, bool isEquipped = false, bool isPurchased = false) : base(name, desc, type, atk, def, hp, mp, price, playerName = null, isEquipped = false, isPurchased = false)
         {
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.Write("{0} ", idx);
-            Console.ResetColor();
+            Value = value;
+            Qty = qty;
         }
-        Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));
 
-        Console.Write(" | ");
-        // 설명 출력
-        Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 20));
+        // 호출예시 : 배틀 -> 아이템사용하기 -> 아이템선택 선택한 아이템.UseHealItem(Value);
+        void UseItem(Object target, float value)
+        {
 
-        Console.Write(" | ");
 
-        ConsoleUtility.PrintTextHighlightsNoLF("", Price.ToString(), " G");
 
-        Console.Write(" | ");
-        // 수량 출력
-        ConsoleUtility.PrintTextHighlights("보유수 ", Qty.ToString(), "");
+        }
+        //void Castera()
+        //{
+        //    player.Hp = (player.Hp + player.Hp * 0.5) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + player.Hp * 0.5);
+        //}
+
+        //void FixedHeal(float _hp)
+        //{
+        //    player.Hp = (player.Hp + _hp) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + _hp);
+        //}
+
+        //void PercentHeal(float _percent)
+        //{
+        //    player.Hp = (player.Hp + player.MaxHp * _percent) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + player.MaxHp * _percent);
+        //}
+        public void PrintUsableItemDescription(bool withNumber = false, int idx = 0)
+        {
+            Console.Write("- ");
+
+            if (withNumber)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write("{0} ", idx);
+                Console.ResetColor();
+            }
+            Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));
+
+            Console.Write(" | ");
+            // 설명 출력
+            Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 20));
+
+            Console.Write(" | ");
+
+            ConsoleUtility.PrintTextHighlightsNoLF("", Price.ToString(), " G");
+
+            Console.Write(" | ");
+            // 수량 출력
+            ConsoleUtility.PrintTextHighlights("보유수 ", Qty.ToString(), "");
+        }
     }
 
 
-
-}
-
-
-internal class InventoryManager
+    internal class InventoryManager
     {
         private Dictionary<string, List<Item>> inventory;
 
@@ -231,7 +228,7 @@ internal class InventoryManager
             if (inventory.ContainsKey(playerName))
                 return inventory[playerName];
             else
-                return new List<Item>(); 
+                return new List<Item>();
         }
 
         public InventoryManager()

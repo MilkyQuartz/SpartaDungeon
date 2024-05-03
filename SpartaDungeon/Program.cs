@@ -56,8 +56,7 @@ namespace SpartaDungeon
             questList.Add( new Quest("몬스터 사냥", "몬스터를 사냥하세요", "몬스터", 100));
             myQuest = new List<Quest>();
             completeQuest = new List<Quest>();
-            casino = new Casino(player);
-            
+            casino = new Casino(player);            
             takeout = new Takeout(player, barInventory, inventory);
 
             skill = new List<Skill>();
@@ -187,7 +186,7 @@ namespace SpartaDungeon
             {
                 case 0:
                     MainMenu();
-                    break;               
+                    break;
             }
         }
 
@@ -199,23 +198,32 @@ namespace SpartaDungeon
             Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.");
             Console.WriteLine("");
             Console.WriteLine("[아이템 목록]");
+
             // InventoryManager 클래스의 인스턴스 생성
             InventoryManager inventoryManager = new InventoryManager();
 
             // 인벤토리 정보를 로드
             List<Item> inventory = inventoryManager.GetInventory(player.Name);
-            for (int i = 0; i < inventory.Count; i++)
-            {
-                if (inventory[i] is UsableItem usableItem)
-                {
-                    usableItem.PrintUsableItemDescription();
-                }
-                else
-                {
-                    inventory[i].PrintItemStatDescription();
-                }               
-            }
 
+            // 만약 인벤토리가 비어있다면 메시지 출력
+            if (inventory.Count == 0)
+            {
+
+                Console.WriteLine("인벤토리가 비어 있습니다.");
+            }
+            else {
+                for (int i = 0; i < inventory.Count; i++)
+                {
+                    if (inventory[i] is UsableItem usableItem)
+                    {
+                        usableItem.PrintUsableItemDescription();
+                    }
+                    else
+                    {
+                        inventory[i].PrintItemStatDescription();
+                    }
+                }
+            }             
             Console.WriteLine("");
             Console.WriteLine("0. 나가기");
             Console.WriteLine("1. 장착관리");
@@ -270,7 +278,7 @@ namespace SpartaDungeon
                     break;
                 default: 
                     //Usable인지 체크
-                    if (inventory[KeyInput - 1].Type==ItemType.USABLE)
+                    if (inventory[selectedItem].Type==ItemType.USABLE)
                     {
                         Console.WriteLine("장비할 수 없는 아이템입니다.");
                         Thread.Sleep(500);
@@ -880,16 +888,13 @@ namespace SpartaDungeon
                 Console.WriteLine($"현재 체력:{player.Hp} | 현재 골드: {player.Gold}");
                 Console.WriteLine("");
 
-            Console.WriteLine("");
-            Console.WriteLine(" 1. [카스테라주] 자신의 보유 체력의 50%를 채워준다.(체력 50일때 +25)     - 가격 : 100G");
-            Console.WriteLine(" 2. [복분자주] 정읍의 자랑, 100을 기준으로 체력을 50% 채워준다.          - 가격 : 300G");
-            Console.WriteLine(" 3. [조니왔다] 유명 위스키, 100을 기준으로 체력을 100% 채워준다.         - 가격 : 500G");
-            Console.WriteLine(" 4. 테이크아웃 요청");
-            Console.WriteLine(" 0. 나가기");
-            Console.WriteLine("");
-
-            while (true)
-            {
+                Console.WriteLine("");
+                Console.WriteLine("1. [카스테라주] 자신의 보유 체력의 50%를 채워준다.(체력 50일때 +25)     - 가격 : 100G");
+                Console.WriteLine("2. [복분자주] 정읍의 자랑, 100을 기준으로 체력을 50% 채워준다.          - 가격 : 300G");
+                Console.WriteLine("3. [조니왔다] 유명 위스키, 100을 기준으로 체력을 100% 채워준다.         - 가격 : 500G");
+                Console.WriteLine("4. 테이크아웃 요청");
+                Console.WriteLine("0. 나가기");
+                Console.WriteLine("");
                 switch (ConsoleUtility.PromptMenuChoice(0, 4))
                 {
                     case 0:

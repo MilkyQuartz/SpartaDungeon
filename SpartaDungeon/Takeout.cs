@@ -17,17 +17,21 @@ namespace SpartaDungeon
         Player player;
         List<UsableItem> barInventory;
         List<Item> inventory;
+        // InventoryManager 클래스의 인스턴스 생성
+            InventoryManager inventoryManager = new InventoryManager();
 
+          
 
         public Takeout(Player _player, List<UsableItem> _BarInventory, List<Item> _inventory)
         {
             player = _player;
             barInventory = _BarInventory;
             inventory = _inventory;
+            inventory = inventoryManager.GetInventory(player.Name);
         }
 
         public void TakeoutMenu(Action Menu)
-        {
+        {            
             Action prevMenu = Menu;
             bool failBuy = false;
             Console.Clear();
@@ -86,17 +90,17 @@ namespace SpartaDungeon
                         
                     }                    
                     // 2 : 돈이 충분해서 살 수 있는 경우 && USABLE이 아님                    
-                    if (barInventory[keyInput - 1].Type != ItemType.USABLE && player.Gold >= barInventory[keyInput - 1].Price)
-                    {
-                        player.Gold -= barInventory[keyInput - 1].Price;
-                        barInventory[keyInput - 1].Purchase();
-                        inventory.Add(barInventory[keyInput - 1]);
+                    //if (barInventory[keyInput - 1].Type != ItemType.USABLE && player.Gold >= barInventory[keyInput - 1].Price)
+                    //{
+                    //    player.Gold -= barInventory[keyInput - 1].Price;
+                    //    barInventory[keyInput - 1].Purchase();
+                    //    inventory.Add(barInventory[keyInput - 1]);
                                                 
-                        string inventoryJson = JsonSerializer.Serialize(inventory);
-                        File.WriteAllText("Inventory.json", inventoryJson);
+                    //    string inventoryJson = JsonSerializer.Serialize(inventory);
+                    //    File.WriteAllText("Inventory.json", inventoryJson);
 
-                        TakeoutMenu(prevMenu);
-                    }
+                    //    TakeoutMenu(prevMenu);
+                    //}
                     // 3 : 돈이 모자라는 경우
                     else
                     {
