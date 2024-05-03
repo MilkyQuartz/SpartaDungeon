@@ -385,7 +385,7 @@ namespace SpartaDungeon
                 players.Add(this);
                 // 플레이어의 인벤토리 정보 저장
                 InventoryManager inventoryManager = new InventoryManager();
-                inventoryManager.LoadInventoryIndirectly();
+                inventoryManager.SaveInventory();
             }
 
             // 리스트를 Json 형식으로 직렬화하여 파일에 저장
