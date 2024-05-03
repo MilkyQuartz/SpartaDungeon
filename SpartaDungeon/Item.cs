@@ -123,7 +123,7 @@ namespace SpartaDungeon
             IsEquipped = !IsEquipped;
         }
 
-        // 구매 // 호출예시: storeInventory[selectedItem].Purchase(player.Name, inventoryManager);
+        // 구매
         public void Purchase(string playerName, InventoryManager inventoryManager)
         {
             IsPurchased = true;
@@ -140,16 +140,16 @@ namespace SpartaDungeon
         }
 
         // 호출예시 Item.SearchIndexInInventoryAtName(targetList, searchList, keyInput)
-        public static int SearchIndexInInventoryAtName(List<Item> targetList, List<UsableItem> searchList, int selectedItem)
+        public static int SearchIndexInInventoryAtName(List<Item> targetList, List<UsableItem> searchList, int keyInput)
         {
-            if (selectedItem < 0 || selectedItem + 1 > searchList.Count)
+            if (keyInput < 1 || keyInput > searchList.Count)
             {
                 // keyInput이 searchList의 인덱스 범위 밖에 있을 경우 처리
                 return -1; // 범위를 벗어나면 기본값으로 -1 반환
             }
             for (int i = 0; i < targetList.Count; ++i)
             {
-                if (targetList[i].Name == searchList[selectedItem].Name)
+                if (targetList[i].Name == searchList[keyInput - 1].Name)
                 {
                     return i;
                 }
@@ -218,7 +218,7 @@ namespace SpartaDungeon
         }
     }
 
-    
+
     internal class InventoryManager
     {
         private Dictionary<string, List<Item>> inventory;
@@ -258,6 +258,7 @@ namespace SpartaDungeon
                     }
                 }
             }
+
             return playerInventory;
         }
 
@@ -267,13 +268,6 @@ namespace SpartaDungeon
             File.WriteAllText("Inventory.json", jsonInventory);
         }
 
-        public void LoadInventoryIndirectly()
-        {
-            string jsonInventory = JsonSerializer.Serialize(inventory);
-            File.WriteAllText("Inventory.json", jsonInventory);
-        }
-
-        
         public void AddItem(string playerName, Item item)
         {
             if (!inventory.ContainsKey(playerName))
