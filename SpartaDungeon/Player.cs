@@ -3,6 +3,7 @@ using System.Xml.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using static SpartaDungeon.Casino_Blackjack;
 
 namespace SpartaDungeon
 {
@@ -348,11 +349,16 @@ namespace SpartaDungeon
             if (!playerExists)
             {
                 players.Add(this);
+                // 플레이어의 인벤토리 정보 저장
+                InventoryManager inventoryManager = new InventoryManager();
+                inventoryManager.LoadInventoryIndirectly();
             }
 
             // 리스트를 Json 형식으로 직렬화하여 파일에 저장
             var jsonToWrite = JsonSerializer.Serialize(players);
             File.WriteAllText("Player.json", jsonToWrite);
+
+
         }
 
         public void SavePlayerIndirectly()

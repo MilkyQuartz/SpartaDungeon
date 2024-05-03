@@ -157,14 +157,14 @@ namespace SpartaDungeon
 
         private Dictionary<string, List<Item>> LoadInventory()
         {
-            Dictionary<string, List<Item>> loadedInventory = new Dictionary<string, List<Item>>();
+            Dictionary<string, List<Item>> playerInventory = new Dictionary<string, List<Item>>();
 
             if (File.Exists("Inventory.json") && new FileInfo("Inventory.json").Length > 0)
             {
                 try
                 {
                     string json = File.ReadAllText("Inventory.json");
-                    loadedInventory = JsonSerializer.Deserialize<Dictionary<string, List<Item>>>(json);
+                    playerInventory = JsonSerializer.Deserialize<Dictionary<string, List<Item>>>(json);
                 }
                 catch (JsonException ex)
                 {
@@ -172,13 +172,19 @@ namespace SpartaDungeon
                 }
             }
 
-            return loadedInventory;
+            return playerInventory;
         }
 
         public void SaveInventory()
         {
-            string updatedJson = JsonSerializer.Serialize(inventory);
-            File.WriteAllText("Inventory.json", updatedJson);
+            string jsonInventory = JsonSerializer.Serialize(inventory);
+            File.WriteAllText("Inventory.json", jsonInventory);
+        }
+
+        public void LoadInventoryIndirectly()
+        {
+            string jsonInventory = JsonSerializer.Serialize(inventory);
+            File.WriteAllText("Inventory.json", jsonInventory);
         }
 
         public void AddItem(string playerName, Item item)
