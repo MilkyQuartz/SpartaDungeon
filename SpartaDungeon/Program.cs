@@ -303,7 +303,7 @@ namespace SpartaDungeon
                     // 퀘스트 아이템 장착시 퀘스트 목표 달성
                     for (int i = 0; i < myQuest.Count; i++)
                     {
-                        if (myQuest[i].Require == inventory[KeyInput - 1].Name)
+                        if (myQuest[i].Require == inventory[selectedItem].Name)
                         {
                             myQuest[i].Progress++;
                         }
