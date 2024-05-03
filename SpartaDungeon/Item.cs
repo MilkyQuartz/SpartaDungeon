@@ -218,11 +218,17 @@ namespace SpartaDungeon
         }
     }
 
-
+    
     internal class InventoryManager
     {
         private Dictionary<string, List<Item>> inventory;
+        public InventoryManager()
+        {
+            inventory = LoadInventory();
+        }
 
+        // player의 inventory에 변화를 준 코드 뒤엔 바로 GetInventory()를 호출해서 inventory를 갱신하세요.
+        // 갱신없이 player의 inventory에 접근하면 변화가 있기 전의 inventory를 가져옵니다.
         public List<Item> GetInventory(string playerName)
         {
             if (inventory.ContainsKey(playerName))
@@ -231,10 +237,6 @@ namespace SpartaDungeon
                 return new List<Item>();
         }
 
-        public InventoryManager()
-        {
-            inventory = LoadInventory();
-        }
 
         private Dictionary<string, List<Item>> LoadInventory()
         {
