@@ -586,6 +586,7 @@ namespace SpartaDungeon
 
             while (!gameOver)
             {
+                Console.WriteLine("");
                 Console.WriteLine("[Battle!!]\n");
 
                 // 몬스터 정보 출력
@@ -681,22 +682,24 @@ namespace SpartaDungeon
                         break;
                 }
 
-                Console.WriteLine("[Monster Turn!]"); // 아직 몬스터 스킬 수정 필요합니당.. 스킬당 데미지 확률로 바꾸려구용~~
+                Console.WriteLine("[Monster Turn!]");
                 Random rand = new Random();
 
                 foreach (var monster in monsters)
                 {
-                    MonsterSkill randomSkill = monster.MonsterSkills[rand.Next(monster.MonsterSkills.Count)]; // 스킬 랜덤으로 사용
+                    MonsterSkill randomSkill = monster.MonsterSkills[rand.Next(monster.MonsterSkills.Count)]; 
 
                     if (monster.Hp > 0)
                     {
-                        int minAttack = (int)(monster.Atk * 0.9f);
-                        int maxAttack = (int)(monster.Atk * 1.1f);
-                        int attackDamage = new Random().Next(minAttack, maxAttack + 1);
+                        var damage = randomSkill.MonsterDamage;
 
-                        // 몬스터의 스킬 사용
-                        if (attackDamage >= 0)
+                        if (damage >= 0)
                         {
+                            int minAttack = (int)(damage * 0.9f); 
+                            int maxAttack = (int)(damage * 1.1f);
+
+                            int attackDamage = rand.Next(minAttack, maxAttack + 1);
+
                             player.Hp -= attackDamage;
                             if (player.Hp <= 0)
                             {
@@ -706,15 +709,13 @@ namespace SpartaDungeon
                         }
                         else
                         {
-                            // 회복량 표시
-                            int healAmount = Math.Abs(attackDamage);
+                            var healAmount = Math.Abs(damage);
                             player.Hp += healAmount;
-                            Console.WriteLine($"{monster.Name}(이)가 {healAmount}만큼 회복되었습니다.");
-                            Console.WriteLine("");
+                            Console.WriteLine($"{monster.Name}(이)가 [{randomSkill.MonsterSkillName}] 스킬을 사용했습니다! {healAmount}만큼 회복되었습니다.");
                         }
-
                     }
                 }
+
 
                 gameOver = CheckGameOver(monsters, totalGold);
             }
