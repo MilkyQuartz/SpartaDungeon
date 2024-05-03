@@ -14,7 +14,6 @@ namespace SpartaDungeon
 
         END = 10
     }
-
     internal class Player
     {
         public string Name { get; set; }
@@ -29,6 +28,9 @@ namespace SpartaDungeon
         public int Gold { get; set; }
         public float MaxExp { get; set; }
         public float Exp { get; set; }
+
+        //public List<Skill> Skills { get; set; }
+
         public float BonusAtk { get; set; }
         public float BonusDef { get; set; }
         public float BonusHp { get; set; }
@@ -53,6 +55,7 @@ namespace SpartaDungeon
             MaxMp = maxMp;
             Gold = gold;
             MaxExp = maxExp;
+            //Skills = new List<Skill>();
         }
 
         // Level Up
@@ -180,9 +183,9 @@ namespace SpartaDungeon
             Console.WriteLine("경비병 : 거기 멈춰서라.");
             Console.WriteLine("경비병 : 우리 마을은 정체도 모르는 이방인을 안으로 들이지 않는다.");
             Console.WriteLine("");
-            Console.WriteLine("[0] 새로운 모험을 떠나기 위해 왔다.         [1] 내 얼굴도 기억하지 못하냐.");
+            Console.WriteLine("[0] 새로운 모험을 떠나기 위해 왔다.         [1] 내 얼굴도 기억하지 못하냐.         \n[2] 나는 무적의 개발자다.(플레이어, 인벤토리 초기화)");
 
-            switch (ConsoleUtility.PromptMenuChoice(0, 1))
+            switch (ConsoleUtility.PromptMenuChoice(0, 2))
             {
                 case 0:
                     StartNewAdventure(MainMenu);
@@ -190,7 +193,38 @@ namespace SpartaDungeon
                 case 1:
                     RememberMyFace(player, MainMenu);
                     break;
+                case 2:
+                    DeveloperBtn(player, MainMenu);
+                    break;
             }
+        }
+
+        private void DeveloperBtn(Player player, Action mainMenu)
+        {
+            Console.WriteLine("[1] 모두 초기화         [2] 플레이어 초기화         [3] 인벤토리 초기화");
+            int keyinput = ConsoleUtility.PromptMenuChoice(0, 2);
+            switch (keyinput)
+            {
+                case 1:
+                    // 모든 파일 초기화
+                    File.WriteAllText("Player.json", "");
+                    File.WriteAllText("Inventory.json", "");
+                    // 나머지 파일도 필요한 경우 추가
+
+                    break;
+                case 2:
+                    // 플레이어 파일 초기화
+                    File.WriteAllText("Player.json", "");
+                    break;
+                case 3:
+                    // 인벤토리 파일 초기화
+                    File.WriteAllText("Inventory.json", "");
+                    break;
+                default:
+                    Console.WriteLine("잘못된 입력입니다.");
+                    break;
+            }
+
         }
 
         private void StartNewAdventure(Action MainMenu)

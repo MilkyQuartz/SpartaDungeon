@@ -16,7 +16,7 @@ namespace SpartaDungeon
 
         Random random = new Random();
 
-        public Skill(string name, string desc, int mp, int damage = 0)
+        public Skill(string name, string desc, int mp, float damage = 0.0f)
         {
             Name = name;
             Desc = desc;
@@ -124,7 +124,7 @@ namespace SpartaDungeon
         {
 
             Console.WriteLine($"{Name}를 뽑았습니다");
-            Console.WriteLine($"\"파랑이 좋겠어\"");            
+            Console.WriteLine($"\"파랑이 좋겠어\"");
 
         }
 

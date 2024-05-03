@@ -159,16 +159,22 @@ namespace SpartaDungeon
         {
             Dictionary<string, List<Item>> playerInventory = new Dictionary<string, List<Item>>();
 
-            if (File.Exists("Inventory.json") && new FileInfo("Inventory.json").Length > 0)
+            if (File.Exists("Inventory.json"))
             {
-                try
+                // 파일 크기 확인
+                long fileSize = new FileInfo("Inventory.json").Length;
+
+                if (fileSize > 0)
                 {
-                    string json = File.ReadAllText("Inventory.json");
-                    playerInventory = JsonSerializer.Deserialize<Dictionary<string, List<Item>>>(json);
-                }
-                catch (JsonException ex)
-                {
-                    Console.WriteLine($"Error loading inventory: {ex.Message}");
+                    try
+                    {
+                        string json = File.ReadAllText("Inventory.json");
+                        playerInventory = JsonSerializer.Deserialize<Dictionary<string, List<Item>>>(json);
+                    }
+                    catch (JsonException ex)
+                    {
+                        Console.WriteLine($"Error loading inventory: {ex.Message}");
+                    }
                 }
             }
 

@@ -11,20 +11,22 @@ namespace SpartaDungeon
     public class GameManager
     {
         private static GameManager instance;
+        private InventoryManager inventoryManager;
         private Player player;
         private List<Item> inventory;
         private List<Item> storeInventory;
         private List<Monster> monsters;
+        private List<Skill> skill;
         private Dictionary<ItemType, int> compareDic;
         private List<Quest> questList;
         private List<Quest> myQuest;
         private List<Quest> completeQuest;
         private Casino casino;
-        private List<Skill> skill;
 
         public GameManager()
         {
             InitializeGame();
+            
         }
 
         public static GameManager Instance
@@ -54,16 +56,8 @@ namespace SpartaDungeon
             myQuest = new List<Quest>();
             completeQuest = new List<Quest>();
             casino = new Casino(player);
-
-            skill = new List<Skill>();
-            skill.Add(new Skill("주사위 굴리기", "주사위를 2개 굴려서 나온 주사위 눈에따라 스킬발동확률과 스킬데미지가 정해집니다.\n" +
-                                                 "빨간주사위는 발동확률을 파란주사위는 데미지를 결정합니다.\n" +
-                                                 "주사위 눈에 따른 발동확률: 1 - 50%, 2 - 55%, 3 - 62%, 4 - 71%, 5 - 83%, 6 - 100%\n" +
-                                                 "주사위 눈에 따른 데미지 : (플레이어의 공격력 / 2) X 주사위의 눈", 5));
-            skill.Add(new Skill("카드뽑기", "도박사 트페가 빨간색, 파란색, 황금색의 카드 중에서 한장을 뽑아줍니다.\n" +
-                                            "빨간색 카드 - 일반 공격력의 2배의 데미지의 공격을 합니다.\n" +
-                                            "파란색 카드 - 20%의 MP를 회복시켜 줍니다.\n" +
-                                            "황금색 카드 - MP를 모두 소진시켜 5배의 데미지의 공격을 합니다.", 10));
+            skill = JsonSerializer.Deserialize<List<Skill>>(File.ReadAllText("Skill.json"));
+            inventoryManager = new InventoryManager();
         }
 
         public void StartGame()
@@ -149,7 +143,6 @@ namespace SpartaDungeon
             Console.WriteLine($"{player.Name} ({player.Job})");
 
             // TODO : 능력치 강화분을 표현하도록 변경
-            InventoryManager inventoryManager = new InventoryManager();
             List<Item> playerInventory = inventoryManager.GetInventory(player.Name);
             player.BonusAtk = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Atk);
             player.BonusDef = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Def);
@@ -200,9 +193,6 @@ namespace SpartaDungeon
             Console.WriteLine("");
             Console.WriteLine("[아이템 목록]");
 
-            // InventoryManager 클래스의 인스턴스 생성
-            InventoryManager inventoryManager = new InventoryManager();
-
             // 인벤토리 정보를 로드
             List<Item> inventory = inventoryManager.GetInventory(player.Name);
 
@@ -244,8 +234,7 @@ namespace SpartaDungeon
             Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.");
             Console.WriteLine("");
             Console.WriteLine("[아이템 목록]");
-            // InventoryManager 클래스의 인스턴스 생성
-            InventoryManager inventoryManager = new InventoryManager();
+
 
             // 인벤토리 정보를 로드
             List<Item> inventory = inventoryManager.GetInventory(player.Name);
@@ -304,6 +293,7 @@ namespace SpartaDungeon
                     }
                     // 인벤토리 파일 업데이트
                     inventoryManager.SaveInventory();
+                    player.SavePlayerIndirectly();
 
                     EquipMenu();
                     break;
@@ -347,7 +337,6 @@ namespace SpartaDungeon
 
         private void PurchaseMenu(string? prompt = null)
         {
-            InventoryManager inventoryManager = new InventoryManager();
             if (prompt != null)
             {
                 // 1초간 메시지를 띄운 다음에 다시 진행
@@ -407,7 +396,6 @@ namespace SpartaDungeon
 
         private void SellMenu(string? prompt = null) // 추가요소 상점 판매
         {
-            InventoryManager inventoryManager = new InventoryManager();
             if (prompt != null)
             {
                 // 1초간 메시지를 띄운 다음에 다시 진행
@@ -471,6 +459,7 @@ namespace SpartaDungeon
                             case 1:
                                 // 장비해제
                                 inventory[selectedItem].ToggleEquipStatus();
+                                player.SavePlayerIndirectly();
                                 // 판매
                                 Sell(keyInput);
                                 break;
@@ -720,12 +709,14 @@ namespace SpartaDungeon
         private int UsingSkill(int totalGold , List<Monster> monsters)
         {
             Console.WriteLine("사용할 스킬을 선택하세요.\n");
+
             for(int i = 0; i< skill.Count; i++)
             {
                 Console.WriteLine($"{i + 1}. {skill[i].Name}");
             }
 
             int skillChoice = ConsoleUtility.PromptMenuChoice(1, skill.Count) - 1;
+            Console.WriteLine($"당신은 [{skill[skillChoice].Name}] 스킬을 선택했습니다.");
 
             Console.WriteLine(" 스킬을 사용할 대상을 선택하세요.\n");
             for (int i = 0; i < monsters.Count; i++)
@@ -1152,13 +1143,14 @@ namespace SpartaDungeon
         public void GameOverMenu()
         {
             Console.Clear();
-
             ConsoleUtility.ShowTitle("■ 게임종료 ■");
             Console.WriteLine("다음에 다시 만나요.");
             Console.WriteLine("");
 
             Console.Write(">> ENTER");
             Console.ReadKey();
+            player.SavePlayerIndirectly();
+
 
             Environment.Exit(0);
         }
