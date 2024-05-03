@@ -43,7 +43,7 @@ namespace SpartaDungeon
         {
             player = new Player(name: "", job: "", level: 1, atk: 10, def: 5, hp: 100, maxHp: 100, mp: 20, maxMp: 20, gold: 10000, maxExp: 10);
             compareDic = new Dictionary<ItemType, int>();
-            inventory = new List<Item>();
+            //inventory = new List<Item>();
             storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json"));
             monsters = JsonSerializer.Deserialize<List<Monster>>(File.ReadAllText("Monster.json"));
 
@@ -144,11 +144,12 @@ namespace SpartaDungeon
             Console.WriteLine($"{player.Name} ({player.Job})");
 
             // TODO : 능력치 강화분을 표현하도록 변경
-
-            player.BonusAtk = inventory.Select(item => item.IsEquipped ? item.Atk : 0).Sum();
-            player.BonusDef = inventory.Select(item => item.IsEquipped ? item.Def : 0).Sum();
-            player.BonusHp = inventory.Select(item => item.IsEquipped ? item.Hp : 0).Sum();
-            player.BonusMp = inventory.Select(item => item.IsEquipped ? item.Hp : 0).Sum();
+            InventoryManager inventoryManager = new InventoryManager();
+            List<Item> playerInventory = inventoryManager.GetInventory(player.Name);
+            player.BonusAtk = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Atk);
+            player.BonusDef = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Def);
+            player.BonusHp = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Hp);
+            player.BonusMp = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Mp);
 
             ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + player.BonusAtk).ToString(), player.BonusAtk > 0 ? $" (+{player.BonusAtk})" : "");
             ConsoleUtility.PrintTextHighlights("방어력 : ", (player.Def + player.BonusDef).ToString(), player.BonusDef > 0 ? $" (+{player.BonusDef})" : "");
@@ -172,7 +173,7 @@ namespace SpartaDungeon
             Console.WriteLine("0. 뒤로가기");
             Console.WriteLine("");
 
-            switch (ConsoleUtility.PromptMenuChoice(0, 1))//0))
+            switch (ConsoleUtility.PromptMenuChoice(0, 1)) //0))
             {
                 case 0:
                     MainMenu();
@@ -180,7 +181,6 @@ namespace SpartaDungeon
                 case 1:
                     //아래테스트영역 삭제가능
                     Potion.HealMenu(player, player.potion, StatusMenu);
-
                     break;
                     //위 테스트영역 삭제가능
             }
@@ -195,9 +195,24 @@ namespace SpartaDungeon
             Console.WriteLine("");
             Console.WriteLine("[아이템 목록]");
 
-            for (int i = 0; i < inventory.Count; i++)
+            // InventoryManager 클래스의 인스턴스 생성
+            InventoryManager inventoryManager = new InventoryManager();
+
+            // 인벤토리 정보를 로드
+            List<Item> inventory = inventoryManager.GetInventory(player.Name);
+
+            // 만약 인벤토리가 비어있다면 메시지 출력
+            if (inventory.Count == 0)
             {
-                inventory[i].PrintItemStatDescription();
+                Console.WriteLine("인벤토리가 비어 있습니다.");
+            }
+            else
+            {
+                // 인벤토리에 아이템이 있는 경우 아이템 목록 출력
+                for (int i = 0; i < inventory.Count; i++)
+                {
+                    inventory[i].PrintItemStatDescription();
+                }
             }
 
             Console.WriteLine("");
@@ -216,7 +231,7 @@ namespace SpartaDungeon
             }
         }
 
-        private void EquipMenu()
+            private void EquipMenu()
         {
             Console.Clear();
 
@@ -224,7 +239,13 @@ namespace SpartaDungeon
             Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.");
             Console.WriteLine("");
             Console.WriteLine("[아이템 목록]");
-            if (inventory.Count == 1 && inventory[0] == null)
+            // InventoryManager 클래스의 인스턴스 생성
+            InventoryManager inventoryManager = new InventoryManager();
+
+            // 인벤토리 정보를 로드
+            List<Item> inventory = inventoryManager.GetInventory(player.Name);
+
+            if (inventory.Count == 0)
             {
                 Console.WriteLine("보유 중인 아이템이 존재하지 않습니다.");
             }
@@ -238,9 +259,10 @@ namespace SpartaDungeon
             Console.WriteLine("");
             Console.WriteLine("0. 나가기");
 
-            int KeyInput = ConsoleUtility.PromptMenuChoice(0, inventory.Count);
+            int keyInput = ConsoleUtility.PromptMenuChoice(0, inventory.Count);
+            int selectedItem = keyInput - 1;
 
-            switch (KeyInput)
+            switch (keyInput)
             {
                 case 0:
                     InventoryMenu();
@@ -248,36 +270,35 @@ namespace SpartaDungeon
                 default: // 추가요소 장비교체
                     // 같은 아이템 선택하면 장비해제로 가고 같은타입이면 기존장비 해제 후 그 장비 착용
                     // null이면 착용, null이 아니면 키값Type 비교, 같으면 해제 후 착용, 같아도 Value Name이 같으면 장비해제 
-                    if (!compareDic.ContainsKey(inventory[KeyInput - 1].Type))
+                    if (!compareDic.ContainsKey(inventory[selectedItem].Type))
                     {
-                        inventory[KeyInput - 1].ToggleEquipStatus();
-                        compareDic.Add(inventory[KeyInput - 1].Type, KeyInput - 1);
+                        inventory[selectedItem].ToggleEquipStatus();
+                        compareDic.Add(inventory[selectedItem].Type, selectedItem);
                     }
                     else // 같은 자리에 장비를 끼고있다 == 선택된 장비와 타입이 같다 같은 타입이면서 다른 장비이면 바꿔끼기.
                     {
                         foreach (KeyValuePair<ItemType, int> dic in compareDic)
                         {
-                            if (!(dic.Value == KeyInput - 1)) //dic에 저장된 장비가 선택한 장비와 같은 장비인지 비교 다르면
+                            if (!(dic.Value == selectedItem)) //dic에 저장된 장비가 선택한 장비와 같은 장비인지 비교 다르면
                             {
                                 inventory[dic.Value].ToggleEquipStatus(); // 기존장비 해제
                                 compareDic.Remove(dic.Key); // 기존장비 삭제     
 
-                                inventory[KeyInput - 1].ToggleEquipStatus(); //골랐던 장비 착용
-                                compareDic.Add(inventory[KeyInput - 1].Type, KeyInput - 1);
+                                inventory[selectedItem].ToggleEquipStatus(); //골랐던 장비 착용
+                                compareDic.Add(inventory[selectedItem].Type, selectedItem);
                                 break;
                             }
                             //같은 타입이면서 같은 장비이면 장비해제.
                             else
                             {
-                                inventory[KeyInput - 1].ToggleEquipStatus();
+                                inventory[selectedItem].ToggleEquipStatus();
                                 compareDic.Remove(dic.Key); // 기존장비 삭제 
                                 break;
                             }
                         }
                     }
                     // 인벤토리 파일 업데이트
-                    string inventoryJson = JsonSerializer.Serialize(inventory);
-                    File.WriteAllText("Inventory.json", inventoryJson);
+                    inventoryManager.SaveInventory();
 
                     // 퀘스트 아이템 장착시 퀘스트 목표 달성
                     for (int i = 0; i < myQuest.Count; i++)
@@ -330,6 +351,7 @@ namespace SpartaDungeon
 
         private void PurchaseMenu(string? prompt = null)
         {
+            InventoryManager inventoryManager = new InventoryManager();
             if (prompt != null)
             {
                 // 1초간 메시지를 띄운 다음에 다시 진행
@@ -355,6 +377,7 @@ namespace SpartaDungeon
             Console.WriteLine("0. 나가기");
             Console.WriteLine("");
             int keyInput = ConsoleUtility.PromptMenuChoice(0, storeInventory.Count);
+            int selectedItem = keyInput - 1;
 
             switch (keyInput)
             {
@@ -363,21 +386,16 @@ namespace SpartaDungeon
                     break;
                 default:
                     // 1 : 이미 구매한 경우
-                    if (storeInventory[keyInput - 1].IsPurchased) // index 맞추기
+                    if (storeInventory[selectedItem].IsPurchased) // index 맞추기
                     {
                         PurchaseMenu("이미 구매한 아이템입니다.");
                     }
                     // 2 : 돈이 충분해서 살 수 있는 경우
-                    else if (player.Gold >= storeInventory[keyInput - 1].Price)
+                    else if (player.Gold >= storeInventory[selectedItem].Price)
                     {
-                        player.Gold -= storeInventory[keyInput - 1].Price;
-                        storeInventory[keyInput - 1].Purchase();
-                        inventory.Add(storeInventory[keyInput - 1]);
-
-                        // 
-                        string inventoryJson = JsonSerializer.Serialize(inventory);
-                        File.WriteAllText("Inventory.json", inventoryJson);
-
+                        player.Gold -= storeInventory[selectedItem].Price;
+                        storeInventory[selectedItem].Purchase(player.Name, inventoryManager);
+                        player.SavePlayerIndirectly();
 
                         PurchaseMenu();
                     }
@@ -393,6 +411,7 @@ namespace SpartaDungeon
 
         private void SellMenu(string? prompt = null) // 추가요소 상점 판매
         {
+            InventoryManager inventoryManager = new InventoryManager();
             if (prompt != null)
             {
                 // 1초간 메시지를 띄운 다음에 다시 진행
@@ -418,21 +437,22 @@ namespace SpartaDungeon
             Console.WriteLine("");
 
             int keyInput = ConsoleUtility.PromptMenuChoice(0, inventory.Count);
+            int selectedItem = keyInput - 1;
 
             void Sell(int keyInput)
             {
-                player.Gold += (int)(inventory[keyInput - 1].Price * 0.85f);
-                foreach (var item in storeInventory)
+                player.Gold += (int)(inventory[selectedItem].Price * 0.85f);
+                foreach (var item in inventory)
                 {
-                    if (item.Name == inventory[keyInput - 1].Name)
+                    if (item.PlayerName == player.Name)
                     {
-                        item.Refund();
-                        break;
+                        if (item.Name == inventory[selectedItem].Name)
+                        {
+                            item.Refund(player.Name, inventoryManager);
+                            break;
+                        }
                     }
                 }
-                inventory.Remove(inventory[keyInput - 1]);
-                string inventoryJson = JsonSerializer.Serialize(inventory);
-                File.WriteAllText("Inventory.json", inventoryJson);
             }
 
             switch (keyInput)
@@ -442,7 +462,7 @@ namespace SpartaDungeon
                     break;
                 default:
                     // 1 : 장비한 아이템인 경우
-                    if (inventory[keyInput - 1].IsEquipped) // index 맞추기
+                    if (inventory[selectedItem].IsEquipped) // index 맞추기
                     {
                         Console.WriteLine("정말로 장비한 아이템을 파시겠습니까?");
                         Console.WriteLine("0. 아니오     1. 예");
@@ -454,7 +474,7 @@ namespace SpartaDungeon
                                 break;
                             case 1:
                                 // 장비해제
-                                inventory[keyInput - 1].ToggleEquipStatus();
+                                inventory[selectedItem].ToggleEquipStatus();
                                 // 판매
                                 Sell(keyInput);
                                 break;
@@ -874,18 +894,18 @@ namespace SpartaDungeon
             ConsoleUtility.ShowTitle("■ 주점입장 ■");
             Console.WriteLine("이곳에서 체력을 회복할 수 있습니다.");
             Console.WriteLine("");
-            Console.WriteLine($"현재 체력:{player.Hp} | 현재 골드: {player.Gold}");
-            Console.WriteLine("");
-
-            Console.WriteLine("");
-            Console.WriteLine(" 1. [카스테라주] 자신의 보유 체력의 50%를 채워준다.(체력 50일때 +25)     - 가격 : 100G");
-            Console.WriteLine(" 2. [복분자주] 정읍의 자랑, 100을 기준으로 체력을 50% 채워준다.          - 가격 : 300G");
-            Console.WriteLine(" 3. [조니왔다] 유명 위스키, 100을 기준으로 체력을 100% 채워준다.         - 가격 : 500G");
-            Console.WriteLine("0. 나가기");
-            Console.WriteLine("");
 
             while (true)
             {
+                Console.WriteLine($"현재 체력:{player.Hp} | 현재 골드: {player.Gold}");
+                Console.WriteLine("");
+
+                Console.WriteLine("");
+                Console.WriteLine("1. [카스테라주] 자신의 보유 체력의 50%를 채워준다.(체력 50일때 +25)     - 가격 : 100G");
+                Console.WriteLine("2. [복분자주] 정읍의 자랑, 100을 기준으로 체력을 50% 채워준다.          - 가격 : 300G");
+                Console.WriteLine("3. [조니왔다] 유명 위스키, 100을 기준으로 체력을 100% 채워준다.         - 가격 : 500G");
+                Console.WriteLine("0. 나가기");
+                Console.WriteLine("");
                 switch (ConsoleUtility.PromptMenuChoice(0, 3))
                 {
                     case 0:
@@ -899,7 +919,7 @@ namespace SpartaDungeon
                             Console.ResetColor();
                             break;
                         }
-                        Console.WriteLine("\t\t\t  \"키야~ 역시 한국인이라면 이 맥주를 마셔줘야지!\"");
+                        Console.WriteLine("\n\t\t\t  \"키야~ 역시 한국인이라면 이 맥주를 마셔줘야지!\"\n");
                         player.Hp += player.Hp / 2;
                         if (player.Hp > 100)
                         {
@@ -917,7 +937,7 @@ namespace SpartaDungeon
                             Console.ResetColor();
                             break;
                         }
-                        Console.WriteLine("\t\t\"아차차~ 이런 술은 난생 처음 마셔봤네! 너무 맛있다! 자주 사먹어야겠는걸?\"");
+                        Console.WriteLine("\n\t\t\"아차차~ 이런 술은 난생 처음 마셔봤네! 너무 맛있다! 자주 사먹어야겠는걸?\"\n");
                         player.Hp += 50;
                         if (player.Hp > 100)
                         {
@@ -935,7 +955,7 @@ namespace SpartaDungeon
                             Console.ResetColor();
                             break;
                         }
-                        Console.WriteLine("\t\t\t\t\t \"비싸구만.. \"");
+                        Console.WriteLine("\n\t\t\t\t\t \"비싸구만.. \"\n");
                         player.Hp += 100;
                         if (player.Hp > 100)
                         {

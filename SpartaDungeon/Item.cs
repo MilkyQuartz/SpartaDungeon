@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using System.Text.Json;
 
 namespace SpartaDungeon
-{   
+{
 
     public enum ItemType
     {
@@ -18,20 +17,20 @@ namespace SpartaDungeon
     {
         public string Name { get; }
         public string Desc { get; }
-
         public ItemType Type { get; }
 
         public int Atk { get; }
         public int Def { get; }
         public int Hp { get; }
+        public int Mp { get; }
 
         public int Price { get; }
+        public string PlayerName { get; set; }
 
         public bool IsEquipped { get; private set; }
         public bool IsPurchased { get; private set; }
 
-
-        public Item(string name, string desc, ItemType type, int atk, int def, int hp, int price, bool isEquipped = false, bool isPurchased = false)
+        public Item(string name, string desc, ItemType type, int atk, int def, int hp, int mp, int price, string playerName = null, bool isEquipped = false, bool isPurchased = false)
         {
             Name = name;
             Desc = desc;
@@ -39,7 +38,9 @@ namespace SpartaDungeon
             Atk = atk;
             Def = def;
             Hp = hp;
+            Mp = mp;
             Price = price;
+            PlayerName = playerName;
             IsEquipped = isEquipped;
             IsPurchased = isPurchased;
         }
@@ -119,14 +120,91 @@ namespace SpartaDungeon
             IsEquipped = !IsEquipped;
         }
 
-        internal void Purchase()
+        // 구매
+        public void Purchase(string playerName, InventoryManager inventoryManager)
         {
             IsPurchased = true;
+            PlayerName = playerName;
+            inventoryManager.AddItem(playerName, this); 
         }
-        internal void Refund()
+
+        // 판매
+        public void Refund(string playerName, InventoryManager inventoryManager)
         {
             IsPurchased = false;
+            PlayerName = null;
+            inventoryManager.RemoveItem(playerName, this); 
         }
     }
 
+
+    internal class InventoryManager
+    {
+        private Dictionary<string, List<Item>> inventory;
+
+        public List<Item> GetInventory(string playerName)
+        {
+            if (inventory.ContainsKey(playerName))
+                return inventory[playerName];
+            else
+                return new List<Item>(); 
+        }
+
+        public InventoryManager()
+        {
+            inventory = LoadInventory();
+        }
+
+        private Dictionary<string, List<Item>> LoadInventory()
+        {
+            Dictionary<string, List<Item>> playerInventory = new Dictionary<string, List<Item>>();
+
+            if (File.Exists("Inventory.json") && new FileInfo("Inventory.json").Length > 0)
+            {
+                try
+                {
+                    string json = File.ReadAllText("Inventory.json");
+                    playerInventory = JsonSerializer.Deserialize<Dictionary<string, List<Item>>>(json);
+                }
+                catch (JsonException ex)
+                {
+                    Console.WriteLine($"Error loading inventory: {ex.Message}");
+                }
+            }
+
+            return playerInventory;
+        }
+
+        public void SaveInventory()
+        {
+            string jsonInventory = JsonSerializer.Serialize(inventory);
+            File.WriteAllText("Inventory.json", jsonInventory);
+        }
+
+        public void LoadInventoryIndirectly()
+        {
+            string jsonInventory = JsonSerializer.Serialize(inventory);
+            File.WriteAllText("Inventory.json", jsonInventory);
+        }
+
+        public void AddItem(string playerName, Item item)
+        {
+            if (!inventory.ContainsKey(playerName))
+            {
+                inventory[playerName] = new List<Item>();
+            }
+
+            inventory[playerName].Add(item);
+            SaveInventory();
+        }
+
+        public void RemoveItem(string playerName, Item item)
+        {
+            if (inventory.ContainsKey(playerName))
+            {
+                inventory[playerName].Remove(item);
+                SaveInventory();
+            }
+        }
+    }
 }

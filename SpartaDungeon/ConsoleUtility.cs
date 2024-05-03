@@ -29,7 +29,7 @@ namespace SpartaDungeon
         {
             while (true)
             {
-                Console.Write("원하시는 번호를 입력해주세요: ");
+                Console.Write(">> ");
                 if (int.TryParse(Console.ReadLine(), out int choice) && choice >= min && choice <= max)
                 {
                     return choice;
@@ -40,7 +40,7 @@ namespace SpartaDungeon
 
         internal static void ShowTitle(string title)
         {
-            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine(title);
             Console.ResetColor();
         }
