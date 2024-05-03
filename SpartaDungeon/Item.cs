@@ -187,12 +187,6 @@ namespace SpartaDungeon
             File.WriteAllText("Inventory.json", jsonInventory);
         }
 
-        public void LoadInventoryIndirectly()
-        {
-            string jsonInventory = JsonSerializer.Serialize(inventory);
-            File.WriteAllText("Inventory.json", jsonInventory);
-        }
-
         public void AddItem(string playerName, Item item)
         {
             if (!inventory.ContainsKey(playerName))
