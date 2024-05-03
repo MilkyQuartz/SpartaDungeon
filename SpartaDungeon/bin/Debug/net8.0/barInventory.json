@@ -10,7 +10,7 @@
         "IsEquipped": false,
         "IsPurchased": false,
 		"Value": 0.5,
-		"Qty": 1
+		"Qty": 0
     },
 	{
         "Name": "복분자주",
@@ -23,7 +23,7 @@
         "IsEquipped": false,
         "IsPurchased": false,
 		"Value": 0.5,
-		"Qty": 1
+		"Qty": 0
     },
 	{
         "Name": "조니왔다",
@@ -36,6 +36,6 @@
         "IsEquipped": false,
         "IsPurchased": false,
 		"Value": 1,
-		"Qty": 1
+		"Qty": 0
     }
 ]

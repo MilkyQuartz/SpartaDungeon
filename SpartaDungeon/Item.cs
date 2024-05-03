@@ -131,6 +131,23 @@ namespace SpartaDungeon
         {
             IsPurchased = false;
         }
+        // 호출예시 Item.SearchIndexInInventoryAtName(targetList, searchList, keyInput)
+        public static int SearchIndexInInventoryAtName(List<Item> targetList, List<UsableItem> searchList, int keyInput)
+        {
+            if (keyInput < 1 || keyInput > searchList.Count)
+            {
+                // keyInput이 searchList의 인덱스 범위 밖에 있을 경우 처리
+                return -1; // 범위를 벗어나면 기본값으로 -1 반환
+            }
+            for (int i = 0; i < targetList.Count; ++i)
+            {
+                if (targetList[i].Name == searchList[keyInput - 1].Name)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
     }
 
     internal class UsableItem : Item
@@ -188,8 +205,10 @@ namespace SpartaDungeon
 
             Console.Write(" | ");
             // 수량 출력
-            ConsoleUtility.PrintTextHighlights("보유수", Qty.ToString(), "");
-        }        
+            ConsoleUtility.PrintTextHighlights("보유수 ", Qty.ToString(), "");
+        }
+
+        
 
     }
 

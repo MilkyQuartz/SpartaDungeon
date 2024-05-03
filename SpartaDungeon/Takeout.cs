@@ -60,33 +60,33 @@ namespace SpartaDungeon
                     break;
                 default:
                     if (barInventory[keyInput - 1].Type == ItemType.USABLE && player.Gold >= barInventory[keyInput - 1].Price)
-                    {
+                    {                        
                         // 선택한 아이템이 USABLE인지 체크
                         // USABLE이면 인벤토리의 수량을 증가시키는 로직
                         // 1 : 구매선택한 아이템이 인벤토리에 존재하는 경우, 그 아이템의 수량만 늘린다.
                         // 인벤토리를 탐색해서 구매선택한 아이템의 Name이 있는지 알아낸다.
                         // 있다면 그아이템의 인벤토리 인덱스를 얻는다.
                         // 인벤토리[인덱스].Qty를 ++한다.
-                        for (int i = 0; i < inventory.Count; ++i)
+                        int index = Item.SearchIndexInInventoryAtName(inventory, barInventory, keyInput);
+                        if (index == -1)
                         {
-                            if (inventory[i].Name == barInventory[keyInput - 1].Name)
-                            {
-                                UsableItem temp = (UsableItem)inventory[i];
-                                ++temp.Qty; // 참조형이라면 인벤토리[i]의 값도 올라갈거다                               
-                                break;
-                            }
-                            else
-                            {
-                                inventory.Add(barInventory[keyInput - 1]);
-
-                            }
-                            player.Gold -= barInventory[keyInput - 1].Price;
-                            string inventoryJson = JsonSerializer.Serialize(inventory);
-                            File.WriteAllText("Inventory.json", inventoryJson);
+                            inventory.Add(barInventory[keyInput - 1]);
+                            UsableItem temp = (UsableItem)inventory[inventory.Count - 1];
+                            temp.Qty++;
                         }
+                        else
+                        {
+                            UsableItem temp = (UsableItem)inventory[index];
+                            temp.Qty++;
+                        }
+
+                        player.Gold -= barInventory[keyInput - 1].Price;
+                        string inventoryJson = JsonSerializer.Serialize(inventory);
+                        File.WriteAllText("Inventory.json", inventoryJson);
+                        
                     }                    
                     // 2 : 돈이 충분해서 살 수 있는 경우 && USABLE이 아님                    
-                    else if (barInventory[keyInput - 1].Type != ItemType.USABLE && player.Gold >= barInventory[keyInput - 1].Price)
+                    if (barInventory[keyInput - 1].Type != ItemType.USABLE && player.Gold >= barInventory[keyInput - 1].Price)
                     {
                         player.Gold -= barInventory[keyInput - 1].Price;
                         barInventory[keyInput - 1].Purchase();
@@ -103,8 +103,9 @@ namespace SpartaDungeon
                         failBuy = !failBuy;
                         TakeoutMenu(prevMenu);
                     }
-                    break;
-            }
+                    break;                    
+            } //END switch
+            TakeoutMenu(prevMenu);
         } // END TakeoutMenu()
 
     }
