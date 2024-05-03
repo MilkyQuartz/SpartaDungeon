@@ -3,6 +3,7 @@ using System.Xml.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using static SpartaDungeon.Casino_Blackjack;
 
 namespace SpartaDungeon
 {
@@ -32,15 +33,14 @@ namespace SpartaDungeon
         public float BonusDef { get; set; }
         public float BonusHp { get; set; }
         public float BonusMp { get; set; }
+
         public int casinoCoin = 0;
 
 
         //디버그
         public int potion = 4;
 
-
-
-        public Player(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp = 10, float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0)
+        public Player(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp = 10,  float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0)
         {
             Name = name;
             Job = job;
@@ -80,12 +80,15 @@ namespace SpartaDungeon
 
         public string InputName()
         {
+            Console.WriteLine("");
+            ConsoleUtility.ShowTitle("■ 이름 선택 ■");
             bool isTrue = true;
             string? name = null;
             while (isTrue)
             {
-                Console.WriteLine("이름을 입력하세요");
+                Console.Write(">> ");
                 name = Console.ReadLine();
+                Console.WriteLine("");
                 if (name == "")
                 {
                     Console.WriteLine("빈 칸은 안됩니다.");
@@ -96,8 +99,9 @@ namespace SpartaDungeon
                     Console.WriteLine("첫자리에 빈 칸은 안됩니다.");
                     continue;
                 }
-                ConsoleUtility.PrintTextHighlights("당신의 이름은 ", name, "이 맞습니까?");
-                Console.WriteLine("[0] 예         [1] 이름 다시짓기");
+                ConsoleUtility.PrintTextHighlights("경비병: 이름이 ", name, "이 맞나?");
+                Console.WriteLine("[0] 예");
+                Console.WriteLine("[1] 이름 다시짓기");
 
                 switch (ConsoleUtility.PromptMenuChoice(0, 1))
                 {
@@ -128,11 +132,8 @@ namespace SpartaDungeon
 
             Console.WriteLine();
             ConsoleUtility.ShowTitle("■ 직업 선택 ■");
-            Console.WriteLine("원하는 직업을 선택하세요.");
             Console.WriteLine("[1] 전사");
             Console.WriteLine("[2] 마법사");
-            Console.WriteLine();
-            Console.WriteLine("                        PRESS ANYKEY TO ENTER THE VILLAGE                             ");
 
             int keyinput = ConsoleUtility.PromptMenuChoice(0, 2);
 
@@ -178,6 +179,7 @@ namespace SpartaDungeon
         {
             Console.WriteLine("경비병 : 거기 멈춰서라.");
             Console.WriteLine("경비병 : 우리 마을은 정체도 모르는 이방인을 안으로 들이지 않는다.");
+            Console.WriteLine("");
             Console.WriteLine("[0] 새로운 모험을 떠나기 위해 왔다.         [1] 내 얼굴도 기억하지 못하냐.");
 
             switch (ConsoleUtility.PromptMenuChoice(0, 1))
@@ -193,15 +195,16 @@ namespace SpartaDungeon
 
         private void StartNewAdventure(Action MainMenu)
         {
+            Console.WriteLine("");
             Console.WriteLine("경비병 : 당신의 이름이 뭐지?");
-            Console.WriteLine();
             string name = InputName();
+            Console.WriteLine("");
 
             if (!string.IsNullOrEmpty(name))
             {
                 if (!IsNameCheck(name))
                 {
-                    Console.WriteLine("경비병 : 직업은?");
+                    Console.WriteLine("경비병: 흠... 신입 모험가인가? 직업을 선택하도록.");
                     // ... 직업
                     JobSelect();
                     Console.WriteLine();
@@ -210,8 +213,7 @@ namespace SpartaDungeon
 
                     SavePlayer();
 
-                    Console.WriteLine("0. 마을로 들어가기");
-                    Console.WriteLine("");
+                    Console.WriteLine("[0] 마을로 들어가기");
 
                     switch (ConsoleUtility.PromptMenuChoice(0, 0))
                     {
@@ -231,9 +233,9 @@ namespace SpartaDungeon
 
         private void RememberMyFace(Player player, Action MainMenu)
         {
-            Console.WriteLine("경비병 : 당신의 이름이 뭐지?");
-            Console.WriteLine();
-            Console.WriteLine("이름을 입력하세요");
+            Console.WriteLine("");
+            Console.WriteLine("경비병 : 당신 이름이 뭐지?");
+            Console.Write(">> ");
             string name = Console.ReadLine();
 
             // 주어진 이름을 가진 플레이어가 존재하는지 확인
@@ -259,22 +261,10 @@ namespace SpartaDungeon
                 player.BonusDef = existingPlayer.BonusDef;
                 player.BonusHp = existingPlayer.BonusHp;
 
-                // 잘가져오는지 확인용.. 플레이어 정보를 출력
-                /*Console.WriteLine("입력된 플레이어 정보:");
-                Console.WriteLine($"이름: {player.Name}");
-                Console.WriteLine($"직업: {player.Job}");
-                Console.WriteLine($"레벨: {player.Level}");
-                Console.WriteLine($"공격력: {player.Atk}");
-                Console.WriteLine($"방어력: {player.Def}");
-                Console.WriteLine($"체력: {player.Hp}");
-                Console.WriteLine($"최대 체력: {player.MaxHp}");
-                Console.WriteLine($"마나: {player.Mp}");
-                Console.WriteLine($"최대 마나: {player.MaxMp}");
-                Console.WriteLine($"골드: {player.Gold}");
-                Console.WriteLine($"최대 경험치: {player.MaxExp}");*/
-
-                Console.WriteLine("0. 마을로 들어가기");
                 Console.WriteLine("");
+                Console.WriteLine($"경비병 : 몰라봬서 죄송합니다 {name}용사님, 들어가시면 됩니다!");
+                Console.WriteLine("");
+                Console.WriteLine("[0] 마을로 들어가기");
                 switch (ConsoleUtility.PromptMenuChoice(0, 0))
                 {
                     case 0:
@@ -296,7 +286,6 @@ namespace SpartaDungeon
             if (!File.Exists("Player.json"))
                 return false;
 
-            // Json 파일 읽어오기
             var json = File.ReadAllText("Player.json");
 
             // 파일이 비어 있는지 확인
@@ -316,7 +305,6 @@ namespace SpartaDungeon
             if (!File.Exists("Player.json"))
                 return null;
 
-            // Json 파일 읽어오기
             var json = File.ReadAllText("Player.json");
 
             // 파일이 비어 있는지 확인
@@ -330,7 +318,7 @@ namespace SpartaDungeon
             return players?.FirstOrDefault(p => p.Name == name);
         }
 
-        private void SavePlayer()
+        public void SavePlayer()
         {
             // Json 파일이 존재하지 않으면 빈 리스트 생성
             List<Player> players;
@@ -351,7 +339,7 @@ namespace SpartaDungeon
             {
                 if (players[i].Name == this.Name)
                 {
-                    players[i] = this; // 동일한 이름의 플레이어 정보 업데이트
+                    players[i] = this; 
                     playerExists = true;
                     break;
                 }
@@ -361,16 +349,21 @@ namespace SpartaDungeon
             if (!playerExists)
             {
                 players.Add(this);
+                // 플레이어의 인벤토리 정보 저장
+                InventoryManager inventoryManager = new InventoryManager();
+                inventoryManager.LoadInventoryIndirectly();
             }
 
             // 리스트를 Json 형식으로 직렬화하여 파일에 저장
             var jsonToWrite = JsonSerializer.Serialize(players);
             File.WriteAllText("Player.json", jsonToWrite);
+
+
         }
 
         public void SavePlayerIndirectly()
         {
-            SavePlayer(); // private 메서드 호출
+            SavePlayer(); 
         }
 
     }
