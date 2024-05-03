@@ -32,15 +32,14 @@ namespace SpartaDungeon
         public float BonusDef { get; set; }
         public float BonusHp { get; set; }
         public float BonusMp { get; set; }
+
         public int casinoCoin = 0;
 
 
         //디버그
         public int potion = 4;
 
-
-
-        public Player(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp = 10, float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0)
+        public Player(string name, string job, int level, float atk, float def, float hp, float maxHp, float mp, float maxMp, int gold, float maxExp = 10,  float exp = 0, float bonusAtk = 0, float bonusDef = 0, float bonusHp = 0)
         {
             Name = name;
             Job = job;
@@ -286,7 +285,6 @@ namespace SpartaDungeon
             if (!File.Exists("Player.json"))
                 return false;
 
-            // Json 파일 읽어오기
             var json = File.ReadAllText("Player.json");
 
             // 파일이 비어 있는지 확인
@@ -306,7 +304,6 @@ namespace SpartaDungeon
             if (!File.Exists("Player.json"))
                 return null;
 
-            // Json 파일 읽어오기
             var json = File.ReadAllText("Player.json");
 
             // 파일이 비어 있는지 확인
@@ -320,7 +317,7 @@ namespace SpartaDungeon
             return players?.FirstOrDefault(p => p.Name == name);
         }
 
-        private void SavePlayer()
+        public void SavePlayer()
         {
             // Json 파일이 존재하지 않으면 빈 리스트 생성
             List<Player> players;
@@ -341,7 +338,7 @@ namespace SpartaDungeon
             {
                 if (players[i].Name == this.Name)
                 {
-                    players[i] = this; // 동일한 이름의 플레이어 정보 업데이트
+                    players[i] = this; 
                     playerExists = true;
                     break;
                 }
@@ -360,7 +357,7 @@ namespace SpartaDungeon
 
         public void SavePlayerIndirectly()
         {
-            SavePlayer(); // private 메서드 호출
+            SavePlayer(); 
         }
 
     }
