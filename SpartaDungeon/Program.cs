@@ -48,9 +48,9 @@ namespace SpartaDungeon
             monsters = JsonSerializer.Deserialize<List<Monster>>(File.ReadAllText("Monster.json"));
 
             questList = new List<Quest>();
-            questList.Add( new Quest("몬스터 사냥", "몬스터를 사냥하세요", "몬스터", 100));
-            questList.Add( new Quest("레벨 업", "레벨을 올려보자", "레벨", 100));
-            questList.Add( new Quest("몬스터 사냥", "몬스터를 사냥하세요", "몬스터", 100));
+            questList.Add(new Quest("7호선 최강의 검사 처치", "몬스터를 사냥하세요", "7호선 최강의 검사", 5, 4, 1000, QuestType.hunt));
+            questList.Add(new Quest("레벨 달성", "레벨을 올려보자", "레벨", 5, player.Level, 1000, QuestType.levelUp));
+            questList.Add(new Quest("장비 장착", "낡은 검을 장착해보자", "낡은 검", 1, 0, 1000, QuestType.equip));
             myQuest = new List<Quest>();
             completeQuest = new List<Quest>();
             casino = new Casino(player);
@@ -93,9 +93,8 @@ namespace SpartaDungeon
             Console.WriteLine("4. 던    전");
             Console.WriteLine("5. 주    점");
             Console.WriteLine("6. 길    드");
-            Console.WriteLine("7. 퀘스트 완료시키기(테스트용)");
+            Console.WriteLine("7 . $$카지노$$");
             Console.WriteLine("8 . 게임종료");
-            Console.WriteLine("9 . $$카지노$$");
             Console.WriteLine("");
 
             // 2. 선택한 결과를 검증함
@@ -123,14 +122,10 @@ namespace SpartaDungeon
                     GuildMenu();
                     break;
                 case 7:
-                    TestQuest();
+                    casino.CasinoMenu(MainMenu);
                     break;
                 case 8:
                     GameOverMenu();
-                    break;
-                case 9:                    
-                    casino.CasinoMenu(MainMenu);
-                    
                     break;
             }
             MainMenu();
@@ -165,7 +160,7 @@ namespace SpartaDungeon
 
             Console.WriteLine("[보유 스킬]");
             Console.WriteLine("");
-            foreach(var skillList in skill)
+            foreach (var skillList in skill)
             {
                 Console.Write($"{skillList.Name} -");
                 ConsoleUtility.PrintTextHighlights(" ", $"필요 MP : {skillList.Mp}", "");
@@ -283,6 +278,15 @@ namespace SpartaDungeon
                     // 인벤토리 파일 업데이트
                     string inventoryJson = JsonSerializer.Serialize(inventory);
                     File.WriteAllText("Inventory.json", inventoryJson);
+
+                    // 퀘스트 아이템 장착시 퀘스트 목표 달성
+                    for (int i = 0; i < myQuest.Count; i++)
+                    {
+                        if (myQuest[i].Require == inventory[KeyInput - 1].Name)
+                        {
+                            myQuest[i].Progress++;
+                        }
+                    }
 
                     EquipMenu();
                     break;
@@ -569,6 +573,7 @@ namespace SpartaDungeon
         {
             bool gameOver = false;
             int totalGold = 0;
+            List<string> questMonster = new List<string>();
 
             while (!gameOver)
             {
@@ -634,6 +639,15 @@ namespace SpartaDungeon
                             {
                                 targetMonster.Hp = 0;
                                 totalGold += targetMonster.Price;
+
+                                // 퀘스트 몬스터 처치시 처치횟수 증가
+                                for (int i = 0; i < myQuest.Count; i++)
+                                {
+                                    if (myQuest[i].Require == targetMonster.Name)
+                                    {
+                                        myQuest[i].Progress++;
+                                    }
+                                }
                             }
                             Console.WriteLine($"당신은 {targetMonster.Name}에게 {attackDamage}의 피해를 입혔습니다.");
                             Console.WriteLine("");
@@ -650,7 +664,7 @@ namespace SpartaDungeon
                         }
                         break;
                     case 2:
-                        totalGold += UsingSkill(totalGold, monsters);
+                        totalGold += UsingSkill(totalGold, monsters, questMonster);
                         break;
                     default:
                         Console.WriteLine("잘못된 입력입니다.");
@@ -659,7 +673,7 @@ namespace SpartaDungeon
                 }
 
                 Console.WriteLine("[Monster Turn!]"); // 아직 몬스터 스킬 수정 필요합니당.. 스킬당 데미지 확률로 바꾸려구용~~
-                 Random rand = new Random();
+                Random rand = new Random();
 
                 foreach (var monster in monsters)
                 {
@@ -670,7 +684,7 @@ namespace SpartaDungeon
                         int minAttack = (int)(monster.Atk * 0.9f);
                         int maxAttack = (int)(monster.Atk * 1.1f);
                         int attackDamage = new Random().Next(minAttack, maxAttack + 1);
-                       
+
                         // 몬스터의 스킬 사용
                         if (attackDamage >= 0)
                         {
@@ -697,10 +711,10 @@ namespace SpartaDungeon
             }
         }
 
-        private int UsingSkill(int totalGold , List<Monster> monsters)
+        private int UsingSkill(int totalGold, List<Monster> monsters, List<string> qustmonster)
         {
             Console.WriteLine("사용할 스킬을 선택하세요.\n");
-            for(int i = 0; i< skill.Count; i++)
+            for (int i = 0; i < skill.Count; i++)
             {
                 Console.WriteLine($"{i + 1}. {skill[i].Name}");
             }
@@ -748,17 +762,17 @@ namespace SpartaDungeon
                     {
                         player.Mp -= skill[skillChoice].Mp;
                         skill[skillChoice].UseCardSkill(out int cardColor);
-                        
+
                         switch (cardColor)
                         {
-                            case 0:
+                            case (int)CardType.RED:
                                 skillDamage = attackDamage * 2;
                                 break;
-                            case 1:
+                            case (int)CardType.BLUE:
                                 player.Mp += (int)(player.MaxMp * 0.2);
                                 Console.WriteLine($"MP {(int)(player.MaxMp * 0.2)}를 회복합니다.");
                                 break;
-                            case 2:
+                            case (int)CardType.GOLD:
                                 skillDamage = attackDamage * 5;
                                 player.Mp = 0;
                                 break;
@@ -780,6 +794,15 @@ namespace SpartaDungeon
                 {
                     targetMonster.Hp = 0;
                     totalGold += targetMonster.Price;
+
+                    // 퀘스트 몬스터 처치시 처치횟수 증가
+                    for (int i = 0; i < myQuest.Count; i++)
+                    {
+                        if (myQuest[i].Require == targetMonster.Name)
+                        {
+                            myQuest[i].Progress++;
+                        }
+                    }
                 }
                 Console.WriteLine($"당신은 {targetMonster.Name}에게 {skillDamage}의 피해를 입혔습니다.");
                 Console.WriteLine("");
@@ -929,6 +952,31 @@ namespace SpartaDungeon
         public void GuildMenu()
         {
             Console.Clear();
+
+
+            //퀘스트 진행상황 체크
+            for (int i = 0; i < myQuest.Count; i++)
+            {
+                if (myQuest[i].Type == QuestType.levelUp && myQuest[i].Achievement <= player.Level)
+                {// 레벨업 퀘스트 체크, 레벨이 목표레벨에 도달시 퀘스트 클리어 처리
+                    myQuest[i].ClearQuest();
+                    completeQuest.Add(myQuest[i]);
+                    myQuest.RemoveAt(i);
+                }
+                else if (myQuest[i].Type == QuestType.hunt && myQuest[i].Achievement <= myQuest[i].Progress)
+                {// 몬스터 처치 퀘스트 체크, 처치횟수가 목표에 도달시 퀘스트 클리어 처리
+                    myQuest[i].ClearQuest();
+                    completeQuest.Add(myQuest[i]);
+                    myQuest.RemoveAt(i);
+                }
+                else if (myQuest[i].Type == QuestType.equip && myQuest[i].Achievement <= myQuest[i].Progress)
+                {// 장비 장착 퀘스트 체크, 특정 장비 장착 완료시 퀘스트 클리어 처리
+                    myQuest[i].ClearQuest();
+                    completeQuest.Add(myQuest[i]);
+                    myQuest.RemoveAt(i);
+                }
+            }
+
             ConsoleUtility.ShowTitle("■ 길드입장 ■");
             Console.WriteLine("");
             Console.WriteLine("길드에 들어서자 접수원이 말을 건다.");
@@ -981,7 +1029,7 @@ namespace SpartaDungeon
             Console.ResetColor();
             Console.WriteLine("");
 
-            for (int i = 0; i<questList.Count; i++)
+            for (int i = 0; i < questList.Count; i++)
             {
                 questList[i].PrintQuestList(i + 1);
             }
@@ -1002,13 +1050,13 @@ namespace SpartaDungeon
                     GuildMenu();
                     break;
                 default:
-                    if(questList[choice - 1].IsAccept == false)
+                    if (questList[choice - 1].IsAccept == false)
                     {
                         QuestInfo(choice - 1);
                         QuestMenu("\"탁월한 선택이에요!\"");
                     }
                     else
-                    {                       
+                    {
                         QuestMenu("\"어머! 이건 이미 수락하셨는걸요?\"");
                     }
                     break;
@@ -1025,7 +1073,7 @@ namespace SpartaDungeon
             Console.WriteLine("1. 수락");
             Console.WriteLine("0. 돌아가기");
 
-            switch(ConsoleUtility.PromptMenuChoice(0, 1))
+            switch (ConsoleUtility.PromptMenuChoice(0, 1))
             {
                 case 0:
                     QuestMenu();
@@ -1033,6 +1081,7 @@ namespace SpartaDungeon
                 case 1:
                     myQuest.Add(questList[choice]);
                     questList[choice].AcceptQuest();
+                    questList.RemoveAt(choice);
                     break;
             }
         }
@@ -1044,7 +1093,7 @@ namespace SpartaDungeon
             Console.WriteLine("");
 
             int i = 0;
-            foreach(var quest in myQuest)
+            foreach (var quest in myQuest)
             {
                 quest.PrintMyQuestList(i + 1);
                 i++;
@@ -1090,43 +1139,14 @@ namespace SpartaDungeon
                     GuildMenu();
                     break;
                 default:
+                    Console.Clear();
+                    Console.WriteLine($"의뢰 보상으로 {completeQuest[choice - 1].RewardGold} G를 받았습니다.");
                     player.Gold += completeQuest[choice - 1].RewardGold;
                     completeQuest.RemoveAt(choice - 1);
+                    Thread.Sleep(1000);
                     RewardMenu();
                     break;
             }
-        }
-
-        public void TestQuest()
-        {
-            Console.Clear();
-
-            int i = 0;
-            foreach (var quest in myQuest)
-            {
-                quest.PrintMyQuestList(i + 1);
-                i++;
-            }
-
-            Console.WriteLine("");
-            Console.WriteLine("0. 나가기");
-            Console.WriteLine("");
-
-            int choice = ConsoleUtility.PromptMenuChoice(0, myQuest.Count);
-
-            switch (choice)
-            {
-                case 0:
-                    MainMenu();
-                    break;
-                default:
-                    myQuest[choice - 1].ClearQuest();
-                    completeQuest.Add(myQuest[choice - 1]);
-                    myQuest.RemoveAt(choice - 1);
-                    TestQuest();
-                    break;
-            }
-
         }
 
         public void GameOverMenu()
@@ -1142,11 +1162,6 @@ namespace SpartaDungeon
 
             Environment.Exit(0);
         }
-
-
-
-
-
 
 
     }
