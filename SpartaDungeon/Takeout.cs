@@ -7,6 +7,7 @@ using static SpartaDungeon.Casino_Blackjack;
 
 using System.Text.Json;
 using System.Xml.Serialization;
+using SpartaDungeon;
 
 namespace SpartaDungeon
 {
@@ -14,11 +15,11 @@ namespace SpartaDungeon
     internal class Takeout 
     {
         Player player;
-        List<Item> barInventory;
+        List<UsableItem> barInventory;
         List<Item> inventory;
 
 
-        public Takeout(Player _player, List<Item> _BarInventory, List<Item> _inventory)
+        public Takeout(Player _player, List<UsableItem> _BarInventory, List<Item> _inventory)
         {
             player = _player;
             barInventory = _BarInventory;
@@ -42,12 +43,12 @@ namespace SpartaDungeon
             Console.WriteLine("");
             Console.WriteLine($"현재 체력:{player.Hp} | 현재 골드: {player.Gold}");
             Console.WriteLine("");
-
-            Console.WriteLine("");
-            Console.WriteLine(" 1. [카스테라주] 자신의 보유 체력의 50%를 채워준다.(체력 50일때 +25)     - 가격 : 150G");
-            Console.WriteLine(" 2. [복분자주] 정읍의 자랑, 100을 기준으로 체력을 50% 채워준다.          - 가격 : 350G");
-            Console.WriteLine(" 3. [조니왔다] 유명 위스키, 100을 기준으로 체력을 100% 채워준다.         - 가격 : 550G");
-            Console.WriteLine("0. 나가기");
+            Console.WriteLine("[아이템 목록]");
+            for (int i = 0; i < barInventory.Count; i++)
+            {
+                barInventory[i].PrintUsableItemDescription(true, i + 1);
+            }
+            Console.WriteLine(" 0. 나가기");
             Console.WriteLine("");
 
             int keyInput = ConsoleUtility.PromptMenuChoice(0, barInventory.Count);
@@ -58,19 +59,39 @@ namespace SpartaDungeon
                     Menu();
                     break;
                 default:
-                    //// 1 : 이미 구매한 경우 여긴상관없음
-                    //if (barInventory[keyInput - 1].IsPurchased) // index 맞추기
-                    //{
-                    //    PurchaseMenu("이미 구매한 아이템입니다.");
-                    //}
-                    // 2 : 돈이 충분해서 살 수 있는 경우
-                    if (player.Gold >= barInventory[keyInput - 1].Price)
+                    if (barInventory[keyInput - 1].Type == ItemType.USABLE && player.Gold >= barInventory[keyInput - 1].Price)
+                    {
+                        // 선택한 아이템이 USABLE인지 체크
+                        // USABLE이면 인벤토리의 수량을 증가시키는 로직
+                        // 1 : 구매선택한 아이템이 인벤토리에 존재하는 경우, 그 아이템의 수량만 늘린다.
+                        // 인벤토리를 탐색해서 구매선택한 아이템의 Name이 있는지 알아낸다.
+                        // 있다면 그아이템의 인벤토리 인덱스를 얻는다.
+                        // 인벤토리[인덱스].Qty를 ++한다.
+                        for (int i = 0; i < inventory.Count; ++i)
+                        {
+                            if (inventory[i].Name == barInventory[keyInput - 1].Name)
+                            {
+                                UsableItem temp = (UsableItem)inventory[i];
+                                ++temp.Qty; // 참조형이라면 인벤토리[i]의 값도 올라갈거다                               
+                                break;
+                            }
+                            else
+                            {
+                                inventory.Add(barInventory[keyInput - 1]);
+
+                            }
+                            player.Gold -= barInventory[keyInput - 1].Price;
+                            string inventoryJson = JsonSerializer.Serialize(inventory);
+                            File.WriteAllText("Inventory.json", inventoryJson);
+                        }
+                    }                    
+                    // 2 : 돈이 충분해서 살 수 있는 경우 && USABLE이 아님                    
+                    else if (barInventory[keyInput - 1].Type != ItemType.USABLE && player.Gold >= barInventory[keyInput - 1].Price)
                     {
                         player.Gold -= barInventory[keyInput - 1].Price;
                         barInventory[keyInput - 1].Purchase();
                         inventory.Add(barInventory[keyInput - 1]);
-
-                        // 
+                                                
                         string inventoryJson = JsonSerializer.Serialize(inventory);
                         File.WriteAllText("Inventory.json", inventoryJson);
 
@@ -84,6 +105,8 @@ namespace SpartaDungeon
                     }
                     break;
             }
-        }
+        } // END TakeoutMenu()
+
     }
 }
+

@@ -22,7 +22,7 @@ namespace SpartaDungeon
         private List<Quest> completeQuest;
         private Casino casino;
         private List<Skill> skill;
-        private List<Item> _BarInventory;
+        private List<UsableItem> barInventory;
         private Takeout takeout;
 
         public GameManager()
@@ -49,7 +49,7 @@ namespace SpartaDungeon
             inventory = new List<Item>();
             storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json"));
             monsters = JsonSerializer.Deserialize<List<Monster>>(File.ReadAllText("Monster.json"));
-
+            barInventory = JsonSerializer.Deserialize<List<UsableItem>>(File.ReadAllText("barInventory.json"));
             questList = new List<Quest>();
             questList.Add( new Quest("몬스터 사냥", "몬스터를 사냥하세요", "몬스터", 100));
             questList.Add( new Quest("레벨 업", "레벨을 올려보자", "레벨", 100));
@@ -57,7 +57,8 @@ namespace SpartaDungeon
             myQuest = new List<Quest>();
             completeQuest = new List<Quest>();
             casino = new Casino(player);
-            takeout = new Takeout(player, _BarInventory, inventory);
+            
+            takeout = new Takeout(player, barInventory, inventory);
 
             skill = new List<Skill>();
             skill.Add(new Skill("주사위 굴리기", "주사위를 2개 굴려서 나온 주사위 눈에따라 스킬발동확률과 스킬데미지가 정해집니다.\n" +
@@ -181,17 +182,11 @@ namespace SpartaDungeon
             Console.WriteLine("0. 뒤로가기");
             Console.WriteLine("");
 
-            switch (ConsoleUtility.PromptMenuChoice(0, 1))//0))
+            switch (ConsoleUtility.PromptMenuChoice(0, 0))
             {
                 case 0:
                     MainMenu();
-                    break;
-                case 1:
-                    //아래테스트영역 삭제가능
-                    Potion.HealMenu(player, player.potion, StatusMenu);
-
-                    break;
-                    //위 테스트영역 삭제가능
+                    break;               
             }
         }
 

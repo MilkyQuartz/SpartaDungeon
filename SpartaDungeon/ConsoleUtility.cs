@@ -98,8 +98,8 @@ namespace SpartaDungeon
         {
             // 가나다
             // 111111
-            int currentLength = GetPrintableLength(str);
-            int padding = totalLength - currentLength;
+            int currentLength = GetPrintableLength(str); // 입력받은 str의 계산된 길이를 저장
+            int padding = totalLength - currentLength;  // totalLength는 정해진 상수
             return str.PadRight(str.Length + padding);
         }
     }

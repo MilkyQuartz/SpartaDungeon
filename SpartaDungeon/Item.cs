@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SpartaDungeon.Casino_Blackjack;
 
 
 namespace SpartaDungeon
@@ -11,7 +12,8 @@ namespace SpartaDungeon
     public enum ItemType
     {
         WEAPON,
-        ARMOR
+        ARMOR,
+        USABLE
     }
 
     internal class Item
@@ -30,7 +32,8 @@ namespace SpartaDungeon
         public bool IsEquipped { get; private set; }
         public bool IsPurchased { get; private set; }
 
-
+        //public Item()
+        //{ }
         public Item(string name, string desc, ItemType type, int atk, int def, int hp, int price, bool isEquipped = false, bool isPurchased = false)
         {
             Name = name;
@@ -79,18 +82,17 @@ namespace SpartaDungeon
 
         }
 
-
-        public void PrintStoreItemDescription(bool withNumber = false, int idx = 0)
+        public void PrintStoreItemDescription(bool withNumber = false, int idx = 0) 
         {
             Console.Write("- ");
             // 장착관리 전용
-            if (withNumber)
+            if (withNumber) //인덱스번호 출력유무
             {
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
                 Console.Write("{0} ", idx);
                 Console.ResetColor();
             }
-            else Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));
+            Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));  
 
             Console.Write(" | ");
 
@@ -100,7 +102,7 @@ namespace SpartaDungeon
 
             Console.Write(" | ");
 
-            Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 12));
+            Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 18));
 
             Console.Write(" | ");
 
@@ -113,6 +115,8 @@ namespace SpartaDungeon
                 ConsoleUtility.PrintTextHighlights("", Price.ToString(), " G");
             }
         }
+
+        
 
         internal void ToggleEquipStatus()
         {
@@ -127,6 +131,66 @@ namespace SpartaDungeon
         {
             IsPurchased = false;
         }
+    }
+
+    internal class UsableItem : Item
+    {
+        public float Value { get; set; }
+        public int Qty { get; set; } //Quantity
+        
+
+        public UsableItem(string name, string desc, ItemType type, int atk, int def, int hp, int price, float value,int qty, bool isEquipped = false, bool isPurchased = false) : base(name, desc, type, atk, def, hp, price, isEquipped = false, isPurchased = false)
+        {
+            Value = value;
+            Qty = qty;
+        }
+
+        // 호출예시 : 배틀 -> 아이템사용하기 -> 아이템선택 선택한 아이템.UseHealItem(Value);
+        void UseItem(Object target, float value)
+        {
+            
+
+            
+        }
+        //void Castera()
+        //{
+        //    player.Hp = (player.Hp + player.Hp * 0.5) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + player.Hp * 0.5);
+        //}
+
+        //void FixedHeal(float _hp)
+        //{
+        //    player.Hp = (player.Hp + _hp) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + _hp);
+        //}
+
+        //void PercentHeal(float _percent)
+        //{
+        //    player.Hp = (player.Hp + player.MaxHp * _percent) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + player.MaxHp * _percent);
+        //}
+        public void PrintUsableItemDescription(bool withNumber = false, int idx = 0)
+        {
+            Console.Write("- ");
+            // 장착관리 전용
+            if (withNumber)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write("{0} ", idx);
+                Console.ResetColor();
+            }
+            Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));
+
+            Console.Write(" | ");
+            // 설명 출력
+            Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 20));
+
+            Console.Write(" | ");
+
+            ConsoleUtility.PrintTextHighlightsNoLF("", Price.ToString(), " G");
+
+            Console.Write(" | ");
+            // 수량 출력
+            ConsoleUtility.PrintTextHighlights("보유수", Qty.ToString(), "");
+        }        
+
     }
 
 }
