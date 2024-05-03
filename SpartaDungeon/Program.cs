@@ -547,6 +547,7 @@ namespace SpartaDungeon
         {
             bool gameOver = false;
             int totalGold = 0;
+            int totalPotion = 0;
             int startLevel = player.Level;
             float startHp = player.Hp;
             float startExp = player.Exp;
@@ -607,14 +608,27 @@ namespace SpartaDungeon
                         Monster targetMonster = monsters[targetChoice];
                         if (targetMonster.Hp > 0)
                         {
-                            int minAttack = (int)(player.Atk * 0.9f);
-                            int maxAttack = (int)(player.Atk * 1.1f);
+                            int minAttack = (int)((player.Atk + player.BonusAtk) * 0.9f);
+                            int maxAttack = (int)((player.Atk + player.BonusAtk) * 1.1f);
                             int attackDamage = new Random().Next(minAttack, maxAttack + 1);
                             targetMonster.Hp -= attackDamage;
                             if (targetMonster.Hp <= 0)
                             {
                                 targetMonster.Hp = 0;
-                                totalGold += targetMonster.Price;
+                                int drop = new Random().Next(0, 3);
+                                string dropitem;
+                                if (drop == 0)
+                                {
+                                    totalGold += targetMonster.Price;
+                                }
+                                else if (drop == 1)
+                                {
+                                    totalPotion++;
+                                }
+                                else if (drop == 2)
+                                {
+                                    //dropitem = ;
+                                }
                                 player.Exp += targetMonster.Level;
                             }
                             Console.WriteLine($"당신은 {targetMonster.Name}에게 {attackDamage}의 피해를 입혔습니다.");
@@ -623,10 +637,10 @@ namespace SpartaDungeon
                             {
                                 Console.WriteLine($"{targetMonster.Name}이(가) 죽었습니다.");
                                 Console.WriteLine(""); 
-                                
                             }
-                            if (player.Exp >= player.MaxExp) player.LevelUp();
                         }
+                        if (player.Exp >= player.MaxExp) player.LevelUp();
+                        
                         else
                         {
                             Console.WriteLine("이미 죽은 몬스터입니다.");
@@ -674,11 +688,11 @@ namespace SpartaDungeon
                     }
                 }
 
-                gameOver = CheckGameOver(monsters, totalGold, monsterCount, startLevel, startHp, startExp);
+                gameOver = CheckGameOver(monsters, totalGold, totalPotion, monsterCount, startLevel, startHp, startExp);
             }
         }
 
-        private bool CheckGameOver(List<Monster> monsters, int totalGold, int monsterCount, float startLevel, float startHp, float startExp)
+        private bool CheckGameOver(List<Monster> monsters, int totalGold, int totalPotion, int monsterCount, float startLevel, float startHp, float startExp)
         {
             bool allMonstersDead = monsters.All(monster => monster.Hp <= 0);
             bool playerDead = player.Hp <= 0;
@@ -692,9 +706,12 @@ namespace SpartaDungeon
                 Console.WriteLine($"Lv. {startLevel} {player.Job} -> Lv. {player.Level} {player.Job}");
                 Console.WriteLine($"HP {startHp} -> {player.Hp}");
                 Console.WriteLine($"Exp {startExp} -> {player.Exp}");
-                Console.WriteLine($"획득 골드: {totalGold}");
+                Console.Write($"보유 골드: {player.Gold}");
                 player.Gold += totalGold;
-                Console.WriteLine($"보유 골드: {player.Gold}");
+                Console.WriteLine($" -> {player.Gold}");
+                Console.Write($"보유 포션: {player.potion}");
+                player.potion += totalPotion;
+                Console.WriteLine($" -> {player.potion}");
                 Console.WriteLine("");
                 Console.WriteLine("1. 다시하기");
                 Console.WriteLine("0. 나가기");

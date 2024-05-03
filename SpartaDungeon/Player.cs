@@ -36,7 +36,7 @@ namespace SpartaDungeon
 
 
         //디버그
-        public int potion = 4;
+        public int potion { get; set; }
 
 
 
@@ -68,11 +68,14 @@ namespace SpartaDungeon
             ConsoleUtility.PrintTextHighlightsNoLF("Lv.", Level.ToString(), Name);
             ConsoleUtility.PrintTextHighlightsNoLF("", " -> ");
             ConsoleUtility.PrintTextHighlightsNoLF("Lv.", (Level + 1).ToString(), Name);
+            Console.WriteLine("");
             Level++;
             Exp = Exp - MaxExp; // 넘치는 Exp를 다음레벨 Exp에 이월
             MaxExp += 25 + 5 * (Level - 2);   // 필요경험치 상승폭은 5씩 커진다
             Atk += 0.5f;
             Def += 1f;
+            Hp += 2f;
+            Mp += 2f;
             MaxHp += 2f;
             MaxMp += 2f;
         }
@@ -151,6 +154,7 @@ namespace SpartaDungeon
                     this.Mp = 20;
                     this.MaxMp = 20;
                     this.Gold = 2000;
+                    this.potion = 4;
                     result = "Warrior"; // 전사 선택 시 "Warrior" 반환
                     break;
                 case 2:
@@ -163,6 +167,7 @@ namespace SpartaDungeon
                     this.Mp = 60;
                     this.MaxMp = 60;
                     this.Gold = 2000;
+                    this.potion = 4;
                     result = "Mage"; // 마법사 선택 시 "Mage" 반환
                     break;
                 default:
