@@ -23,7 +23,7 @@ namespace SpartaDungeon
         private Casino casino;
         private List<Skill> skill;
         private List<UsableItem> barInventory;
-        private Takeout takeout;
+        private BarTakeout bartakeout;
 
         public GameManager()
         {
@@ -57,7 +57,7 @@ namespace SpartaDungeon
             myQuest = new List<Quest>();
             completeQuest = new List<Quest>();
             casino = new Casino(player);            
-            takeout = new Takeout(player, barInventory, inventory);
+            bartakeout = new BarTakeout(player, barInventory, inventory);
 
             skill = new List<Skill>();
             skill.Add(new Skill("주사위 굴리기", "주사위를 2개 굴려서 나온 주사위 눈에따라 스킬발동확률과 스킬데미지가 정해집니다.\n" +
@@ -955,7 +955,7 @@ namespace SpartaDungeon
                         player.SavePlayerIndirectly();
                         break;
                     case 4:
-                        takeout.TakeoutMenu(BarMenu);
+                        bartakeout.TakeoutMenu(BarMenu);
                         break;
 
                 }

@@ -12,7 +12,7 @@ using SpartaDungeon;
 namespace SpartaDungeon
 {
 
-    internal class Takeout 
+    internal class BarTakeout 
     {
         Player player;
         List<UsableItem> barInventory;
@@ -22,7 +22,7 @@ namespace SpartaDungeon
 
           
 
-        public Takeout(Player _player, List<UsableItem> _BarInventory, List<Item> _inventory)
+        public BarTakeout(Player _player, List<UsableItem> _BarInventory, List<Item> _inventory)
         {
             player = _player;
             barInventory = _BarInventory;
