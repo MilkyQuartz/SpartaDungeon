@@ -22,11 +22,10 @@ namespace SpartaDungeon
 
           
 
-        public BarTakeout(Player _player, List<UsableItem> _BarInventory, List<Item> _inventory)
+        public BarTakeout(Player _player, List<UsableItem> _BarInventory)
         {
             player = _player;
-            barInventory = _BarInventory;
-            inventory = _inventory;
+            barInventory = _BarInventory;            
             inventory = inventoryManager.GetInventory(player.Name);
         }
 

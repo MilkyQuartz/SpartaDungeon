@@ -59,6 +59,7 @@ namespace SpartaDungeon
             myQuest = new List<Quest>();
             completeQuest = new List<Quest>();
             casino = new Casino(player);
+            bartakeout = new BarTakeout(player, barInventory);
             skill = JsonSerializer.Deserialize<List<Skill>>(File.ReadAllText("Skill.json"));
             inventoryManager = new InventoryManager();
         }
