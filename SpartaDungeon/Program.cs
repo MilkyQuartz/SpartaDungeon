@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Xml.Serialization;
 
 namespace SpartaDungeon
@@ -21,6 +22,8 @@ namespace SpartaDungeon
         private List<Quest> completeQuest;
         private Casino casino;
         private List<Skill> skill;
+        private List<Item> _BarInventory;
+        private Takeout takeout;
 
         public GameManager()
         {
@@ -54,6 +57,7 @@ namespace SpartaDungeon
             myQuest = new List<Quest>();
             completeQuest = new List<Quest>();
             casino = new Casino(player);
+            takeout = new Takeout(player, _BarInventory, inventory);
 
             skill = new List<Skill>();
             skill.Add(new Skill("주사위 굴리기", "주사위를 2개 굴려서 나온 주사위 눈에따라 스킬발동확률과 스킬데미지가 정해집니다.\n" +
@@ -858,12 +862,13 @@ namespace SpartaDungeon
             Console.WriteLine(" 1. [카스테라주] 자신의 보유 체력의 50%를 채워준다.(체력 50일때 +25)     - 가격 : 100G");
             Console.WriteLine(" 2. [복분자주] 정읍의 자랑, 100을 기준으로 체력을 50% 채워준다.          - 가격 : 300G");
             Console.WriteLine(" 3. [조니왔다] 유명 위스키, 100을 기준으로 체력을 100% 채워준다.         - 가격 : 500G");
-            Console.WriteLine("0. 나가기");
+            Console.WriteLine(" 4. 테이크아웃 요청");
+            Console.WriteLine(" 0. 나가기");
             Console.WriteLine("");
 
             while (true)
             {
-                switch (ConsoleUtility.PromptMenuChoice(0, 3))
+                switch (ConsoleUtility.PromptMenuChoice(0, 4))
                 {
                     case 0:
                         MainMenu();
@@ -922,6 +927,10 @@ namespace SpartaDungeon
 
                         player.SavePlayerIndirectly();
                         break;
+                    case 4:
+                        takeout.TakeoutMenu(BarMenu);
+                        break;
+
                 }
             }
         }

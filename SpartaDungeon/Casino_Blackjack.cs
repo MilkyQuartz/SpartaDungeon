@@ -208,23 +208,6 @@ namespace SpartaDungeon
 
             public void Play(int _bettedCoin)
             {
-                //if (prompt != null)
-                //{
-                //    // 1초간 메시지를 띄운 다음에 다시 진행
-                //    Console.WriteLine("Player : " + player.Hand.GetTotalValue().ToString());
-                //    Console.WriteLine("Dealer : " + dealer.Hand.GetTotalValue().ToString());
-                //    Console.WriteLine(prompt);
-                //    Console.Write("Player Win : " + playerWin.ToString());
-                //    Console.WriteLine("      Dealer Win : " + dealerWin.ToString());
-                //    Console.WriteLine("남은 카드 : " + deck.cards.Count.ToString());
-                //    stop = false;
-                //    //딜러 플레이어 핸드 비우기
-                //    dealer.Hand.cards.Clear();
-                //    player.Hand.cards.Clear();
-                //    Thread.Sleep(1000);
-
-                //}
-
                 Console.Clear(); 
                 Console.WriteLine();
                 //초기카드 패가 0장이면 카드 두장씩 받는다
