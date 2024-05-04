@@ -28,8 +28,7 @@ namespace SpartaDungeon
 
         public GameManager()
         {
-            InitializeGame();
-            
+            InitializeGame();            
         }
 
         public static GameManager Instance
@@ -91,8 +90,8 @@ namespace SpartaDungeon
             Console.WriteLine("4. 던    전");
             Console.WriteLine("5. 주    점");
             Console.WriteLine("6. 길    드");
-            Console.WriteLine("7 . $$카지노$$");
-            Console.WriteLine("8 . 게임종료");
+            Console.WriteLine("7. $$카지노$$");
+            Console.WriteLine("8. 게임종료");
             Console.WriteLine("");
 
             // 2. 선택한 결과를 검증함
@@ -225,7 +224,7 @@ namespace SpartaDungeon
             }
         }
 
-            private void EquipMenu()
+        private void EquipMenu()
         {
             Console.Clear();
 
@@ -501,6 +500,7 @@ namespace SpartaDungeon
             Console.WriteLine("1. 쉬운 던전");
             Console.WriteLine("2. 일반 던전");
             Console.WriteLine("3. 어려운 던전");
+            Console.WriteLine("4. 포션 사용");
             Console.WriteLine("0. 나가기");
             Console.WriteLine("");
 
@@ -512,7 +512,7 @@ namespace SpartaDungeon
                 return;
             }
 
-            switch (ConsoleUtility.PromptMenuChoice(0, 3))
+            switch (ConsoleUtility.PromptMenuChoice(0, 4))
             {
                 case 0:
                     MainMenu();
@@ -525,6 +525,9 @@ namespace SpartaDungeon
                     break;
                 case 3:
                     StartDungeon(3);
+                    break;
+                case 4:
+                    Potion.HealMenu(player, player.potion, DungeonMenu);
                     break;
             }
         }
@@ -621,10 +624,12 @@ namespace SpartaDungeon
 
                 Console.WriteLine("1. 공격");
                 Console.WriteLine("2. 스킬");
+                Console.WriteLine("3. 포션 즉시사용(체력 30 회복)");
+                Console.WriteLine("4. 아이템사용");
                 Console.WriteLine("0. 도망가기");
                 Console.WriteLine("");
 
-                int choice = ConsoleUtility.PromptMenuChoice(0, 2);
+                int choice = ConsoleUtility.PromptMenuChoice(0, 4);
 
                 switch (choice)
                 {
@@ -686,6 +691,11 @@ namespace SpartaDungeon
                         break;
                     case 2:
                         totalGold += UsingSkill(totalGold, monsters, questMonster);
+                        break;
+                    case 3:
+                        Potion.UsePotionDirectly(player, player.potion, Battle, monsters);
+                        break;
+                        case 4:
                         break;
                     default:
                         Console.WriteLine("잘못된 입력입니다.");

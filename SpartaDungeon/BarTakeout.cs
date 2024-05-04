@@ -65,18 +65,17 @@ namespace SpartaDungeon
                 default:
                     if (barInventory[selectedItem].Type == ItemType.USABLE && player.Gold >= barInventory[selectedItem].Price)
                     {                        
-                        // 선택한 아이템이 USABLE인지 체크
-                        // USABLE이면 인벤토리의 수량을 증가시키는 로직
+                        // 선택한 아이템이 USABLE인지 체크, USABLE이면 인벤토리의 수량을 증가시키는 로직
                         // 1 : 구매선택한 아이템이 인벤토리에 존재하는 경우, 그 아이템의 수량만 늘린다.
                         // 인벤토리를 탐색해서 구매선택한 아이템의 Name이 있는지 알아낸다.
                         // 있다면 그아이템의 인벤토리 인덱스를 얻는다.
                         // 인벤토리[인덱스].Qty를 ++한다.
                         int index = Item.SearchIndexInInventoryAtName(playerInventory, barInventory, keyInput);
-                        if (index == -1)
+                        if (index == -1) // playerInventory에 barInventory[selectedItem]과 같은 아이템이 없을 경우
                         {
-                            barInventory[selectedItem].Purchase(player.Name, inventoryManager); //Purchase하면 Add도 안에 있음
-                            playerInventory = inventoryManager.GetInventory(player.Name); // 가방 상태 갱신
-                            UsableItem temp = (UsableItem)playerInventory[playerInventory.Count -1];                            
+                            barInventory[selectedItem].Purchase(player.Name, inventoryManager); // Add할 대상객체에 .Purchase()를 하면 inventoryManager가 player.Name의 인벤토리를 찾아서 Add를 실행한다. 
+                            playerInventory = inventoryManager.GetInventory(player.Name); // 가방상태 갱신코드. 이코드를 실행하지 않으면 playerInventory는 함수 맨 위의 처음호출 때의 inventory를 가리키고있고, 바로 윗줄의 Purchase로 인한 변화를 반영하지 못한다.
+                            UsableItem temp = (UsableItem)playerInventory[playerInventory.Count -1]; // 방금 Add를 했기때문에 대상아이템이 List의 맨 뒤에 있을 것을 알고있다.                     
                             temp.Qty++;
                         }
                         else
@@ -84,10 +83,7 @@ namespace SpartaDungeon
                             UsableItem temp = (UsableItem)playerInventory[index];
                             temp.Qty++;
                         }
-                        player.Gold -= barInventory[selectedItem].Price;
-
-                        
-
+                        player.Gold -= barInventory[selectedItem].Price;              
                     }     
                     // 돈이 모자라는 경우
                     else
