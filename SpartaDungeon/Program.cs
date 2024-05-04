@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading;
 using System.Xml.Serialization;
+using static SpartaDungeon.UseItem;
 
 namespace SpartaDungeon
 {
@@ -261,7 +262,7 @@ namespace SpartaDungeon
                     break;
                 default: 
                     //Usable인지 체크
-                    if (inventory[selectedItem].Type==ItemType.USABLE)
+                    if (inventory[selectedItem].Type!=ItemType.WEAPON && inventory[selectedItem].Type != ItemType.ARMOR)
                     {
                         Console.WriteLine("장비할 수 없는 아이템입니다.");
                         Thread.Sleep(500);
@@ -426,7 +427,9 @@ namespace SpartaDungeon
             ConsoleUtility.PrintTextHighlights("", player.Gold.ToString(), " G");
             Console.WriteLine("");
             Console.WriteLine("[아이템 목록]");
-            for (int i = 0; i < inventory.Count; i++)
+            // 인벤토리 정보를 로드
+            List<Item> inventory = inventoryManager.GetInventory(player.Name);
+            for (int i = 0; i < inventory.Count; i++)   // 판매시 Null출력
             {
                 inventory[i].PrintItemStatDescription(true, i + 1);
             }
@@ -459,6 +462,12 @@ namespace SpartaDungeon
                     StoreMenu();
                     break;
                 default:
+                    if (inventory[selectedItem].Type != ItemType.WEAPON && inventory[selectedItem].Type != ItemType.ARMOR)
+                    {
+                        Console.WriteLine("판매 할 수 없는 아이템입니다.");
+                        Thread.Sleep(500);
+                        SellMenu();
+                    }
                     // 1 : 장비한 아이템인 경우
                     if (inventory[selectedItem].IsEquipped) // index 맞추기
                     {
@@ -695,7 +704,8 @@ namespace SpartaDungeon
                     case 3:
                         Potion.UsePotionDirectly(player, player.potion, Battle, monsters);
                         break;
-                        case 4:
+                    case 4:
+                        UseItem.ItemMenu(player, Battle, monsters, inventoryManager);
                         break;
                     default:
                         Console.WriteLine("잘못된 입력입니다.");

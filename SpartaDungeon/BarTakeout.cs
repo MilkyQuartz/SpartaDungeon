@@ -63,7 +63,7 @@ namespace SpartaDungeon
                     Menu();
                     break;
                 default:
-                    if (barInventory[selectedItem].Type == ItemType.USABLE && player.Gold >= barInventory[selectedItem].Price)
+                    if (barInventory[selectedItem].Type != ItemType.WEAPON && barInventory[selectedItem].Type != ItemType.ARMOR && player.Gold >= barInventory[selectedItem].Price)
                     {                        
                         // 선택한 아이템이 USABLE인지 체크, USABLE이면 인벤토리의 수량을 증가시키는 로직
                         // 1 : 구매선택한 아이템이 인벤토리에 존재하는 경우, 그 아이템의 수량만 늘린다.
