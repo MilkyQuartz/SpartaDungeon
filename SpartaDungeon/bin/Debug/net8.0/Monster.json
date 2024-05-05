@@ -200,11 +200,11 @@
         "MonsterSkills": [
             {
                 "MonsterSkillName": "해치웠나?",
-                "MonsterDamage": -20
+                "MonsterDamage": -10
             },
             {
-                "MonsterSkillName": "몸에... 힘이 들어가지않아..!",
-                "MonsterDamage": 1
+                "MonsterSkillName": "내게 무슨 일이 생기면 이 편지를 가족에게 대신 전해줘..",
+                "MonsterDamage": 8
             }
         ]
     },

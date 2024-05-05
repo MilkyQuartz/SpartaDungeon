@@ -722,7 +722,7 @@ namespace SpartaDungeon
                         {
                             var healAmount = Math.Abs(damage);
                             player.Hp += healAmount;
-                            Console.WriteLine($"{monster.Name}(이)가 [{randomSkill.MonsterSkillName}] 스킬을 사용했습니다! {healAmount}만큼 회복되었습니다.");
+                            Console.WriteLine($"{monster.Name}(이)가 [{randomSkill.MonsterSkillName}] 스킬을 사용했습니다! 당신의 HP가 {healAmount}만큼 회복되었습니다.");
                         }
                     }
                 }
