@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using SpartaDungeon;
+using static SpartaDungeon.Casino_Blackjack;
 
 namespace SpartaDungeon
 {
@@ -12,7 +13,12 @@ namespace SpartaDungeon
     {
         WEAPON,
         ARMOR,
-        USABLE
+        USABLE,
+        HEAL = 20,
+        PERCENTHEAL,
+        CASTERA,
+        ATTACK = 30,
+        ONLYSELL = 40
     }
 
     internal class Item
@@ -171,31 +177,10 @@ namespace SpartaDungeon
             Qty = qty;
         }
 
-        // 호출예시 : 배틀 -> 아이템사용하기 -> 아이템선택 선택한 아이템.UseHealItem(Value);
-        void UseItem(Object target, float value)
-        {
-
-
-
-        }
-        //void Castera()
-        //{
-        //    player.Hp = (player.Hp + player.Hp * 0.5) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + player.Hp * 0.5);
-        //}
-
-        //void FixedHeal(float _hp)
-        //{
-        //    player.Hp = (player.Hp + _hp) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + _hp);
-        //}
-
-        //void PercentHeal(float _percent)
-        //{
-        //    player.Hp = (player.Hp + player.MaxHp * _percent) >= player.MaxHp ? (player.Hp = player.MaxHp) : (player.Hp + player.MaxHp * _percent);
-        //}
+        
         public void PrintUsableItemDescription(bool withNumber = false, int idx = 0)
         {
             Console.Write("- ");
-
             if (withNumber)
             {
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -203,11 +188,9 @@ namespace SpartaDungeon
                 Console.ResetColor();
             }
             Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));
-
             Console.Write(" | ");
             // 설명 출력
             Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 20));
-
             Console.Write(" | ");
 
             ConsoleUtility.PrintTextHighlightsNoLF("", Price.ToString(), " G");
@@ -218,11 +201,17 @@ namespace SpartaDungeon
         }
     }
 
-
+    
     internal class InventoryManager
     {
         private Dictionary<string, List<Item>> inventory;
+        public InventoryManager()
+        {
+            inventory = LoadInventory();
+        }
 
+        // player의 inventory에 변화를 준 코드 뒤엔 바로 GetInventory()를 호출해서 inventory를 갱신하세요.
+        // 갱신없이 player의 inventory에 접근하면 변화가 있기 전의 inventory를 가져옵니다.
         public List<Item> GetInventory(string playerName)
         {
             if (inventory.ContainsKey(playerName))
@@ -231,10 +220,6 @@ namespace SpartaDungeon
                 return new List<Item>();
         }
 
-        public InventoryManager()
-        {
-            inventory = LoadInventory();
-        }
 
         private Dictionary<string, List<Item>> LoadInventory()
         {

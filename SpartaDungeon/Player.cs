@@ -14,7 +14,7 @@ namespace SpartaDungeon
 
         END = 10
     }
-    internal class Player
+    internal class Player : ICritical,IDamage
     {
         public string Name { get; set; }
         public string Job { get; set; }
@@ -79,6 +79,32 @@ namespace SpartaDungeon
             MaxHp += 2f;
             MaxMp += 2f;
         }
+
+        public void CheckCritical(ref int attackDamage)
+        {
+
+            int rand = new Random().Next(1, 21);
+            if (rand == 4 || rand == 11 || rand == 18)
+            {
+                attackDamage = (int)(attackDamage * 1.6);
+                Console.WriteLine("치명타 공격!");
+            }
+        }
+
+        public void TakeDamage(int damage)
+        {
+            int rand = new Random().Next(1, 11);
+            if (rand ==10)
+            {
+                ConsoleUtility.PrintTextHighlights("", "\"무우~빙!\"", "");
+                Console.WriteLine("몬스터의 공격을 회피했다!");
+            }
+            else
+            {
+                Hp -= damage;
+            }
+        }
+
 
 
         public string InputName()
