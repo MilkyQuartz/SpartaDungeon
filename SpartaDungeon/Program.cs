@@ -53,7 +53,7 @@ namespace SpartaDungeon
             monsters = JsonSerializer.Deserialize<List<Monster>>(File.ReadAllText("Monster.json"));
             barInventory = JsonSerializer.Deserialize<List<UsableItem>>(File.ReadAllText("barInventory.json"));
             questList = new List<Quest>();
-            questList.Add(new Quest("7호선 최강의 검사 처치", "몬스터를 사냥하세요", "7호선 최강의 검사", 5, 4, 1000, QuestType.hunt));
+            questList.Add(new Quest("7호선 최강의 검사 처치", "몬스터를 사냥하세요", "7호선 최강의 검사", 5, 3, 1000, QuestType.hunt));
             questList.Add(new Quest("레벨 달성", "레벨을 올려보자", "레벨", 5, player.Level, 1000, QuestType.levelUp));
             questList.Add(new Quest("장비 장착", "낡은 검을 장착해보자", "낡은 검", 1, 0, 1000, QuestType.equip));
             myQuest = new List<Quest>();
@@ -605,10 +605,10 @@ namespace SpartaDungeon
         {
             bool gameOver = false;
             int totalGold = 0;
-            List<string> questMonster = new List<string>();
 
             while (!gameOver)
             {
+                Console.Clear();
                 Console.WriteLine("");
                 Console.WriteLine("[Battle!!]\n");
 
@@ -643,10 +643,13 @@ namespace SpartaDungeon
                 switch (choice)
                 {
                     case 0:
+                        Console.Clear();
                         Console.WriteLine("쫄?");
+                        Thread.Sleep(1000);
                         MainMenu();
                         break;
                     case 1:
+                        Console.Clear();
                         Console.WriteLine("[My turn!]\n");
                         Console.WriteLine("공격할 대상을 선택하세요.\n");
                         for (int i = 0; i < monsters.Count; i++)
@@ -663,13 +666,18 @@ namespace SpartaDungeon
                         }
                         Console.WriteLine("");
                         int targetChoice = ConsoleUtility.PromptMenuChoice(1, monsters.Count) - 1;
+                        Console.WriteLine("");
+
                         Monster targetMonster = monsters[targetChoice];
                         if (targetMonster.Hp > 0)
                         {
                             int minAttack = (int)(player.Atk * 0.9f);
                             int maxAttack = (int)(player.Atk * 1.1f);
                             int attackDamage = new Random().Next(minAttack, maxAttack + 1);
-                            targetMonster.Hp -= attackDamage;
+
+                            player.CheckCritical(ref attackDamage);
+                            targetMonster.TakeDamage(attackDamage);
+
                             if (targetMonster.Hp <= 0)
                             {
                                 targetMonster.Hp = 0;
@@ -684,8 +692,7 @@ namespace SpartaDungeon
                                     }
                                 }
                             }
-                            Console.WriteLine($"당신은 {targetMonster.Name}에게 {attackDamage}의 피해를 입혔습니다.");
-                            Console.WriteLine("");
+
                             if (targetMonster.Hp == 0)
                             {
                                 Console.WriteLine($"{targetMonster.Name}이(가) 죽었습니다.");
@@ -699,12 +706,15 @@ namespace SpartaDungeon
                         }
                         break;
                     case 2:
-                        totalGold += UsingSkill(totalGold, monsters, questMonster);
+                        Console.Clear();
+                        UsingSkill(ref totalGold, monsters);
                         break;
                     case 3:
+                        Console.Clear();
                         Potion.UsePotionDirectly(player, player.potion, Battle, monsters);
                         break;
                     case 4:
+                        Console.Clear();
                         UseItem.ItemMenu(player, Battle, monsters, inventoryManager);
                         break;
                     default:
@@ -728,15 +738,16 @@ namespace SpartaDungeon
                         {
                             int minAttack = (int)(damage * 0.9f); 
                             int maxAttack = (int)(damage * 1.1f);
-
                             int attackDamage = rand.Next(minAttack, maxAttack + 1);
 
-                            player.Hp -= attackDamage;
+                            Console.WriteLine($">> {monster.Name}(이)가 [{randomSkill.MonsterSkillName}] 스킬을 사용했습니다! [데미지: {attackDamage}]");
+                            monster.CheckCritical(ref attackDamage);
+                            player.TakeDamage(attackDamage);
                             if (player.Hp <= 0)
                             {
                                 player.Hp = 0;
                             }
-                            Console.WriteLine($">> {monster.Name}(이)가 [{randomSkill.MonsterSkillName}] 스킬을 사용했습니다! [데미지: {attackDamage}]");
+           
                         }
                         else
                         {
@@ -745,14 +756,16 @@ namespace SpartaDungeon
                             Console.WriteLine($"{monster.Name}(이)가 [{randomSkill.MonsterSkillName}] 스킬을 사용했습니다! {healAmount}만큼 회복되었습니다.");
                         }
                     }
+
+                    Thread.Sleep(500);
                 }
-
-
+                Thread.Sleep(3000);
                 gameOver = CheckGameOver(monsters, totalGold);
+
             }
         }
 
-        private int UsingSkill(int totalGold, List<Monster> monsters, List<string> qustmonster)
+        private void UsingSkill(ref int totalGold, List<Monster> monsters)
         {
             Console.WriteLine("사용할 스킬을 선택하세요.\n");
             for (int i = 0; i < skill.Count; i++)
@@ -761,9 +774,10 @@ namespace SpartaDungeon
             }
 
             int skillChoice = ConsoleUtility.PromptMenuChoice(1, skill.Count) - 1;
+            Console.WriteLine("");
             Console.WriteLine($"당신은 [{skill[skillChoice].Name}] 스킬을 선택했습니다.");
-
             Console.WriteLine(" 스킬을 사용할 대상을 선택하세요.\n");
+
             for (int i = 0; i < monsters.Count; i++)
             {
                 var monster = monsters[i];
@@ -859,8 +873,6 @@ namespace SpartaDungeon
                 Console.WriteLine("이미 죽은 몬스터입니다.");
                 Console.WriteLine("");
             }
-
-            return totalGold;
         }
 
         private bool CheckGameOver(List<Monster> monsters, int totalGold)
@@ -868,8 +880,10 @@ namespace SpartaDungeon
             bool allMonstersDead = monsters.All(monster => monster.Hp <= 0);
             bool playerDead = player.Hp <= 0;
 
+            Console.Clear();
             if (allMonstersDead)
             {
+                Console.WriteLine("모든 몬스터가 쓰러졌습니다.");
                 Console.WriteLine("던전 공략에 성공하셨습니다.");
                 Console.WriteLine($"총 획득 골드: {totalGold}");
                 player.Gold += totalGold;
@@ -1028,10 +1042,8 @@ namespace SpartaDungeon
             Console.WriteLine("");
             Console.WriteLine("길드에 들어서자 접수원이 말을 건다.");
             Console.WriteLine("");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\"어서오세요! 길드 카지노 입니다.\"");
-            Console.WriteLine("\"무엇을 도와드릴까요?\"");
-            Console.ResetColor();
+            ConsoleUtility.PrintTextHighlights("", "\"어서오세요! 길드 카지노 입니다.\"", "");
+            ConsoleUtility.PrintTextHighlights("", "\"무엇을 도와드릴까요?\"", "");
             Console.WriteLine("");
 
             Console.WriteLine("1. \"괜찮은 일거리 좀 있나?\"");
@@ -1085,9 +1097,7 @@ namespace SpartaDungeon
             Console.WriteLine("0. \"별거 없군...\"");
             Console.WriteLine("");
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\"관심이 가는 의뢰가 있나요?\"");
-            Console.ResetColor();
+            ConsoleUtility.PrintTextHighlights("", "\"관심이 가는 의뢰가 있나요?\"", "");
             Console.WriteLine("");
             int choice = ConsoleUtility.PromptMenuChoice(0, questList.Count);
 
@@ -1136,7 +1146,7 @@ namespace SpartaDungeon
         public void MyQuestMenu()
         {
             Console.Clear();
-            Console.WriteLine("\"현재 수령하신 의뢰 목록들이에요.");
+            ConsoleUtility.PrintTextHighlights("", "\"현재 수령하신 의뢰 목록들이에요.\"", "");
             Console.WriteLine("");
 
             int i = 0;
@@ -1162,9 +1172,7 @@ namespace SpartaDungeon
         {
             Console.Clear();
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\"어떤 의뢰를 완료하셨나요?\"");
-            Console.ResetColor();
+            ConsoleUtility.PrintTextHighlights("", "\"어떤 의뢰를 완료하셨나요?\"", "");
             Console.WriteLine("");
 
             int i = 0;
