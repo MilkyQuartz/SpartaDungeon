@@ -55,7 +55,7 @@ namespace SpartaDungeon
             monsters = JsonSerializer.Deserialize<List<Monster>>(File.ReadAllText("Monster.json"));
             barInventory = JsonSerializer.Deserialize<List<UsableItem>>(File.ReadAllText("barInventory.json"));
             questList = new List<Quest>();
-            questList.Add(new Quest("7호선 최강의 검사 처치", "몬스터를 사냥하세요", "7호선 최강의 검사", 5, 3, 1000, QuestType.hunt));
+            questList.Add(new Quest("7호선 최강의 검사 처치", "몬스터를 사냥하세요", "7호선 최강의 검사", 5, 0, 1000, QuestType.hunt));
             questList.Add(new Quest("레벨 달성", "레벨을 올려보자", "레벨", 5, player.Level, 1000, QuestType.levelUp));
             questList.Add(new Quest("장비 장착", "낡은 검을 장착해보자", "낡은 검", 1, 0, 1000, QuestType.equip));
             myQuest = new List<Quest>();

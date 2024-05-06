@@ -42,7 +42,7 @@ namespace SpartaDungeon
                 failBuy = !failBuy;
             }
             else
-            { Console.WriteLine("내 술을 탐험중에도 마시고 싶다고? 기꺼이 챙겨주지. 포장비는 50G다."); }
+            { Console.WriteLine("탐험중에도 내 술을 마시고 싶다고? 기꺼이 챙겨주지. 포장비는 50G다."); }
             Console.WriteLine("");
             Console.WriteLine($"현재 체력:{player.Hp} | 현재 골드: {player.Gold}");
             Console.WriteLine("");

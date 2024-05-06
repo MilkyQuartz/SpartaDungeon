@@ -190,7 +190,7 @@ namespace SpartaDungeon
             Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));
             Console.Write(" | ");
             // 설명 출력
-            Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 20));
+            Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 52));
             Console.Write(" | ");
 
             ConsoleUtility.PrintTextHighlightsNoLF("", Price.ToString(), " G");

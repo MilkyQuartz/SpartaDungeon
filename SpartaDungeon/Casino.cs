@@ -53,7 +53,7 @@ namespace SpartaDungeon
                     Betting(Casino_Blackjack.Game_Blackjack.StartBlackjack, bettedCoin);                    
                     break;
                 case 3:
-                    Console.WriteLine("아직 준비가 안됐습니다.");
+                    Console.WriteLine("- 딜러가 자리에 없습니다 -");
                     Thread.Sleep(1000);
                     CasinoMenu(MainMenu);
                     break;

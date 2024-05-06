@@ -31,5 +31,38 @@
         "Price": 2000,
         "IsEquipped": false,
         "IsPurchased": false
-    }
+    },
+	{
+        "Name": "강철 검",
+        "Desc": "강철로 만들어진 검",
+        "Type": 0,
+        "Atk": 8,
+        "Def": 0,
+        "Hp": 0,
+        "Price": 2500,
+        "IsEquipped": false,
+        "IsPurchased": false
+    },
+	{
+        "Name": "다마스커스 검",
+        "Desc": "검신에 물결무늬가 들어가있다",
+        "Type": 0,
+        "Atk": 15,
+        "Def": 0,
+        "Hp": 0,
+        "Price": 4000,
+        "IsEquipped": false,
+        "IsPurchased": false
+    },
+	{
+        "Name": "이세계의 도구",
+        "Desc": "긴 나무 막대와 금속으로 된 기묘한 물건",
+        "Type": 0,
+        "Atk": 99,
+        "Def": 0,
+        "Hp": 0,
+        "Price": 50000,
+        "IsEquipped": false,
+        "IsPurchased": false
+    }	
 ]
