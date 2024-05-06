@@ -15,13 +15,13 @@ namespace SpartaDungeon
     internal class BarTakeout 
     {
         Player player;
-        List<UsableItem> barInventory;
+        List<Item> barInventory;
         List<Item> playerInventory;
         InventoryManager inventoryManager;
 
           
 
-        public BarTakeout(Player _player, List<UsableItem> _BarInventory, InventoryManager _inventoryManager)
+        public BarTakeout(Player _player, List<Item> _BarInventory, InventoryManager _inventoryManager)
         {
             player = _player;
             barInventory = _BarInventory;
@@ -75,13 +75,12 @@ namespace SpartaDungeon
                         {
                             barInventory[selectedItem].Purchase(player.Name, inventoryManager); // Add할 대상객체에 .Purchase()를 하면 inventoryManager가 player.Name의 인벤토리를 찾아서 Add를 실행한다. 
                             playerInventory = inventoryManager.GetInventory(player.Name); // 가방상태 갱신코드. 이코드를 실행하지 않으면 playerInventory는 함수 맨 위의 처음호출 때의 inventory를 가리키고있고, 바로 윗줄의 Purchase로 인한 변화를 반영하지 못한다.
-                            UsableItem temp = (UsableItem)playerInventory[playerInventory.Count -1]; // 방금 Add를 했기때문에 대상아이템이 List의 맨 뒤에 있을 것을 알고있다.                     
-                            temp.Qty++;
+                            playerInventory[playerInventory.Count -1].Qty++; // 방금 Add를 했기때문에 대상아이템이 List의 맨 뒤에 있을 것을 알고있다.                     
+                            
                         }
                         else
                         {
-                            UsableItem temp = (UsableItem)playerInventory[index];
-                            temp.Qty++;
+                            playerInventory[playerInventory.Count - 1].Qty++;
                         }
                         player.Gold -= barInventory[selectedItem].Price;              
                     }     

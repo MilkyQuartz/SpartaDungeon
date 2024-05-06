@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using SpartaDungeon;
 using static SpartaDungeon.Casino_Blackjack;
 
@@ -34,11 +36,13 @@ namespace SpartaDungeon
 
         public int Price { get; }
         public string PlayerName { get; set; }
+        public float Value { get; set; }
+        public int Qty { get; set; } //Quantity
 
         public bool IsEquipped { get; private set; }
         public bool IsPurchased { get; private set; }
 
-        public Item(string name, string desc, ItemType type, int atk, int def, int hp, int mp, int price, string playerName = null, bool isEquipped = false, bool isPurchased = false)
+        public Item(string name, string desc, ItemType type, int atk, int def, int hp, int mp, int price, float value, int qty, string playerName = null, bool isEquipped = false, bool isPurchased = false)
         {
             Name = name;
             Desc = desc;
@@ -48,6 +52,8 @@ namespace SpartaDungeon
             Hp = hp;
             Mp = mp;
             Price = price;
+            Value = value;
+            Qty = qty;
             PlayerName = playerName;
             IsEquipped = isEquipped;
             IsPurchased = isPurchased;
@@ -122,6 +128,27 @@ namespace SpartaDungeon
             }
         }
 
+        public void PrintUsableItemDescription(bool withNumber = false, int idx = 0)
+        {
+            Console.Write("- ");
+            if (withNumber)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write("{0} ", idx);
+                Console.ResetColor();
+            }
+            Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));
+            Console.Write(" | ");
+            // 설명 출력
+            Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 52));
+            Console.Write(" | ");
+
+            ConsoleUtility.PrintTextHighlightsNoLF("", Price.ToString(), " G");
+
+            Console.Write(" | ");
+            // 수량 출력
+            ConsoleUtility.PrintTextHighlights("보유수 ", Qty.ToString(), "");
+        }
 
 
         internal void ToggleEquipStatus()
@@ -146,7 +173,7 @@ namespace SpartaDungeon
         }
 
         // 호출예시 Item.SearchIndexInInventoryAtName(targetList, searchList, keyInput)
-        public static int SearchIndexInInventoryAtName(List<Item> targetList, List<UsableItem> searchList, int keyInput)
+        public static int SearchIndexInInventoryAtName(List<Item> targetList, List<Item> searchList, int keyInput)
         {
             if (keyInput < 1 || keyInput > searchList.Count)
             {
@@ -162,52 +189,60 @@ namespace SpartaDungeon
             }
             return -1;
         }
+
+       
     }
 
    
-    internal class UsableItem : Item
-    {
-        public float Value { get; set; }
-        public int Qty { get; set; } //Quantity
+    //internal class UsableItem : Item
+    //{
+    //    public float Value { get; set; }
+    //    public int Qty { get; set; } //Quantity
 
 
-        public UsableItem(string name, string desc, ItemType type, int atk, int def, int hp, int mp, int price, float value, int qty, string playerName = null, bool isEquipped = false, bool isPurchased = false) : base(name, desc, type, atk, def, hp, mp, price, playerName = null, isEquipped = false, isPurchased = false)
-        {
-            Value = value;
-            Qty = qty;
-        }
+    //    public UsableItem(string name, string desc, ItemType type, int atk, int def, int hp, int mp, int price, float value, int qty, string playerName = null, bool isEquipped = false, bool isPurchased = false) : base(name, desc, type, atk, def, hp, mp, price, playerName = null, isEquipped = false, isPurchased = false)
+    //    {
+    //        Value = value;
+    //        Qty = qty;
+    //    }
 
         
-        public void PrintUsableItemDescription(bool withNumber = false, int idx = 0)
-        {
-            Console.Write("- ");
-            if (withNumber)
-            {
-                Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                Console.Write("{0} ", idx);
-                Console.ResetColor();
-            }
-            Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));
-            Console.Write(" | ");
-            // 설명 출력
-            Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 52));
-            Console.Write(" | ");
+    //    public void PrintUsableItemDescription(bool withNumber = false, int idx = 0)
+    //    {
+    //        Console.Write("- ");
+    //        if (withNumber)
+    //        {
+    //            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+    //            Console.Write("{0} ", idx);
+    //            Console.ResetColor();
+    //        }
+    //        Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));
+    //        Console.Write(" | ");
+    //        // 설명 출력
+    //        Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 52));
+    //        Console.Write(" | ");
 
-            ConsoleUtility.PrintTextHighlightsNoLF("", Price.ToString(), " G");
+    //        ConsoleUtility.PrintTextHighlightsNoLF("", Price.ToString(), " G");
 
-            Console.Write(" | ");
-            // 수량 출력
-            ConsoleUtility.PrintTextHighlights("보유수 ", Qty.ToString(), "");
-        }
-    }
+    //        Console.Write(" | ");
+    //        // 수량 출력
+    //        ConsoleUtility.PrintTextHighlights("보유수 ", Qty.ToString(), "");
+    //    }
+    //}
 
     
     internal class InventoryManager
     {
+        
+
+
+
+
         private Dictionary<string, List<Item>> inventory;
         public InventoryManager()
         {
             inventory = LoadInventory();
+
         }
 
         // player의 inventory에 변화를 준 코드 뒤엔 바로 GetInventory()를 호출해서 inventory를 갱신하세요.
@@ -219,6 +254,7 @@ namespace SpartaDungeon
             else
                 return new List<Item>();
         }
+                
 
 
         private Dictionary<string, List<Item>> LoadInventory()

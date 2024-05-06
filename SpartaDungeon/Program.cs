@@ -26,7 +26,7 @@ namespace SpartaDungeon
         private List<Quest> myQuest;
         private List<Quest> completeQuest;
         private Casino casino;
-        private List<UsableItem> barInventory;
+        private List<Item> barInventory;
         private BarTakeout bartakeout;
 
         public GameManager()
@@ -52,7 +52,7 @@ namespace SpartaDungeon
             compareDic = new Dictionary<ItemType, int>();
             storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json"));
             monsters = JsonSerializer.Deserialize<List<Monster>>(File.ReadAllText("Monster.json"));
-            barInventory = JsonSerializer.Deserialize<List<UsableItem>>(File.ReadAllText("barInventory.json"));
+            barInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("barInventory.json"));
             questList = new List<Quest>();
             questList.Add(new Quest("7호선 최강의 검사 처치", "몬스터를 사냥하세요", "7호선 최강의 검사", 5, 0, 1000, QuestType.hunt));
             questList.Add(new Quest("레벨 달성", "레벨을 올려보자", "레벨", 5, player.Level, 1000, QuestType.levelUp));
@@ -198,9 +198,9 @@ namespace SpartaDungeon
             else {
                 for (int i = 0; i < inventory.Count; i++)
                 {
-                    if (inventory[i] is UsableItem usableItem)
+                    if (inventory[i].Type != ItemType.ARMOR && inventory[i].Type != ItemType.WEAPON)
                     {
-                        usableItem.PrintUsableItemDescription();
+                        inventory[i].PrintUsableItemDescription();
                     }
                     else
                     {
@@ -248,9 +248,9 @@ namespace SpartaDungeon
                 for (int i = 0; i < inventory.Count; i++)
                 {
                     //inventory[i].PrintItemStatDescription(true, i + 1); // 나가기가 0번 고정, 나머지가 1번부터 배정
-                    if (inventory[i] is UsableItem usableItem)
+                    if (inventory[i].Type != ItemType.ARMOR && inventory[i].Type != ItemType.WEAPON)
                     {
-                        usableItem.PrintUsableItemDescription(true, i + 1);
+                        inventory[i].PrintUsableItemDescription(true, i + 1);
                     }
                     else
                     {

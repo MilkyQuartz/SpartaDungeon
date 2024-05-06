@@ -38,9 +38,9 @@ namespace SpartaDungeon
             {
                 for (int i = 0; i < inventory.Count; i++)
                 {
-                    if (inventory[i] is UsableItem usableItem)
+                    if (inventory[i].Type != ItemType.ARMOR && inventory[i].Type != ItemType.WEAPON)
                     {
-                        usableItem.PrintUsableItemDescription(true, i + 1);
+                        inventory[i].PrintUsableItemDescription(true, i + 1);
                     }
                     else
                     {
@@ -67,26 +67,26 @@ namespace SpartaDungeon
                         Console.WriteLine("사용할 수 없는 아이템입니다.");
                         Thread.Sleep(500);
                     }
-                    else if (inventory[selectedItem] is UsableItem usableItem)
+                    else if (inventory[selectedItem].Type != ItemType.ARMOR && inventory[selectedItem].Type != ItemType.WEAPON)
                     {
                         if (inventory[selectedItem].Type == ItemType.PERCENTHEAL)
                         {
-                            ItemEffect.PercentHeal(player, usableItem.Value);
+                            ItemEffect.PercentHeal(player, inventory[selectedItem].Value);
                         }
                         else if (inventory[selectedItem].Type == ItemType.CASTERA)
                         {
-                            ItemEffect.Castera(player, usableItem.Value);
+                            ItemEffect.Castera(player, inventory[selectedItem].Value);
                         }
 
                         inventory = inventoryManager.GetInventory(player.Name);
 
                         //사용아이템 수량 --
-                        --usableItem.Qty;
+                        --inventory[selectedItem].Qty;
                         inventory = inventoryManager.GetInventory(player.Name);
                         //수량 0이면 인벤토리에서 삭제
-                        if (usableItem.Qty == 0)
+                        if (inventory[selectedItem].Qty == 0)
                         {
-                            inventoryManager.RemoveItem(player.Name, usableItem);
+                            inventoryManager.RemoveItem(player.Name, inventory[selectedItem]);
                             inventory = inventoryManager.GetInventory(player.Name);
                         }
                     }
