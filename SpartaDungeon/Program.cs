@@ -50,7 +50,6 @@ namespace SpartaDungeon
         {
             player = new Player(name: "", job: "", level: 1, atk: 10, def: 5, hp: 100, maxHp: 100, mp: 20, maxMp: 20, gold: 10000, maxExp: 10);
             compareDic = new Dictionary<ItemType, int>();
-            //inventory = new List<Item>();
             storeInventory = JsonSerializer.Deserialize<List<Item>>(File.ReadAllText("StoreInventory.json"));
             monsters = JsonSerializer.Deserialize<List<Monster>>(File.ReadAllText("Monster.json"));
             barInventory = JsonSerializer.Deserialize<List<UsableItem>>(File.ReadAllText("barInventory.json"));
@@ -331,7 +330,7 @@ namespace SpartaDungeon
             Console.WriteLine("[아이템 목록]");
             for (int i = 0; i < storeInventory.Count; i++)
             {
-                storeInventory[i].PrintStoreItemDescription(true, i + 1);
+                storeInventory[i].PrintStoreItemDescription(inventoryManager, true, i + 1, player.Name);
             }
             Console.WriteLine("");
             Console.WriteLine("1. 아이템 구매");
@@ -373,7 +372,7 @@ namespace SpartaDungeon
             Console.WriteLine("[아이템 목록]");
             for (int i = 0; i < storeInventory.Count; i++)
             {
-                storeInventory[i].PrintStoreItemDescription(true, i + 1);
+                storeInventory[i].PrintStoreItemDescription(inventoryManager, true, i + 1, player.Name);
             }
             Console.WriteLine("");
             Console.WriteLine("0. 나가기");
