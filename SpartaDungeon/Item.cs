@@ -161,7 +161,7 @@ namespace SpartaDungeon
         {
             IsPurchased = true;
             PlayerName = playerName;
-            inventoryManager.AddItem(playerName, this); 
+            inventoryManager.AddItem(playerName, this);
         }
 
         // 판매

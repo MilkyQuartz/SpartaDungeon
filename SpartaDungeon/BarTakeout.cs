@@ -74,13 +74,12 @@ namespace SpartaDungeon
                         if (index == -1) // playerInventory에 barInventory[selectedItem]과 같은 아이템이 없을 경우
                         {
                             barInventory[selectedItem].Purchase(player.Name, inventoryManager); // Add할 대상객체에 .Purchase()를 하면 inventoryManager가 player.Name의 인벤토리를 찾아서 Add를 실행한다. 
-                            playerInventory = inventoryManager.GetInventory(player.Name); // 가방상태 갱신코드. 이코드를 실행하지 않으면 playerInventory는 함수 맨 위의 처음호출 때의 inventory를 가리키고있고, 바로 윗줄의 Purchase로 인한 변화를 반영하지 못한다.
-                            playerInventory[playerInventory.Count -1].Qty++; // 방금 Add를 했기때문에 대상아이템이 List의 맨 뒤에 있을 것을 알고있다.                     
-                            
+                            playerInventory = inventoryManager.GetInventory(player.Name); // 가방상태 갱신코드. 이코드를 실행하지 않으면 playerInventory는 함수 맨 위의 처음호출 때의 inventory를 가리키고있고, 바로 윗줄의 Purchase로 인한 변화를 반영하지 못한다.  
+                            playerInventory[playerInventory.Count - 1].Qty++; // 방금 Add를 했기때문에 대상아이템이 List의 맨 뒤에 있을 것을 알고있다.   
                         }
                         else
                         {
-                            playerInventory[playerInventory.Count - 1].Qty++;
+                            playerInventory[index].Qty++;
                         }
                         player.Gold -= barInventory[selectedItem].Price;              
                     }     
@@ -90,6 +89,7 @@ namespace SpartaDungeon
                         failBuy = !failBuy;
                         TakeoutMenu(prevMenu);
                     }
+                    inventoryManager.SaveInventory();
                     break;                    
             } //END switch
             TakeoutMenu(prevMenu);

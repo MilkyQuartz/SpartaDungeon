@@ -1,1 +1,0 @@
-[{"Name":"player1","Job":"Warrior","Level":1,"Atk":10,"Def":5,"Hp":97,"MaxHp":100,"Mp":50,"MaxMp":50,"Gold":6350,"MaxExp":10,"Exp":0,"BonusAtk":2,"BonusDef":14,"BonusHp":0,"BonusMp":0},{"Name":"player2","Job":"Mage","Level":1,"Atk":10,"Def":5,"Hp":60,"MaxHp":60,"Mp":100,"MaxMp":100,"Gold":500,"MaxExp":10,"Exp":0,"BonusAtk":0,"BonusDef":0,"BonusHp":0,"BonusMp":0}]
