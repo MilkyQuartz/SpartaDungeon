@@ -129,7 +129,7 @@ namespace SpartaDungeon
                 Console.ResetColor();
                 Console.Write(" 회복 할 수 있습니다.  ");
                 ConsoleUtility.PrintTextHighlights("남은 포션 : ", _howManyPotion.ToString(), " )");
-                ConsoleUtility.PrintTextHighlights("현재 체력 : ", (player.Hp).ToString(), " / ", (player.Hp + player.BonusHp).ToString(), player.BonusHp > 0 ? $" (+{player.BonusHp})" : "");
+                ConsoleUtility.PrintTextHighlights("현재 체력 : ", (player.Hp).ToString(), " / ", (player.MaxHp + player.BonusHp).ToString(), player.BonusHp > 0 ? $" (+{player.BonusHp})" : "");
                 Console.WriteLine();
                 Console.WriteLine("1. 사용하기");
                 Console.WriteLine("0. 돌아가기");
