@@ -33,17 +33,6 @@
         "IsPurchased": false
     },
 	{
-        "Name": "강철 검",
-        "Desc": "강철로 만들어진 검",
-        "Type": 0,
-        "Atk": 8,
-        "Def": 0,
-        "Hp": 0,
-        "Price": 2500,
-        "IsEquipped": false,
-        "IsPurchased": false
-    },
-	{
         "Name": "다마스커스 검",
         "Desc": "검신에 물결무늬가 들어가있다",
         "Type": 0,
@@ -64,5 +53,16 @@
         "Price": 50000,
         "IsEquipped": false,
         "IsPurchased": false
-    }	
+    },
+    {
+        "Name": "노가다 목장갑",
+        "Desc": "단풍냄새가 나는 장갑",
+        "Type": 1,
+        "Atk": 5,
+        "Def": 5,
+        "Hp": 0,
+        "Price": 1500,
+        "IsEquipped": false,
+        "IsPurchased": false
+    }
 ]

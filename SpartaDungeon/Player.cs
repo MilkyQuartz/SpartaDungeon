@@ -121,6 +121,7 @@ namespace SpartaDungeon
             {
                 ConsoleUtility.PrintTextHighlights("", "\"무우~빙!\"", "");
                 Console.WriteLine("몬스터의 공격을 회피했다!");
+                Console.WriteLine("");
             }
             else
             {

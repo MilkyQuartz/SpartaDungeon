@@ -38,22 +38,24 @@ namespace SpartaDungeon
             if (rand >= 18)
             {
                 attackDamage = (int)(attackDamage * 1.6);
-                Console.WriteLine($"급소에 맞았다! [데미지 : {attackDamage}]");
+                Console.WriteLine($"급소에 맞았다!");
             }
         }
+
 
         public void TakeDamage(int damage)
         {
             int rand = new Random().Next(1, 11);
             if (rand == 10)
             {
-                Console.WriteLine($"Lv.{Level} {Name} 을(를) 공격했지만 아무일도 일어나지 않았다!");
+                Console.WriteLine($"Lv.{Level} {Name}을(를) 공격했지만 아무일도 일어나지 않았다!");
                 ConsoleUtility.PrintTextHighlights("", "\"요호호호~ 그건 제 잔상입니다만?\"", "");
+                Console.WriteLine("");
             }
             else
             {
                 Hp -= damage;
-                Console.WriteLine($"당신은 {Name}에게 {damage}의 피해를 입혔습니다.");
+                Console.WriteLine($"당신은 {Name}에게 {damage}만큼의 피해를 입혔습니다.");
                 Console.WriteLine("");
             }
         }
