@@ -247,7 +247,15 @@ namespace SpartaDungeon
             {
                 for (int i = 0; i < inventory.Count; i++)
                 {
-                    inventory[i].PrintItemStatDescription(true, i + 1); // 나가기가 0번 고정, 나머지가 1번부터 배정
+                    //inventory[i].PrintItemStatDescription(true, i + 1); // 나가기가 0번 고정, 나머지가 1번부터 배정
+                    if (inventory[i] is UsableItem usableItem)
+                    {
+                        usableItem.PrintUsableItemDescription(true, i + 1);
+                    }
+                    else
+                    {
+                        inventory[i].PrintItemStatDescription(true, i + 1);
+                    }
                 }
             }
             Console.WriteLine("");
@@ -486,6 +494,7 @@ namespace SpartaDungeon
                                 player.SavePlayerIndirectly();
                                 // 판매
                                 Sell(keyInput);
+                                SellMenu();
                                 break;
                         }
                     }
@@ -649,7 +658,7 @@ namespace SpartaDungeon
                         Thread.Sleep(1000);
                         MainMenu();
                         break;
-                    case 1:
+                    case 1: // 공격
                         Console.Clear();
                         Console.WriteLine("[My turn!]\n");
                         Console.WriteLine("공격할 대상을 선택하세요.\n");
@@ -954,8 +963,8 @@ namespace SpartaDungeon
 
                 Console.WriteLine("");
                 Console.WriteLine("1. [카스테라주] 자신의 보유 체력의 50%를 채워준다.(체력 50일때 +25)     - 가격 : 100G");
-                Console.WriteLine("2. [복분자주] 정읍의 자랑, 100을 기준으로 체력을 50% 채워준다.          - 가격 : 300G");
-                Console.WriteLine("3. [조니왔다] 유명 위스키, 100을 기준으로 체력을 100% 채워준다.         - 가격 : 500G");
+                Console.WriteLine("2. [복분자주] 정읍의 자랑, 체력을 50% 채워준다.                        - 가격 : 300G");
+                Console.WriteLine("3. [조니왔다] 유명 위스키, 체력을 100% 채워준다.                       - 가격 : 500G");
                 Console.WriteLine("4. 테이크아웃 요청");
                 Console.WriteLine("0. 나가기");
                 Console.WriteLine("");
@@ -974,9 +983,9 @@ namespace SpartaDungeon
                         }
                         Console.WriteLine("\n\t\t\t  \"키야~ 역시 한국인이라면 이 맥주를 마셔줘야지!\"\n");
                         player.Hp += player.Hp / 2;
-                        if (player.Hp > 100)
+                        if (player.Hp > player.MaxHp)
                         {
-                            player.Hp = 100;
+                            player.Hp = player.MaxHp;
                         }
                         player.Gold -= 100;
 
@@ -991,10 +1000,10 @@ namespace SpartaDungeon
                             break;
                         }
                         Console.WriteLine("\n\t\t\"아차차~ 이런 술은 난생 처음 마셔봤네! 너무 맛있다! 자주 사먹어야겠는걸?\"\n");
-                        player.Hp += 50;
-                        if (player.Hp > 100)
+                        player.Hp += (float)(player.MaxHp*0.5);
+                        if (player.Hp > player.MaxHp)
                         {
-                            player.Hp = 100;
+                            player.Hp = player.MaxHp;
                         }
                         player.Gold -= 300;
 
@@ -1009,10 +1018,10 @@ namespace SpartaDungeon
                             break;
                         }
                         Console.WriteLine("\n\t\t\t\t\t \"비싸구만.. \"\n");
-                        player.Hp += 100;
-                        if (player.Hp > 100)
+                        player.Hp += player.MaxHp;
+                        if (player.Hp > player.MaxHp)
                         {
-                            player.Hp = 100;
+                            player.Hp = player.MaxHp;
                         }
                         player.Gold -= 500;
 

@@ -90,8 +90,7 @@ namespace SpartaDungeon
                             inventory = inventoryManager.GetInventory(player.Name);
                         }
                     }
-                    
-                    ItemMenu(player, prevMenu, monsters, inventoryManager);
+                    //ItemMenu(player, prevMenu, monsters, inventoryManager);
                     break;
                     
 

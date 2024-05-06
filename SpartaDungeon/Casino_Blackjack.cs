@@ -228,8 +228,7 @@ namespace SpartaDungeon
                     }
                     Console.WriteLine(" Dealer : " + dealer.Hand.GetTotalValue().ToString());
                 }
-                else Console.Write("[" + dealer.Hand.cards[0].ToString() + "]" + " " + "[ ? ]");
-                Console.WriteLine(" Dealer : ?");
+                else Console.Write("[" + dealer.Hand.cards[0].ToString() + "]" + " " + "[ ? ]" + " Dealer : ?");                
 
                 Console.WriteLine("\n");
                 ConsoleUtility.PrintTextHighlights("배팅한 코인 : ", _bettedCoin.ToString());

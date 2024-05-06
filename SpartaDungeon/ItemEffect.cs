@@ -40,7 +40,15 @@ namespace SpartaDungeon
             target.Hp = (target.Hp + target.MaxHp * _percent) > target.MaxHp ? (target.Hp = target.MaxHp) : (target.Hp + target.MaxHp * _percent);
             Thread.Sleep(200);
         }
-
+        public static void FixedAttacktoOne(Monster target, float _fixedNum)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write($"{target.Name} HP : ");
+            Console.WriteLine(target.Hp.ToString() + " -> " + ((target.Hp - _fixedNum) < 0 ? (target.Hp = 0) : (target.Hp - _fixedNum)).ToString());
+            Console.ResetColor();
+            target.Hp = (target.Hp - _fixedNum) < 0 ? (target.Hp = 0) : (target.Hp - _fixedNum);
+            Thread.Sleep(200);
+        }
 
     }
 }
