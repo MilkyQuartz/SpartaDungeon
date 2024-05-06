@@ -606,6 +606,7 @@ namespace SpartaDungeon
         {
             bool gameOver = false;
             int totalGold = 0;
+            Random rand = new Random();
 
             while (!gameOver)
             {
@@ -627,12 +628,16 @@ namespace SpartaDungeon
                     }
                 }
 
-                Console.WriteLine($"\n[내정보]\nLv. {player.Level} {player.Name} ({player.Job})");
+                Console.Write($"\n[내정보]\nLv. {player.Level}");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write($" {player.Name} ");
+                Console.ResetColor();
+                Console.WriteLine($"<{player.Job}>");
                 Console.WriteLine($"HP: {player.Hp}/{player.MaxHp}");
                 Console.WriteLine($"MP: {player.Mp}/{player.MaxMp}");
                 Console.WriteLine("");
 
-                Console.WriteLine("1. 공격");
+                Console.WriteLine("1. 기본공격");
                 Console.WriteLine("2. 스킬");
                 Console.WriteLine("3. 포션 즉시사용(체력 30 회복)");
                 Console.WriteLine("4. 아이템사용");
@@ -652,7 +657,7 @@ namespace SpartaDungeon
                     case 1:
                         Console.Clear();
                         Console.WriteLine("[My turn!]\n");
-                        Console.WriteLine("공격할 대상을 선택하세요.\n");
+                        Console.WriteLine(">> 공격할 대상을 선택하세요.\n");
                         for (int i = 0; i < monsters.Count; i++)
                         {
                             var monster = monsters[i];
@@ -676,8 +681,15 @@ namespace SpartaDungeon
                             int maxAttack = (int)(player.Atk * 1.1f + player.BonusAtk);
                             int attackDamage = new Random().Next(minAttack, maxAttack + 1);
 
-                            player.CheckCritical(ref attackDamage);
-                            targetMonster.TakeDamage(attackDamage);
+                            int critRoll = rand.Next(1, 11);
+                            if (critRoll == 1)
+                            {
+                                player.CheckCritical(ref attackDamage);
+                            }
+                            else
+                            {
+                                targetMonster.TakeDamage(attackDamage);
+                            }
 
                             if (targetMonster.Hp <= 0)
                             {
@@ -696,13 +708,13 @@ namespace SpartaDungeon
 
                             if (targetMonster.Hp == 0)
                             {
-                                Console.WriteLine($"{targetMonster.Name}이(가) 죽었습니다.");
+                                Console.WriteLine($">> {targetMonster.Name}이(가) 죽었습니다.");
                                 Console.WriteLine("");
                             }
                         }
                         else
                         {
-                            Console.WriteLine("이미 죽은 몬스터입니다.");
+                            Console.WriteLine(">> 이미 죽은 몬스터입니다.");
                             Console.WriteLine("");
                         }
                         break;
@@ -719,13 +731,13 @@ namespace SpartaDungeon
                         UseItem.ItemMenu(player, Battle, monsters, inventoryManager);
                         break;
                     default:
-                        Console.WriteLine("잘못된 입력입니다.");
+                        Console.WriteLine(">> 잘못된 입력입니다.");
                         Console.WriteLine("");
                         break;
                 }
 
                 Console.WriteLine("[Monster Turn!]");
-                Random rand = new Random();
+
 
                 foreach (var monster in monsters)
                 {
@@ -741,28 +753,38 @@ namespace SpartaDungeon
                             int maxAttack = (int)(damage * 1.1f);
                             int attackDamage = rand.Next(minAttack, maxAttack + 1);
 
-                            Console.WriteLine($">> {monster.Name}(이)가 [{randomSkill.MonsterSkillName}] 스킬을 사용했습니다! [데미지: {attackDamage}]");
-                            monster.CheckCritical(ref attackDamage);
-                            player.TakeDamage(attackDamage);
+                            Console.WriteLine($">> {monster.Name}(이)가 [{randomSkill.MonsterSkillName}] 스킬을 사용했습니다!");
+
+                            int critRoll = rand.Next(1, 11); 
+                            if (critRoll == 1)
+                            {
+                                monster.CheckCritical(ref attackDamage);
+                            }
+                            else
+                            {
+                                player.TakeDamage(attackDamage);
+                            }
+
+                            Console.WriteLine($"{monster.Name}에게 {damage}만큼의 피해를 입었습니다.");
+                            Console.WriteLine("");
                             if (player.Hp <= 0)
                             {
                                 player.Hp = 0;
                             }
            
                         }
-                        else
+                        else // 엑스트라1 경우에만 사용되는 조건문
                         {
                             var healAmount = Math.Abs(damage);
                             player.Hp += healAmount;
-                            Console.WriteLine($"{monster.Name}(이)가 [{randomSkill.MonsterSkillName}] 스킬을 사용했습니다! 당신의 HP가 {healAmount}만큼 회복되었습니다.");
+                            Console.WriteLine($">> {monster.Name}(이)가 [{randomSkill.MonsterSkillName}] 스킬을 사용했습니다! 당신의 HP가 {healAmount}만큼 회복되었습니다.");
                         }
                     }
 
                     Thread.Sleep(500);
                 }
                 Thread.Sleep(300);
-                Console.WriteLine();
-                Console.WriteLine("PRESS ANYKEY TO CONTINUE");
+                Console.WriteLine(">> PRESS ANYKEY TO CONTINUE <<");
                 Console.ReadKey();
                 gameOver = CheckGameOver(monsters, totalGold);
 
@@ -771,7 +793,7 @@ namespace SpartaDungeon
 
         private void UsingSkill(ref int totalGold, List<Monster> monsters)
         {
-            Console.WriteLine("사용할 스킬을 선택하세요.\n");
+            Console.WriteLine(">> 사용할 스킬을 선택하세요.\n");
             for (int i = 0; i < skill.Count; i++)
             {
                 Console.WriteLine($"{i + 1}. {skill[i].Name}");
@@ -779,8 +801,8 @@ namespace SpartaDungeon
 
             int skillChoice = ConsoleUtility.PromptMenuChoice(1, skill.Count) - 1;
             Console.WriteLine("");
-            Console.WriteLine($"당신은 [{skill[skillChoice].Name}] 스킬을 선택했습니다.");
-            Console.WriteLine(" 스킬을 사용할 대상을 선택하세요.\n");
+            Console.WriteLine($">> 당신은 [{skill[skillChoice].Name}] 스킬을 선택했습니다.");
+            Console.WriteLine(">> 스킬을 사용할 대상을 선택하세요.\n");
 
             for (int i = 0; i < monsters.Count; i++)
             {
@@ -813,7 +835,7 @@ namespace SpartaDungeon
                     else
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("스킬을 사용할 MP가 부족합니다.");
+                        Console.WriteLine(">> 스킬을 사용할 MP가 부족합니다.");
                         Console.ResetColor();
                     }
                     break;
@@ -830,7 +852,7 @@ namespace SpartaDungeon
                                 break;
                             case (int)CardType.BLUE:
                                 player.Mp += (int)(player.MaxMp * 0.2);
-                                Console.WriteLine($"MP {(int)(player.MaxMp * 0.2)}를 회복합니다.");
+                                Console.WriteLine($">> MP {(int)(player.MaxMp * 0.2)}를 회복합니다.");
                                 break;
                             case (int)CardType.GOLD:
                                 skillDamage = attackDamage * 5;
@@ -841,7 +863,7 @@ namespace SpartaDungeon
                     else
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("스킬을 사용할 MP가 부족합니다.");
+                        Console.WriteLine(">> 스킬을 사용할 MP가 부족합니다.");
                         Console.ResetColor();
                     }
 
@@ -864,17 +886,17 @@ namespace SpartaDungeon
                         }
                     }
                 }
-                Console.WriteLine($"당신은 {targetMonster.Name}에게 {skillDamage}의 피해를 입혔습니다.");
+                Console.WriteLine($">> 당신은 {targetMonster.Name}에게 {skillDamage}의 피해를 입혔습니다.");
                 Console.WriteLine("");
                 if (targetMonster.Hp == 0)
                 {
-                    Console.WriteLine($"{targetMonster.Name}이(가) 죽었습니다.");
+                    Console.WriteLine($">> {targetMonster.Name}이(가) 죽었습니다.");
                     Console.WriteLine("");
                 }
             }
             else
             {
-                Console.WriteLine("이미 죽은 몬스터입니다.");
+                Console.WriteLine(">> 이미 죽은 몬스터입니다.");
                 Console.WriteLine("");
             }
         }
