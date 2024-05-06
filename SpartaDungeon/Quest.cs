@@ -16,10 +16,9 @@ namespace SpartaDungeon
     {
         public string Name { get; }
         public string Desc { get; }
-        public string Require { get; }
-        public int Achievement { get; }
-        public int Progress { get; set; }
-        //public string RewardItem { get; }
+        public string Require { get; }  // 요구 사항
+        public int Achievement { get; }  // 달성 목표
+        public int Progress { get; set; }  // 진행 상황
         public int RewardGold { get; }
         public bool IsAccept { get; private set; }
         public bool IsClear { get; private set; }
@@ -33,7 +32,6 @@ namespace SpartaDungeon
             Require = require;
             Achievement = achievement;
             Progress = progress;
-            //RewardItem = rewardItem;
             RewardGold = rewardGold;
             Type = type;
             IsAccept = isAccept;
