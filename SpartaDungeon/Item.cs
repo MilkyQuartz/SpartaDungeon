@@ -88,7 +88,7 @@ namespace SpartaDungeon
 
         }
 
-        public void PrintStoreItemDescription(bool withNumber = false, int idx = 0) 
+        public void PrintStoreItemDescription(InventoryManager inventoryManager, bool withNumber = false, int idx = 0, string playerName = "")
         {
             Console.Write("- ");
             // 장착관리 전용
@@ -98,7 +98,7 @@ namespace SpartaDungeon
                 Console.Write("{0} ", idx);
                 Console.ResetColor();
             }
-            Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));  
+            Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));
 
             Console.Write(" | ");
 
@@ -112,7 +112,7 @@ namespace SpartaDungeon
 
             Console.Write(" | ");
 
-            if (IsPurchased)
+            if (inventoryManager.GetInventory(playerName).Any(item => item.Name == this.Name && item.IsPurchased)) // LINQ의 Any메서드
             {
                 Console.WriteLine("구매완료");
             }
@@ -122,7 +122,7 @@ namespace SpartaDungeon
             }
         }
 
-        
+
 
         internal void ToggleEquipStatus()
         {
