@@ -1,17 +1,30 @@
-using System.Text.Json;
 using System.Xml.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using static SpartaDungeon.Casino_Blackjack;
+using System.Text.Json;
 
 namespace SpartaDungeon
 {
+    public class JobData
+    {
+        public string Job { get; set; }
+        public int Level { get; set; }
+        public float Atk { get; set; }
+        public float Def { get; set; }
+        public float Hp { get; set; }
+        public float MaxHp { get; set; }
+        public float Mp { get; set; }
+        public float MaxMp { get; set; }
+        public int Gold { get; set; }
+    }
     public enum JOB
     {
-        Warrior,
+        Warrior = 1,
         Mage,
-
+        Archer,
+        Assassin,
         END = 10
     }
     internal class Player : ICritical,IDamage
@@ -146,6 +159,7 @@ namespace SpartaDungeon
             return name;
         }
 
+
         // 직업선택 함수
         public string JobSelect(string? prompt = null)
         {
@@ -161,46 +175,71 @@ namespace SpartaDungeon
 
             Console.WriteLine();
             ConsoleUtility.ShowTitle("■ 직업 선택 ■");
-            Console.WriteLine("[1] 전사");
-            Console.WriteLine("[2] 마법사");
+            Console.WriteLine("[1] 전사 - 체력");
+            Console.WriteLine("[2] 마법사 - 마력");
+            Console.WriteLine("[3] 궁수 - 공격력");
+            Console.WriteLine("[4] 암살자 - 방어력");
 
-            int keyinput = ConsoleUtility.PromptMenuChoice(0, 2);
+            int keyinput = ConsoleUtility.PromptMenuChoice(0, 4);
 
-            switch (keyinput)
+            // Json 파일에서 직업 정보 불러오기
+            List<JobData> jobDataList = LoadJobData("Job.json");
+
+            switch ((JOB)keyinput)
             {
                 case 0:
                     JobSelect("어딜 가려고?");
                     break;
-                case 1: //전사
-                    this.Job = "Warrior";
-                    this.Level = 1;
-                    this.Atk = 10;
-                    this.Def = 5;
-                    this.Hp = 100;
-                    this.MaxHp = 100;
-                    this.Mp = 20;
-                    this.MaxMp = 20;
-                    this.Gold = 2000;
-                    result = "Warrior"; // 전사 선택 시 "Warrior" 반환
+                case JOB.Warrior: 
+                    JobData warriorData = jobDataList.FirstOrDefault(j => j.Job == "Warrior");
+                    SetPlayerStats(warriorData);
+                    result = warriorData.Job;
                     break;
-                case 2:
-                    this.Job = "Mage";
-                    this.Level = 1;
-                    this.Atk = 13;
-                    this.Def = 3;
-                    this.Hp = 60;
-                    this.MaxHp = 60;
-                    this.Mp = 60;
-                    this.MaxMp = 60;
-                    this.Gold = 2000;
-                    result = "Mage"; // 마법사 선택 시 "Mage" 반환
+                case JOB.Mage: 
+                    JobData mageData = jobDataList.FirstOrDefault(j => j.Job == "Mage");
+                    SetPlayerStats(mageData);
+                    result = mageData.Job;
+                    break;
+                case JOB.Archer:
+                    JobData archerData = jobDataList.FirstOrDefault(j => j.Job == "Archer");
+                    SetPlayerStats(archerData);
+                    result = archerData.Job;
+                    break;
+                case JOB.Assassin: 
+                    JobData assassinData = jobDataList.FirstOrDefault(j => j.Job == "Assassin");
+                    SetPlayerStats(assassinData);
+                    result = assassinData.Job;
                     break;
                 default:
                     result = ""; // 기본적으로 빈 문자열 반환
                     break;
             }
 
-            return result; // 결과 반환
+            return result;
+        }
+
+        private List<JobData> LoadJobData(string jsonFilePath)
+        {
+            string jsonString = File.ReadAllText(jsonFilePath);
+            List<JobData> jobDataList = JsonSerializer.Deserialize<List<JobData>>(jsonString);
+            return jobDataList;
+        }
+
+        // 플레이어 스탯 설정
+        private void SetPlayerStats(JobData jobData)
+        {
+            if (jobData != null)
+            {
+                Job = jobData.Job;
+                Level = jobData.Level;
+                Atk = jobData.Atk;
+                Def = jobData.Def;
+                Hp = jobData.Hp;
+                MaxHp = jobData.MaxHp;
+                Mp = jobData.Mp;
+                MaxMp = jobData.MaxMp;
+                Gold = jobData.Gold;
+            }
         }
 
         // 이름 입력과 직업선택 함수
