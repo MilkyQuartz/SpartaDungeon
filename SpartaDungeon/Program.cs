@@ -980,23 +980,66 @@ namespace SpartaDungeon
 
             while (true)
             {
-                Console.WriteLine($"현재 체력:{player.Hp} | 현재 골드: {player.Gold}");
+                Console.WriteLine($"HP:{player.Hp} | MP:{player.Mp} | Gold: {player.Gold}");
                 Console.WriteLine("");
 
                 Console.WriteLine("");
-                Console.WriteLine("1. [카스테라주] 자신의 보유 체력의 50%를 채워준다.(체력 50일때 +25)     - 가격 : 100G");
-                Console.WriteLine("2. [복분자주] 정읍의 자랑, 체력을 50% 채워준다.                        - 가격 : 300G");
-                Console.WriteLine("3. [조니왔다] 유명 위스키, 체력을 100% 채워준다.                       - 가격 : 500G");
-                Console.WriteLine("4. 테이크아웃 요청");
+                Console.WriteLine("1. [락스] 솔로가 마시는 물, HP는 깎이지만 MP는 50 오른다.                    - 가격 : 200G");
+                Console.WriteLine("2. [YB맥주] 영보이만 먹을 수 있는 젊은이들의 술. MP를 10 회복한다.           - 가격 : 50G");
+                Console.WriteLine("3. [카스테라주] 자신의 보유 체력의 50%를 채워준다.(체력 50일때 +25)          - 가격 : 150G");
+                Console.WriteLine("4. [복분자주] 정읍의 자랑, 체력을 50% 채워준다.                              - 가격 : 350G");
+                Console.WriteLine("5. [조니왔다] 유명 위스키, 체력을 100% 채워준다.                             - 가격 : 550G");
+                Console.WriteLine("6. 테이크아웃 요청");
                 Console.WriteLine("0. 나가기");
                 Console.WriteLine("");
-                switch (ConsoleUtility.PromptMenuChoice(0, 4))
+                switch (ConsoleUtility.PromptMenuChoice(0, 6))
                 {
                     case 0:
                         MainMenu();
                         break;
                     case 1:
-                        if (player.Gold < 100)
+                        if (player.Gold < 200)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("\t\t\t\t\t[돈이 부족하여 구매할 수 없습니다.]");
+                            Console.ResetColor();
+                            break;
+                        }
+                        Console.WriteLine("\n\t\t\t  \"가져와.... 가져와!!!\"\n");
+                        player.Hp -= player.Hp - 20;
+                        player.Mp += player.Mp + 50;
+                        if (player.Hp < 0)
+                        {
+                            player.Hp = 0;
+                        }
+                        if (player.Mp > player.MaxMp)
+                        {
+                            player.Mp = player.MaxMp;
+                        }
+                        player.Gold -= 200;
+
+                        player.SavePlayerIndirectly();
+                        break;
+                    case 2:
+                        if (player.Gold < 50)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("\t\t\t\t\t[돈이 부족하여 구매할 수 없습니다.]");
+                            Console.ResetColor();
+                            break;
+                        }
+                        Console.WriteLine("\n\t\t\t  \"25살까지는 애기지\"\n");
+                        player.Mp += player.Mp + 10;
+                        if (player.Mp > player.MaxMp)
+                        {
+                            player.Mp = player.MaxMp;
+                        }
+                        player.Gold -= 50;
+
+                        player.SavePlayerIndirectly();
+                        break;
+                    case 3:
+                        if (player.Gold < 150)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("\t\t\t\t\t[돈이 부족하여 구매할 수 없습니다.]");
@@ -1009,12 +1052,12 @@ namespace SpartaDungeon
                         {
                             player.Hp = player.MaxHp;
                         }
-                        player.Gold -= 100;
+                        player.Gold -= 150;
 
                         player.SavePlayerIndirectly();
                         break;
-                    case 2:
-                        if (player.Gold < 300)
+                    case 4:
+                        if (player.Gold < 350)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("\t\t\t\t\t[돈이 부족하여 구매할 수 없습니다.]");
@@ -1031,8 +1074,8 @@ namespace SpartaDungeon
 
                         player.SavePlayerIndirectly();
                         break;
-                    case 3:
-                        if (player.Gold < 500)
+                    case 5:
+                        if (player.Gold < 550)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("\t\t\t\t\t[돈이 부족하여 구매할 수 없습니다.]");
@@ -1045,11 +1088,11 @@ namespace SpartaDungeon
                         {
                             player.Hp = player.MaxHp;
                         }
-                        player.Gold -= 500;
+                        player.Gold -= 550;
 
                         player.SavePlayerIndirectly();
                         break;
-                    case 4:
+                    case 6:
                         bartakeout.TakeoutMenu(BarMenu);
                         break;
 
