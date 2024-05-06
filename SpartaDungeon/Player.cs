@@ -68,9 +68,10 @@ namespace SpartaDungeon
             // 출력예시 : [캐릭터 정보]
             // 출력예시 : Lv.1 Chad -> Lv2. Chad
             Console.WriteLine("[캐릭터 정보]");
-            ConsoleUtility.PrintTextHighlightsNoLF("Lv.", Level.ToString(), Name);
+            ConsoleUtility.PrintTextHighlightsNoLF("Lv.", Level.ToString(), $" {Name}");
             ConsoleUtility.PrintTextHighlightsNoLF("", " -> ");
-            ConsoleUtility.PrintTextHighlightsNoLF("Lv.", (Level + 1).ToString(), Name);
+            ConsoleUtility.PrintTextHighlights("Lv.", (Level + 1).ToString(), $" {Name}");
+
             Level++;
             Exp = Exp - MaxExp; // 넘치는 Exp를 다음레벨 Exp에 이월
             MaxExp += 25 + 5 * (Level - 2);   // 필요경험치 상승폭은 5씩 커진다
@@ -78,6 +79,15 @@ namespace SpartaDungeon
             Def += 1f;
             MaxHp += 2f;
             MaxMp += 2f;
+        }
+
+        public static void GetEquipStat(Player player, InventoryManager inventoryManager)
+        {
+            List<Item> playerInventory = inventoryManager.GetInventory(player.Name);
+            player.BonusAtk = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Atk);
+            player.BonusDef = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Def);
+            player.BonusHp = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Hp);
+            player.BonusMp = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Mp);
         }
 
         public void CheckCritical(ref int attackDamage)

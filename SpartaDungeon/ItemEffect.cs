@@ -11,10 +11,7 @@ namespace SpartaDungeon
     {
 
 
-        // 호출예시 : 배틀 -> 아이템사용하기 -> 아이템선택 선택한 아이템.UseHealItem(Value);
-        void UseItem(Object target, float value)
-        {
-        }
+        
         public static void Castera(Player target, float _percent)
         {
             Console.WriteLine("\n\t\t\t  \"키야~ 역시 한국인이라면 이 맥주를 마셔줘야지!\"\n");

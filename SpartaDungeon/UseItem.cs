@@ -23,7 +23,7 @@ namespace SpartaDungeon
 
             Console.WriteLine();
             ConsoleUtility.ShowTitle("■ 가방 ■");
-            Console.Write("사용할 아이템을 선택해주세요.");
+            Console.WriteLine("사용할 아이템을 선택해주세요.");
             Console.WriteLine();
             Console.WriteLine("[아이템 목록]");
             // 인벤토리 정보를 로드

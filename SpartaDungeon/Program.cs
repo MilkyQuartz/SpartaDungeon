@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection.Emit;
 using System.Text.Json;
 using System.Threading;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using static SpartaDungeon.UseItem;
 
@@ -129,6 +131,8 @@ namespace SpartaDungeon
             MainMenu();
         }
 
+        
+
         private void StatusMenu()
         {
             Console.Clear();
@@ -142,12 +146,8 @@ namespace SpartaDungeon
             Console.WriteLine($"{player.Name} ({player.Job})");
 
             // TODO : 능력치 강화분을 표현하도록 변경
-            List<Item> playerInventory = inventoryManager.GetInventory(player.Name);
-            player.BonusAtk = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Atk);
-            player.BonusDef = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Def);
-            player.BonusHp = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Hp);
-            player.BonusMp = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Mp);
-
+            Player.GetEquipStat(player, inventoryManager);
+            
             ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + player.BonusAtk).ToString(), player.BonusAtk > 0 ? $" (+{player.BonusAtk})" : "");
             ConsoleUtility.PrintTextHighlights("방어력 : ", (player.Def + player.BonusDef).ToString(), player.BonusDef > 0 ? $" (+{player.BonusDef})" : "");
             ConsoleUtility.PrintTextHighlights("체 력 : ", (player.Hp).ToString(), " / ", (player.MaxHp + player.BonusHp).ToString(), player.BonusHp > 0 ? $" (+{player.BonusHp})" : "");
@@ -227,6 +227,8 @@ namespace SpartaDungeon
 
         private void EquipMenu()
         {
+            Player.GetEquipStat(player, inventoryManager);
+
             Console.Clear();
 
             ConsoleUtility.ShowTitle("■ 인벤토리 - 장착 관리 ■");
@@ -671,8 +673,8 @@ namespace SpartaDungeon
                         Monster targetMonster = monsters[targetChoice];
                         if (targetMonster.Hp > 0)
                         {
-                            int minAttack = (int)(player.Atk * 0.9f);
-                            int maxAttack = (int)(player.Atk * 1.1f);
+                            int minAttack = (int)(player.Atk * 0.9f + player.BonusAtk);
+                            int maxAttack = (int)(player.Atk * 1.1f + player.BonusAtk);
                             int attackDamage = new Random().Next(minAttack, maxAttack + 1);
 
                             player.CheckCritical(ref attackDamage);
@@ -759,7 +761,10 @@ namespace SpartaDungeon
 
                     Thread.Sleep(500);
                 }
-                Thread.Sleep(3000);
+                Thread.Sleep(300);
+                Console.WriteLine();
+                Console.WriteLine("PRESS ANYKEY TO CONTINUE");
+                Console.ReadKey();
                 gameOver = CheckGameOver(monsters, totalGold);
 
             }
@@ -792,8 +797,8 @@ namespace SpartaDungeon
             }
             int targetChoice = ConsoleUtility.PromptMenuChoice(1, monsters.Count) - 1;
             Monster targetMonster = monsters[targetChoice];
-            int minAttack = (int)(player.Atk * 0.9f);
-            int maxAttack = (int)(player.Atk * 1.1f);
+            int minAttack = (int)(player.Atk * 0.9f + player.BonusAtk);
+            int maxAttack = (int)(player.Atk * 1.1f + player.BonusAtk);
             int attackDamage = new Random().Next(minAttack, maxAttack + 1);
             int skillDamage = 0;
 
@@ -883,8 +888,20 @@ namespace SpartaDungeon
             Console.Clear();
             if (allMonstersDead)
             {
+                float getExp = 0;
+                for (int i = 0; i < monsters.Count; ++i)
+                {
+                    getExp += (float)(monsters[i].Level * 2 + 1);                    
+                }
+                player.Exp += getExp;
                 Console.WriteLine("모든 몬스터가 쓰러졌습니다.");
-                Console.WriteLine("던전 공략에 성공하셨습니다.");
+                Console.WriteLine("던전 공략에 성공하셨습니다.");               
+                if (player.Exp >= player.MaxExp)
+                {
+                    player.LevelUp();
+                }
+                Console.WriteLine($"총 획득 경험치: {getExp.ToString("N0")}");
+                ConsoleUtility.PrintTextHighlights("경험치: ", player.Exp.ToString(), " / ", player.MaxExp.ToString(), "");
                 Console.WriteLine($"총 획득 골드: {totalGold}");
                 player.Gold += totalGold;
                 Console.WriteLine("");

@@ -60,7 +60,7 @@ namespace SpartaDungeon
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(s2);
             Console.ResetColor();
-            Console.Write(s3);
+            Console.Write(s3);  // '/' or '->'
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(s4);
             Console.ResetColor();
