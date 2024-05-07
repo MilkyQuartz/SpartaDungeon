@@ -209,8 +209,8 @@ namespace SpartaDungeon
                 }
             }             
             Console.WriteLine("");
-            Console.WriteLine("0. 나가기");
             Console.WriteLine("1. 장착관리");
+            Console.WriteLine("0. 나가기");            
             Console.WriteLine("");
 
             switch (ConsoleUtility.PromptMenuChoice(0, 1))
