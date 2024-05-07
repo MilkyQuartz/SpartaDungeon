@@ -32,21 +32,22 @@ namespace SpartaDungeon
             MonsterSkills = new List<MonsterSkill>();
         }
 
-        public void CheckCritical(ref int attackDamage)
+        public void CheckCritical(ref int attackDamage , ref bool isCritical)
         {
             int rand = new Random().Next(1, 21);
             if (rand >= 18)
             {
                 attackDamage = (int)(attackDamage * 1.6);
                 Console.WriteLine($"급소에 맞았다!");
+                isCritical = true;
             }
         }
 
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(int damage, bool isCritical)
         {
             int rand = new Random().Next(1, 11);
-            if (rand == 10)
+            if (rand == 10 && isCritical == false)
             {
                 Console.WriteLine($"Lv.{Level} {Name}을(를) 공격했지만 아무일도 일어나지 않았다!");
                 ConsoleUtility.PrintTextHighlights("", "\"요호호호~ 그건 제 잔상입니다만?\"", "");

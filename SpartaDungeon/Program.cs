@@ -209,8 +209,8 @@ namespace SpartaDungeon
                 }
             }             
             Console.WriteLine("");
-            Console.WriteLine("0. 나가기");
             Console.WriteLine("1. 장착관리");
+            Console.WriteLine("0. 나가기");            
             Console.WriteLine("");
 
             switch (ConsoleUtility.PromptMenuChoice(0, 1))
@@ -689,16 +689,11 @@ namespace SpartaDungeon
                             int minAttack = (int)(player.Atk * 0.9f + player.BonusAtk);
                             int maxAttack = (int)(player.Atk * 1.1f + player.BonusAtk);
                             int attackDamage = new Random().Next(minAttack, maxAttack + 1);
+                            bool isCritical = false;
 
-                            int critRoll = rand.Next(1, 11);
-                            if (critRoll == 1)
-                            {
-                                player.CheckCritical(ref attackDamage);
-                            }
-                            else
-                            {
-                                targetMonster.TakeDamage(attackDamage);
-                            }
+                            player.CheckCritical(ref attackDamage, ref isCritical);                                                                        
+                            targetMonster.TakeDamage(attackDamage, isCritical);
+                            
 
                             if (targetMonster.Hp <= 0)
                             {
@@ -761,21 +756,15 @@ namespace SpartaDungeon
                             int minAttack = (int)(damage * 0.9f); 
                             int maxAttack = (int)(damage * 1.1f);
                             int attackDamage = rand.Next(minAttack, maxAttack + 1);
+                            bool isCritical = false;
 
                             Console.WriteLine($">> {monster.Name}(이)가 [{randomSkill.MonsterSkillName}] 스킬을 사용했습니다!");
 
-                            int critRoll = rand.Next(1, 11); 
-                            if (critRoll == 1)
-                            {
-                                monster.CheckCritical(ref attackDamage);
-                            }
-                            else
-                            {
-                                player.TakeDamage(attackDamage);
-                            }
+                            monster.CheckCritical(ref attackDamage, ref isCritical);
+                            player.TakeDamage(attackDamage, isCritical);
 
-                            Console.WriteLine($"{monster.Name}에게 {damage}만큼의 피해를 입었습니다.");
-                            Console.WriteLine("");
+
+                            
                             if (player.Hp <= 0)
                             {
                                 player.Hp = 0;
