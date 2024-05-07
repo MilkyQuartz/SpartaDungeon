@@ -8,12 +8,12 @@ namespace SpartaDungeon
 {
     public interface ICritical
     {
-        public void CheckCritical(ref int attackDamage);
+        public void CheckCritical(ref int attackDamage, ref bool isCritical);
 
     }
 
     public interface IDamage
     {
-        public void TakeDamage(int damage);
+        public void TakeDamage(int damage, bool isCritical);
     }
 }

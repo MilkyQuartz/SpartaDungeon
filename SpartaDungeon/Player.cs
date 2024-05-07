@@ -4,6 +4,7 @@ using System.IO;
 using System.Numerics;
 using static SpartaDungeon.Casino_Blackjack;
 using System.Text.Json;
+using System.Threading;
 
 namespace SpartaDungeon
 {
@@ -103,7 +104,7 @@ namespace SpartaDungeon
             player.BonusMp = playerInventory.Where(item => item.IsEquipped).Sum(item => item.Mp);
         }
 
-        public void CheckCritical(ref int attackDamage)
+        public void CheckCritical(ref int attackDamage, ref bool isCritical)
         {
 
             int rand = new Random().Next(1, 21);
@@ -111,13 +112,14 @@ namespace SpartaDungeon
             {
                 attackDamage = (int)(attackDamage * 1.6);
                 Console.WriteLine("치명타 공격!");
+                isCritical = true;
             }
         }
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(int damage, bool isCritical)
         {
             int rand = new Random().Next(1, 11);
-            if (rand ==10)
+            if (rand ==10 && isCritical == false)
             {
                 ConsoleUtility.PrintTextHighlights("", "\"무우~빙!\"", "");
                 Console.WriteLine("몬스터의 공격을 회피했다!");
@@ -126,6 +128,8 @@ namespace SpartaDungeon
             else
             {
                 Hp -= damage;
+                Console.WriteLine($"{damage}만큼의 피해를 입었습니다.");
+                Console.WriteLine("");
             }
         }
 
