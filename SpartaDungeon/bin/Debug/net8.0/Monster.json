@@ -1,0 +1,268 @@
+[
+    {
+        "Name": "스파르타마켓빌런",
+        "Level": 1,
+        "Atk": 3,
+        "Def": 1,
+        "Hp": 10,
+        "MaxHp": 10,
+        "Price": 100,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "네고해주세요",
+                "MonsterDamage": 1
+            },
+            {
+                "MonsterSkillName": "나눔해주세요",
+                "MonsterDamage": 3
+            }
+        ]
+    },
+    {
+        "Name": "7호선 최강의 검사",
+        "Level": 1, 
+        "Atk": 2,
+        "Def": 5,
+        "Hp": 20,
+        "MaxHp": 20,
+        "Price": 200,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "후 아 유 !",
+                "MonsterDamage": 1
+            },
+            {
+                "MonsterSkillName": "안때려!",
+                "MonsterDamage": 2
+            }
+        ]
+    },
+    {
+        "Name": "샌즈",
+        "Level": 2,
+        "Atk": 5,
+        "Def": 5,
+        "Hp": 20,
+        "MaxHp": 20,
+        "Price": 200,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "언더*일 아시는구나! 진짜 겁.나.어.렵.습.니.다.",
+                "MonsterDamage": 4
+            },
+            {
+                "MonsterSkillName": "와 샌즈 파피루스!",
+                "MonsterDamage": 3
+            }
+        ]
+    },
+    {
+        "Name": "아파트 주민",
+        "Level": 3,
+        "Atk": 5,   
+        "Def": 5,
+        "Hp": 40,
+        "MaxHp": 40,
+        "Price": 300,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "야!!!!!!!!!!!!! 개 짖는 소리 좀 안나게 하라!!",
+                "MonsterDamage": 3
+            },
+            {
+                "MonsterSkillName": "야 이 강아지들아!!!!!!!!!",
+                "MonsterDamage": 4
+            }
+        ]
+    },
+    {
+        "Name": "던전도둑",
+        "Level": 4,
+        "Atk": 6,
+        "Def": 2,
+        "Hp": 40,
+        "MaxHp": 40,
+        "Price": 400,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "너...너는 뉴스도 안보냐?",
+                "MonsterDamage": 4
+            },
+            {
+                "MonsterSkillName": " 네.. 네가 언제부터 이 던전을 매입..매입했는데!",
+                "MonsterDamage": 4
+            }
+        ]
+    },
+    {
+        "Name": "물음표살인마",
+        "Level": 5,
+        "Atk": 6,
+        "Def": 10,
+        "Hp": 100,
+        "MaxHp": 100,
+        "Price": 450,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "?",
+                "MonsterDamage": 3
+            },
+            {
+                "MonsterSkillName": "??",
+                "MonsterDamage": 4
+            }
+        ]
+    }, 
+    {
+        "Name": "소드마스터 고길동",
+        "Level": 6,
+        "Atk": 6,
+        "Def": 5,
+        "Hp": 50,
+        "MaxHp": 50,
+        "Price": 500,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "아아, 이 서늘하고도 묵직한감각.",
+                "MonsterDamage": 4
+            },
+            {
+                "MonsterSkillName": "(바람만 휘날리는 소리)철컥",
+                "MonsterDamage": 5
+            }
+        ]
+    }, 
+    {
+        "Name": "빵상아줌마",
+        "Level": 7,
+        "Atk": 5,
+        "Def": 7,
+        "Hp": 50,
+        "MaxHp": 50,
+        "Price": 600,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "빵↘빵↗똥똥똥똥 땅땅 따라라라~↘따띵↘ 똥똥똥똥띵↘똥똥↗↗",
+                "MonsterDamage": 3
+            },
+            {
+                "MonsterSkillName": "빵상, 깨라까랑",
+                "MonsterDamage": 5
+            }
+        ]
+    },  
+    {
+        "Name": "도서관 경쟁자",
+        "Level": 8,
+        "Atk": 7,
+        "Def": 7,
+        "Hp": 70,
+        "MaxHp": 70,
+        "Price": 700,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "너는 지금 꿈을 꾸고 있지만 나는 꿈을 이루고 있다. (포스트잇을 너의 이마에 붙인다.)",
+                "MonsterDamage": 5
+            },
+            {
+                "MonsterSkillName": "저랑 사궈주세요.",
+                "MonsterDamage": 5
+            }
+        ]
+    },
+    {
+        "Name": "상남자",
+        "Level": 9,
+        "Atk": 15,
+        "Def": 5,
+        "Hp": 70,
+        "MaxHp": 70,
+        "Price": 800,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "저는 트렁크에 오함마를 가지고 다닙니다. 전화 한번 걸어서 안받으면 사이드미러, 두번은 보닛, 세번은 유리창..",
+                "MonsterDamage": 15
+            },
+            {
+                "MonsterSkillName": "밥상에 고기 없으면 안먹는다.",
+                "MonsterDamage": 10
+            }
+        ]
+    },
+    {
+        "Name": "엑스트라1",
+        "Level": 9,
+        "Atk": 10,
+        "Def": 7,
+        "Hp": 100,
+        "MaxHp": 100,
+        "Price": 800,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "해치웠나?",
+                "MonsterDamage": -10
+            },
+            {
+                "MonsterSkillName": "내게 무슨 일이 생기면 이 편지를 가족에게 대신 전해줘..",
+                "MonsterDamage": 8
+            }
+        ]
+    },
+    {
+        "Name": "머리에 붕대를 감은 여성",
+        "Level": 10,
+        "Atk": 20,
+        "Def": 5,
+        "Hp": 50,
+        "MaxHp": 50,
+        "Price": 900,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "오버워치는 출시한 2016년에 올해의 게임상을 수상했을 정도로.. 또 이러신다. 밥이나 드세요.",
+                "MonsterDamage": 20
+            },
+            {
+                "MonsterSkillName": " “명예와 영광” 그것뿐이 나를 울린 유일한 작품.",
+                "MonsterDamage": 15
+            }
+        ]
+    },
+    {
+        "Name": "개발자 삼형제",
+        "Level": 10,
+        "Atk": 15,
+        "Def": 10,
+        "Hp": 100,
+        "MaxHp": 100,
+        "Price": 900,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "어?",
+                "MonsterDamage": 13
+            },
+            {
+                "MonsterSkillName": "(내 뒤에 삼형제가 팔짱끼고 서있다.)",
+                "MonsterDamage": 15
+            }
+        ]
+    },
+    {
+        "Name": "AI",
+        "Level": 10,
+        "Atk": 15,
+        "Def": 15,
+        "Hp": 100,
+        "MaxHp": 100,
+        "Price": 1000,
+        "MonsterSkills": [
+            {
+                "MonsterSkillName": "삐빅 인간시대에 끝이 도래했다.",
+                "MonsterDamage": 13
+            },
+            {
+                "MonsterSkillName": "깡!",
+                "MonsterDamage": 15
+            }
+        ]
+    }
+]
