@@ -31,8 +31,8 @@ namespace SpartaDungeon
             ConsoleUtility.PrintTextHighlights("","길드가 운영하는 안전한 카지노입니다. ");
             ConsoleUtility.PrintTextHighlights("웨이트리스 : ", "교환소", "에 가시면 Gold와 COIN을 교환하실 수 있어요.");
 
-            ConsoleUtility.PrintTextHighlights("Gold : ", player.Gold.ToString());
-            ConsoleUtility.PrintTextHighlights("COIN : ", player.casinoCoin.ToString());
+            ConsoleUtility.PrintTextHighlights("소지 Gold : ", player.Gold.ToString());
+            ConsoleUtility.PrintTextHighlights("소지 COIN : ", player.casinoCoin.ToString());
             Console.WriteLine("");
 
             Console.WriteLine("1. 교환소");
@@ -68,7 +68,7 @@ namespace SpartaDungeon
             ConsoleUtility.ShowTitle("■ Betting ■");
             ConsoleUtility.PrintTextHighlights("","얼마나 베팅하시겠습니까?");
             Console.WriteLine();
-            ConsoleUtility.ShowTitle("가지고 있는 COIN보다 크게 입력하면 ALL IN 합니다");
+            ConsoleUtility.ShowTitle("가지고 있는 COIN보다 크게 입력하면 ALL IN 합니다. (1회 최대 99,999개)");
             ConsoleUtility.PrintTextHighlightsNoLF("배팅 가능 코인 : ","0"," ~ ");
             ConsoleUtility.PrintTextHighlights("", player.casinoCoin.ToString());
             Console.WriteLine("0. 뒤로가기");
@@ -80,8 +80,14 @@ namespace SpartaDungeon
                 case 0:
                     CasinoMenu(MainMenu);
                     break;
-                default:
-                    if(keyinput >= player.casinoCoin)
+                default:                    
+                    if( 0 == player.casinoCoin)
+                    {
+                        ConsoleUtility.PrintTextHighlights("검은옷을 입은 경비원 : ", "손님 COIN이 부족하시군요. COIN을 교환해오시길 바랍니다.");
+                        Thread.Sleep(1000);
+                        CasinoMenu(MainMenu);
+                    }
+                    else if(keyinput >= player.casinoCoin)
                     {
                         //올인
                         bettedCoin = player.casinoCoin;
@@ -90,8 +96,6 @@ namespace SpartaDungeon
                         Thread.Sleep(1000);
                         _Game(bettedCoin);
                         Betting(_Game, bettedCoin);
-
-
                     }
                     else
                     {
@@ -112,8 +116,8 @@ namespace SpartaDungeon
             ConsoleUtility.ShowTitle("■ 교환소 ■");
             Console.WriteLine("이곳에서 Gold와 COIN을 교환할 수 있습니다.");            
             Console.WriteLine();
-            ConsoleUtility.PrintTextHighlights("Gold : ", player.Gold.ToString());
-            ConsoleUtility.PrintTextHighlights("COIN : ", player.casinoCoin.ToString());
+            ConsoleUtility.PrintTextHighlights("소지 Gold : ", player.Gold.ToString());
+            ConsoleUtility.PrintTextHighlights("소지 COIN : ", player.casinoCoin.ToString());
 
             Console.WriteLine("1. COIN으로 교환");
             Console.WriteLine("2. Gold로 교환");
@@ -141,8 +145,8 @@ namespace SpartaDungeon
                 Console.WriteLine("100 Gold을 1 COIN으로 교환할 수 있습니다.");
                 Console.WriteLine("몇 개 교환하시겠습니까?");
                 Console.WriteLine();
-                ConsoleUtility.PrintTextHighlights("Gold : ", player.Gold.ToString());
-                ConsoleUtility.PrintTextHighlights("COIN : ", player.casinoCoin.ToString());
+                ConsoleUtility.PrintTextHighlights("소지 Gold : ", player.Gold.ToString());
+                ConsoleUtility.PrintTextHighlights("소지 COIN : ", player.casinoCoin.ToString());
                 Console.WriteLine();
                 Console.WriteLine("안내 : 교환 1회당 최대 100 COIN 교환 가능합니다.");
                 Console.WriteLine("0. 뒤로가기");
@@ -181,10 +185,10 @@ namespace SpartaDungeon
                 Console.WriteLine("1 COIN을 100 Gold로 교환할 수 있습니다.");
                 Console.WriteLine("몇 개 교환하시겠습니까?");
                 Console.WriteLine();
-                ConsoleUtility.PrintTextHighlights("Gold : ", player.Gold.ToString());
-                ConsoleUtility.PrintTextHighlights("COIN : ", player.casinoCoin.ToString());
+                ConsoleUtility.PrintTextHighlights("소지 Gold : ", player.Gold.ToString());
+                ConsoleUtility.PrintTextHighlights("소지 COIN : ", player.casinoCoin.ToString());
                 Console.WriteLine();
-                Console.WriteLine("안내 : 교환 1회당 최대 100 COIN 교환 가능합니다. 0을 입력하면 돌아갑니다.");
+                Console.WriteLine("안내 : 교환 1회당 최대 100 COIN 교환 가능합니다.");
                 Console.WriteLine("0. 뒤로가기");
                 Console.WriteLine();
                 int keyinput = ConsoleUtility.PromptMenuChoice(0, 100);
@@ -214,14 +218,5 @@ namespace SpartaDungeon
                 }
             }
         }
-
-
-
-
-
-
-
-
-
     }
 }
