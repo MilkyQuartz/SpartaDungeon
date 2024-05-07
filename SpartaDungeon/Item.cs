@@ -17,8 +17,10 @@ namespace SpartaDungeon
         ARMOR,
         USABLE,
         HEAL = 20,
-        PERCENTHEAL,
-        CASTERA,
+        PERCENTHEAL, // Hp 회복
+        CASTERA, //  Hp 회복
+        MPHEAL, // Mp 회복
+        SOLO, // Hp는 깎이고 Mp는 증가하는 타입
         ATTACK = 30,
         ONLYSELL = 40
     }
