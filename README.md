@@ -51,3 +51,7 @@
 - 게임종료시 기존의 정보를 모두 저장하고 종료를 하게된다.
 
 ## Scenario #3: 실행 화면
+- 이미지 클릭시 구현 영상으로 이동합니다.
+  
+[![Main](https://github.com/MilkyQuartz/SpartaDungeon/assets/141620531/4af158f0-a30d-41b6-9f29-664820201459)
+](https://youtu.be/Bsqa1bmoJBY)
