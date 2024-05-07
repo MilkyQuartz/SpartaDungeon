@@ -77,6 +77,14 @@ namespace SpartaDungeon
                         {
                             ItemEffect.Castera(player, inventory[selectedItem].Value);
                         }
+                        else if (inventory[selectedItem].Type == ItemType.SOLO)
+                        {
+                            ItemEffect.SoloHeal(player, inventory[selectedItem].Value);
+                        }
+                        else if (inventory[selectedItem].Type == ItemType.MPHEAL)
+                        {
+                            ItemEffect.MpHeal(player, inventory[selectedItem].Value);
+                        }
 
                         inventory = inventoryManager.GetInventory(player.Name);
 

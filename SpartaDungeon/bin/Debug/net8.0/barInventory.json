@@ -2,27 +2,27 @@
     {
         "Name": "락스",
         "Desc": "솔로가 마시는 물. HP는 깎이지만 MP는 50 오른다.",
-        "Type": 22,
+        "Type": 24,
         "Atk": 0,
         "Def": 0,
         "Hp": 0,
         "Price": 200,
         "IsEquipped": false,
         "IsPurchased": false,
-		"Value": 0.5,
+		"Value": 1,
 		"Qty": 0
     },
     {
         "Name": "YB맥주",
         "Desc": "영보이만 먹을 수 있는 젊은이들의 술. MP를 10 회복한다.",
-        "Type": 22,
+        "Type": 23,
         "Atk": 0,
         "Def": 0,
         "Hp": 0,
         "Price": 50,
         "IsEquipped": false,
         "IsPurchased": false,
-		"Value": 0.5,
+		"Value": 0.1,
 		"Qty": 0
     },
     {
